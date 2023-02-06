@@ -4,7 +4,7 @@ As an existing UniTrade user
 I want to login to my account
 So I can access my existing account
 
-Scenario: Email exists in system and password is correct (Normal Flow)
+Scenario Outline: Email exists in system and password is correct (Normal Flow)
 Given user is on the login page
 And user enters existing email address <existing_email>
 And user enters correct password <correct_password>
@@ -15,7 +15,7 @@ Then user is logged in to their account
 | alex@existingemail.com  | STRONGPASSWORD123 |
 | steve@existingemail.com | STRONGPASSWORD456 |
 
-Scenario: Email exists in system and password is incorrect (Error Flow)
+Scenario Outline: Email exists in system and password is incorrect (Error Flow)
 Given user is on the login page
 And user enters existing email address <existing_email>
 And user enters incorrect password <incorrect_password>
@@ -26,7 +26,7 @@ Then a "password is incorrect" error is issued
 | alex@existingemail.com  | STRONGPASSWORD123 | wrongpassword123   |
 | steve@existingemail.com | STRONGPASSWORD456 | wrongpassword456   |
 
-Scenario: Email does not exist in system (Error Flow)
+Scenario Outline: Scenario Outline name: Email does not exist in system (Error Flow)
 Given user is on the login page
 And user enters non-existing email address
 And user enters a password <password>
