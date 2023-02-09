@@ -1,13 +1,13 @@
-package ca.mcgill.ecse428.unitrade.backend;
+package ca.mcgill.ecse428.unitrade.unitradebackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendApplication {
+public class UnitradeBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BackendApplication.class, args);
+		SpringApplication.run(UnitradeBackendApplication.class, args);
 	}
 
 }

@@ -1,10 +1,10 @@
-package ca.mcgill.ecse428.unitrade.backend;
+package ca.mcgill.ecse428.unitrade.unitradebackend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BackendApplicationTests {
+class UnitradeBackendApplicationTests {
 
 	@Test
 	void contextLoads() {
