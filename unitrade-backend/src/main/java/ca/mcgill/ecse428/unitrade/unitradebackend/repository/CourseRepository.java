@@ -4,5 +4,5 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseRepository extends JpaRepository<Course, Long>{
-    
+    public Course findByCodename(String codename);
 }
