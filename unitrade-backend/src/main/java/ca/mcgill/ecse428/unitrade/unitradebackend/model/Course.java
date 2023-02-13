@@ -8,7 +8,7 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String title;
-    private String codeName;
+    private String codename;
     private String description;
     private boolean isApproved;
     @ManyToOne private University university;
@@ -29,12 +29,12 @@ public class Course {
         this.title = string;
     }
 
-    public String getCodeName() {
-        return codeName;
+    public String getCodename() {
+        return codename;
     }
 
-    public void setCodeName(String codeName) {
-        this.codeName = codeName;
+    public void setCodename(String codeName) {
+        this.codename = codeName;
     }
 
     public String getDescription() {
