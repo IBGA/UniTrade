@@ -27,7 +27,7 @@ public class ChatMessageRepositoryTests {
     }
 
     @Test
-    public void testCreateChatMessage() {
+    public void testPersistAndLoadChatMessage() {
         Person sender = new Person();
         Person receiver = new Person();
 
@@ -65,6 +65,6 @@ public class ChatMessageRepositoryTests {
         assertEquals(receiver.getId(), message.getReceiver().getId());
         assertEquals(content, message.getContent());
         assertEquals(date, message.getSendDate());
-
+        
     }
 }

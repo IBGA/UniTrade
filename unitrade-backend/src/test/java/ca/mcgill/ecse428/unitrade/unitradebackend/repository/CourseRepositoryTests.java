@@ -26,7 +26,7 @@ public class CourseRepositoryTests {
     }
 
     @Test
-    public void testCreateCourse() {
+    public void testPersistAndLoadCourse() {
         Course course = new Course();
         University university = new University();
 
