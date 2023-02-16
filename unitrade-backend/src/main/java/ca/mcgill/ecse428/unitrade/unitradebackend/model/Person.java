@@ -5,37 +5,35 @@ import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.lang.NonNull;
+
 @Entity
 public class Person{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String email;
-    private String username;
-    private String firstName;
-    private String lastName;
-    private String password;
-    private boolean isOnline;
-    private Date lastOnline;
-    private boolean isEnabled;
-    private String profilePicture;
+    private @NonNull String email = "defaultEmail";
+    private @NonNull String username = "defaultUsername";
+    private @NonNull String firstName = "defaultFirstName";
+    private @NonNull String lastName = "defaultLastName";
+    private @NonNull String password = "defaultPassword";
+    private @NonNull Date lastOnline = new Date();
+    private String profilePicture = null;
+    private boolean isOnline = false;
+    private boolean isEnabled = true;
     @ManyToMany private List<Course> enrolledCourses;
     @ManyToOne private University university;
 
-    public long getId() {
+    public Long getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(@NonNull String email) {
         this.email = email;
     }
 
@@ -43,7 +41,7 @@ public class Person{
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(@NonNull String username) {
         this.username = username;
     }
 
@@ -51,7 +49,7 @@ public class Person{
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(@NonNull String firstName) {
         this.firstName = firstName;
     }
 
@@ -59,7 +57,7 @@ public class Person{
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(@NonNull String lastName) {
         this.lastName = lastName;
     }
 
@@ -67,7 +65,7 @@ public class Person{
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(@NonNull String password) {
         this.password = password;
     }
 
@@ -83,7 +81,7 @@ public class Person{
         return lastOnline;
     }
 
-    public void setLastOnline(Date lastOnline) {
+    public void setLastOnline(@NonNull Date lastOnline) {
         this.lastOnline = lastOnline;
     }
 
