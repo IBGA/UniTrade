@@ -12,7 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.ModerationTier.ModerationRole;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @SpringBootTest
 public class ModerationTierRepositoryTests {
 

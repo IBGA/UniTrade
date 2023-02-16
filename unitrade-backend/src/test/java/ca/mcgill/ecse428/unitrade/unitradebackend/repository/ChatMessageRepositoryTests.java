@@ -12,7 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.ChatMessage;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
+import jakarta.transaction.Transactional;
 
+@Transactional
 @SpringBootTest
 public class ChatMessageRepositoryTests {
 
@@ -65,6 +67,6 @@ public class ChatMessageRepositoryTests {
         assertEquals(receiver.getId(), message.getReceiver().getId());
         assertEquals(content, message.getContent());
         assertEquals(date, message.getSendDate());
-        
+
     }
 }
