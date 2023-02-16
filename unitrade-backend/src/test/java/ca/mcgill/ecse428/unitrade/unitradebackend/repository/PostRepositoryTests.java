@@ -33,7 +33,7 @@ public class PostRepositoryTests {
     public void clearDatabase() {
         postRepository.deleteAll();
     }
-/* 
+ 
     @Test
     public void testPersistAndLoadItemPosting(){
         ItemPosting itemPosting = new ItemPosting();
@@ -56,6 +56,7 @@ public class PostRepositoryTests {
         itemPosting.setPoster(poster);
         itemPosting.setBuyer(buyer);
         itemPosting.setAvailable(isAvailable);
+        itemPosting.setUniversity(university);
 
         university = universityRepository.save(university);
         poster = personRepository.save(poster);
@@ -93,6 +94,7 @@ public class PostRepositoryTests {
         unipost.setTitle(title);
         unipost.setDescription(description);
         unipost.setPoster(poster);
+        unipost.setUniversity(university);
 
         university = universityRepository.save(university);
         poster = personRepository.save(poster);
@@ -110,7 +112,7 @@ public class PostRepositoryTests {
         assertEquals(uniName, unipost.getUniversity().getName());
     }
 
-*/
+
 
     @Test
     public void testPersistAndLoadPost(){
