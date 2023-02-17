@@ -24,7 +24,7 @@ jobs:
           postgresql version: 14.5
           postgresql db: unitrade-db
           postgresql user: postgres
-          postgresql password: postgres
+          postgresql password: admin
       # setup Java & Gradle
       - uses: actions/checkout@v3
       - name: Set up JDK 17
