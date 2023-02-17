@@ -22,7 +22,7 @@ jobs:
         uses: harmon758/postgresql-action@v1
         with:
           postgresql version: 14.5
-          postgresql db: UniTrade
+          postgresql db: unitrade-db
           postgresql user: postgres
           postgresql password: postgres
       # setup Java & Gradle
