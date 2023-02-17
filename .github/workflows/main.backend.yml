@@ -10,7 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     
-    # Tell it to run in the unitrade-backend folder
+    # Tell it to run in the unitrade-backend folder, but does not work for external actions 
+    # only for running our own scripts
     defaults: 
       run:
         working-directory: unitrade-backend
@@ -38,7 +39,4 @@ jobs:
        # working-directory: UniTrade
         # Run build
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-        with:
-          arguments: build
-          gradle-executable: ./unitrade-backend/gradlew
+        run: ./gradlew build
