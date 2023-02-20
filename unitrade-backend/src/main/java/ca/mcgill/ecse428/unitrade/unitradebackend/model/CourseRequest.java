@@ -32,6 +32,14 @@ public class CourseRequest {
         this.requester = requester;
     }
 
+    public Person getValidator() {
+        return validator;
+    }
+
+    public void setValidator(Person validator) {
+        this.validator = validator;
+    }
+
     public Course getCourse() {
         return course;
     }
@@ -50,6 +58,7 @@ public class CourseRequest {
 
     private boolean isApproved;
     @OneToOne private Person requester;
+    @OneToOne private Person validator;
     @OneToOne private Course course;
     @OneToOne private University university;
 }

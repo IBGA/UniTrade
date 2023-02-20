@@ -8,7 +8,7 @@ public class ModerationTier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private enum ModerationRole {
+    public enum ModerationRole {
         ADMINISTRATOR, HELPER
     }
     private ModerationRole role;
