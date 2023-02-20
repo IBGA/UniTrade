@@ -19,7 +19,7 @@ dependencies {
 
 	// For PostgreSQL
 	runtimeOnly 'org.postgresql:postgresql'
-	
+
 	// For JUnit
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -32,8 +32,8 @@ dependencies {
 	implementation 'org.hibernate.validator:hibernate-validator:6.2.0.Final'
 
 	// For Spring Security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.security:spring-security-test'
+	// implementation 'org.springframework.boot:spring-boot-starter-security'
+	// implementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {
