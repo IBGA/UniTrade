@@ -18,23 +18,27 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.repository.UniversityRepositor
 
 @Service
 public class PersonService {
-    @Autowired PersonRepository personRepository;
+    @Autowired
+    PersonRepository personRepository;
 
-    @Autowired UniversityRepository universityRepository;
+    @Autowired
+    UniversityRepository universityRepository;
 
-    @Autowired CourseRepository courseRepository; 
+    @Autowired
+    CourseRepository courseRepository;
 
     @Transactional
-    public Person CreatePerson(
-        String email,
-        String username,
-        String firstName,
-        String lastName,
-        String password,
-        String profilePicture,
-        List<Course> enrolledCourses,
-        University university
-    ) {
+    public Person createPerson(
+            String email,
+            String username,
+            String firstName,
+            String lastName,
+            String password,
+            String profilePicture,
+            List<Long> enrolledCoursesIds,
+            Long universityId) {
+
+        // Validate input syntax (Error -> 400)
         if (email == null || email.isEmpty()) {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Email cannot be null or empty");
         }
@@ -55,14 +59,36 @@ public class PersonService {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Password cannot be null or empty");
         }
 
+        if (universityId == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University id cannot be null");
+        }
+
+        // Validate that email and username are unique (Error -> 409)
         if (personRepository.findByEmail(email) != null) {
-            throw new ServiceLayerException(HttpStatus.CONFLICT, String.format("Email '%s' already exists in system", email));
+            throw new ServiceLayerException(HttpStatus.CONFLICT,
+                    String.format("Email '%s' already exists in system", email));
         }
 
         if (personRepository.findByUsername(username) != null) {
-            throw new ServiceLayerException(HttpStatus.CONFLICT, String.format("Username '%s' already exists in system", username));
+            throw new ServiceLayerException(HttpStatus.CONFLICT,
+                    String.format("Username '%s' already exists in system", username));
         }
 
+        // Validate that university and courses exist (Error -> 404)
+        if (universityRepository.findById(universityId).orElse(null) == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("University with id '%d' not found", universityId));
+        }
+
+        for (Long courseId : enrolledCoursesIds) {
+            if (courseRepository.findById(courseId).orElse(null) == null) {
+                throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                        String.format("Course with id '%d' not found", courseId));
+            }
+        }
+
+        // Code reaches here -> No errors.
+        // So create person and save to database
         Person person = new Person();
         person.setEmail(email);
         person.setUsername(username);
@@ -70,9 +96,16 @@ public class PersonService {
         person.setLastName(lastName);
         person.setPassword(password);
         person.setProfilePicture(profilePicture);
-        person.setEnrolledCourses(enrolledCourses);
-        person.setUniversity(university);
 
+        List<Course> enrolledCourses = new ArrayList<Course>();
+        for (Long courseId : enrolledCoursesIds) {
+            enrolledCourses.add(courseRepository.findById(courseId).orElse(null));
+        }
+
+        person.setEnrolledCourses(enrolledCourses);
+
+        University university = universityRepository.findById(universityId).orElse(null);
+        person.setUniversity(university);
         return personRepository.save(person);
     }
 
@@ -100,7 +133,8 @@ public class PersonService {
         Person person = personRepository.findByEmail(email);
 
         if (person == null) {
-            throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Person with email '%s' not found", email));
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("Person with email '%s' not found", email));
         }
 
         return person;
@@ -113,11 +147,10 @@ public class PersonService {
 
     @Transactional
     public Person updatePersonInformation(
-        long id,
-        String firstName,
-        String lastName,
-        String profilePicture
-    ) {
+            long id,
+            String firstName,
+            String lastName,
+            String profilePicture) {
         Person person = personRepository.findById(id).orElse(null);
 
         if (firstName == null || firstName.isEmpty()) {
@@ -160,15 +193,16 @@ public class PersonService {
     public Person updatePersonCurrentUniversity(long id, long universityId) {
 
         Person person = personRepository.findById(id).orElse(null);
-                
+
         if (person == null) {
             throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Person with id '%d' not found", id));
         }
-        
+
         University university = universityRepository.findById(universityId).orElse(null);
-        
+
         if (university == null) {
-            throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("University with id '%d' not found", universityId));
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("University with id '%d' not found", universityId));
         }
 
         person.setUniversity(university);
@@ -187,7 +221,8 @@ public class PersonService {
         for (Long courseId : enrolledCoursesIds) {
             Course course = courseRepository.findById(courseId).orElse(null);
             if (course == null) {
-                throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Course with id '%d' not found", courseId));
+                throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                        String.format("Course with id '%d' not found", courseId));
             }
             enrolledCourses.add(course);
         }

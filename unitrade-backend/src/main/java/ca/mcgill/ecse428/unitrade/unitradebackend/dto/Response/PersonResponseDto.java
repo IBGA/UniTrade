@@ -4,12 +4,10 @@ import java.sql.Date;
 import java.util.List;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 
-
 public class PersonResponseDto {
-    
+
     private String email;
     private String username;
     private String firstName;
@@ -20,7 +18,7 @@ public class PersonResponseDto {
     private boolean isOnline;
     private boolean isEnabled;
     private List<Course> enrolledCourses;
-    private University university;
+    private UniversityResponseDto university;
 
     public String getEmail() {
         return email;
@@ -62,23 +60,23 @@ public class PersonResponseDto {
         return enrolledCourses;
     }
 
-    public University getUniversity() {
+    public UniversityResponseDto getUniversity() {
         return university;
     }
 
-    public static PersonResponseDto createPersonDto(Person person) {
-        PersonResponseDto personDto = new PersonResponseDto();
-        personDto.email = person.getEmail();
-        personDto.username = person.getUsername();
-        personDto.firstName = person.getFirstName();
-        personDto.lastName = person.getLastName();
-        personDto.password = person.getPassword();
-        personDto.lastOnline = person.getLastOnline();
-        personDto.profilePicture = person.getProfilePicture();
-        personDto.isOnline = person.isOnline();
-        personDto.isEnabled = person.isEnabled();
-        personDto.enrolledCourses = person.getEnrolledCourses();
-        personDto.university = person.getUniversity();
-        return personDto;
+    public static PersonResponseDto createDto(Person person) {
+        PersonResponseDto dto = new PersonResponseDto();
+        dto.email = person.getEmail();
+        dto.username = person.getUsername();
+        dto.firstName = person.getFirstName();
+        dto.lastName = person.getLastName();
+        dto.password = person.getPassword();
+        dto.lastOnline = person.getLastOnline();
+        dto.profilePicture = person.getProfilePicture();
+        dto.isOnline = person.isOnline();
+        dto.isEnabled = person.isEnabled();
+        dto.enrolledCourses = person.getEnrolledCourses();
+        dto.university = UniversityResponseDto.createDto(person.getUniversity());
+        return dto;
     }
 }

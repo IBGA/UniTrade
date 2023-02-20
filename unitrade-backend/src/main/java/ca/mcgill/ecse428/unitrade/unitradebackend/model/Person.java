@@ -2,28 +2,30 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.lang.NonNull;
 
 @Entity
-public class Person{
+public class Person {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private @NonNull String email = "defaultEmail";
     private @NonNull String username = "defaultUsername";
     private @NonNull String firstName = "defaultFirstName";
     private @NonNull String lastName = "defaultLastName";
     private @NonNull String password = "defaultPassword";
-    private @NonNull Date lastOnline = new Date();
+    private @NonNull Date lastOnline = new Date(0);
     private String profilePicture = null;
     private boolean isOnline = false;
     private boolean isEnabled = true;
-    @ManyToMany private List<Course> enrolledCourses;
-    @ManyToOne private University university;
+    @ManyToMany
+    private List<Course> enrolledCourses;
+    @ManyToOne
+    private University university;
 
     public Long getId() {
         return id;

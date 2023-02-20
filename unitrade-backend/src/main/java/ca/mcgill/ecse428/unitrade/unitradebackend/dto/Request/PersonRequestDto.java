@@ -3,11 +3,9 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request;
 import java.sql.Date;
 import java.util.List;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
-
 public class PersonRequestDto {
-    
+
+    private Long id;
     private String email;
     private String username;
     private String firstName;
@@ -17,8 +15,16 @@ public class PersonRequestDto {
     private String profilePicture;
     private boolean isOnline;
     private boolean isEnabled;
-    private List<Course> enrolledCourses;
-    private University university;
+    private List<Long> enrolledCoursesIds;
+    private Long universityId;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getEmail() {
         return email;
@@ -92,19 +98,19 @@ public class PersonRequestDto {
         this.profilePicture = profilePicture;
     }
 
-    public List<Course> getEnrolledCourses() {
-        return enrolledCourses;
+    public List<Long> getEnrolledCourses() {
+        return enrolledCoursesIds;
     }
 
-    public void setEnrolledCourses(List<Course> enrolledCourses) {
-        this.enrolledCourses = enrolledCourses;
+    public void setEnrolledCourses(List<Long> enrolledCoursesIds) {
+        this.enrolledCoursesIds = enrolledCoursesIds;
     }
 
-    public University getUniversity() {
-        return university;
+    public Long getUniversityId() {
+        return universityId;
     }
 
-    public void setUniversity(University university) {
-        this.university = university;
+    public void setUniversity(Long universityId) {
+        this.universityId = universityId;
     }
 }
