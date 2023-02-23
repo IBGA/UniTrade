@@ -46,6 +46,7 @@ public class PostRepositoryTests {
         String description = "This is a description";
         String posterName = "poster";
         String buyerName = "buyer";
+        double price = 10.0;
         Boolean isAvailable = false;
 
         university.setName(uniName);
@@ -57,6 +58,7 @@ public class PostRepositoryTests {
         itemPosting.setBuyer(buyer);
         itemPosting.setAvailable(isAvailable);
         itemPosting.setUniversity(university);
+        itemPosting.setPrice(price);
 
         university = universityRepository.save(university);
         poster = personRepository.save(poster);
@@ -71,6 +73,7 @@ public class PostRepositoryTests {
 
         assertEquals(title, itemPosting.getTitle());
         assertEquals(description, itemPosting.getDescription());
+        assertEquals(price, itemPosting.getPrice());
         assertEquals(posterName, itemPosting.getPoster().getUsername());
         assertEquals(buyerName, itemPosting.getBuyer().getUsername());
         assertEquals(isAvailable, itemPosting.isAvailable());

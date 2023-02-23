@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 public class ItemPosting extends Post{
 
     private boolean isAvailable;
+    private double price;
 
     public Person getBuyer() {
         return buyer;
@@ -23,5 +24,13 @@ public class ItemPosting extends Post{
 
     public void setAvailable(boolean available) {
         isAvailable = available;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }
