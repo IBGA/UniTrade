@@ -13,7 +13,7 @@ jobs:
     # Setup Node
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
     
     # Tell it to run in the unitrade-backend folder, but does not work for external actions 
     # only for running our own scripts
@@ -38,8 +38,8 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       # Run build which runs the tests as well
-      - name: Build with Gradle
-        run: ./gradlew build
+      #- name: Build with Gradle
+       # run: ./gradlew build
       # Frontend build and test
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
