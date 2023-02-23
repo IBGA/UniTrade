@@ -3,6 +3,7 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,11 +46,11 @@ public class PersonRestController {
                 PersonResponseDto.createDto(person), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/person/{id}" })
     public ResponseEntity<PersonResponseDto> getPerson(@PathVariable("id") Long id) {
         return new ResponseEntity<PersonResponseDto>(
-                PersonResponseDto.createDto(personService.getPerson(id)),
-                HttpStatus.CREATED);
+                PersonResponseDto.createDto(personService.getPerson(id)), HttpStatus.OK);
     }
 }
