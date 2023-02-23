@@ -53,7 +53,7 @@ public class ReactionRepositoryTests {
         post = postRepository.save(post);
         reaction = reactionRepository.save(reaction);
 
-        long reactionID = reaction.getId();
+        Long reactionID = reaction.getId();
         
         reaction = reactionRepository.findById(reactionID).orElse(null);
 

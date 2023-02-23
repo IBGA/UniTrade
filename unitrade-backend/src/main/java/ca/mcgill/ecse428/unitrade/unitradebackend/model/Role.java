@@ -3,31 +3,31 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 import jakarta.persistence.*;
 
 @Entity
-public class ModerationTier {
+public class Role {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     public enum ModerationRole {
         ADMINISTRATOR, HELPER
     }
-    private ModerationRole role;
+    private ModerationRole modRole;
     @OneToOne private Person person;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
     public ModerationRole getRole() {
-        return role;
+        return modRole;
     }
 
-    public void setRole(ModerationRole role) {
-        this.role = role;
+    public void setRole(ModerationRole modRole) {
+        this.modRole = modRole;
     }
 
     public Person getPerson() {

@@ -9,17 +9,17 @@ public class ChatMessage {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String content;
     private Date sendDate;
     @ManyToOne private Person sender;
     @ManyToOne private Person receiver;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

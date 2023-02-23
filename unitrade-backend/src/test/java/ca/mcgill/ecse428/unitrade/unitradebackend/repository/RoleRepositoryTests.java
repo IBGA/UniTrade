@@ -1,6 +1,6 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.repository;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.ModerationTier;
+import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -11,49 +11,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.ModerationTier.ModerationRole;
+import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role.ModerationRole;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-public class ModerationTierRepositoryTests {
+public class RoleRepositoryTests {
 
     @Autowired
-    ModerationTierRepository moderationTierRepository;
+    RoleRepository roleRepository;
 
     @Autowired
     PersonRepository personRepository;
 
     @AfterEach
     public void clearDatabase() {
-        moderationTierRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     @Test
-    public void testPersistAndLoadModerationTier() {
+    public void testPersistAndLoadRole() {
         Person moderator = new Person();
-        ModerationTier moderationTier = new ModerationTier();
+        Role role = new Role();
 
-        ModerationRole role = ModerationTier.ModerationRole.ADMINISTRATOR;
+        ModerationRole modRole = Role.ModerationRole.ADMINISTRATOR;
         String username = "moderator";
 
-        moderationTier.setRole(role);
+        role.setRole(modRole);
         moderator.setUsername(username);
-        moderationTier.setPerson(moderator);
+        role.setPerson(moderator);
 
         moderator = personRepository.save(moderator);
-        moderationTier = moderationTierRepository.save(moderationTier);
+        role = roleRepository.save(role);
 
-        long moderationTierID = moderationTier.getId();
-        long moderatorID = moderator.getId();
+        Long roleID = role.getId();
+        Long moderatorID = moderator.getId();
 
         moderator = personRepository.findById(moderatorID).orElse(null);
-        moderationTier = moderationTierRepository.findById(moderationTierID).orElse(null);
+        role = roleRepository.findById(roleID).orElse(null);
 
-        assertNotNull(moderationTier);
+        assertNotNull(role);
         assertNotNull(moderator);
 
         assertEquals(username, moderator.getUsername());
-        assertEquals(role, moderationTier.getRole());
+        assertEquals(modRole, role.getRole());
     }
 }

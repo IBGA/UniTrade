@@ -46,7 +46,7 @@ public class PostRepositoryTests {
         String description = "This is a description";
         String posterName = "poster";
         String buyerName = "buyer";
-        double price = 10.0;
+        Double price = 10.0;
         Boolean isAvailable = false;
 
         university.setName(uniName);
@@ -65,7 +65,7 @@ public class PostRepositoryTests {
         buyer = personRepository.save(buyer);
         itemPosting = postRepository.save(itemPosting);
 
-        long itemPostingID = itemPosting.getId();
+        Long itemPostingID = itemPosting.getId();
         
         itemPosting = (ItemPosting) postRepository.findById(itemPostingID).orElse(null);
 
@@ -103,7 +103,7 @@ public class PostRepositoryTests {
         poster = personRepository.save(poster);
         unipost = postRepository.save(unipost);
 
-        long unipostID = unipost.getId();
+        Long unipostID = unipost.getId();
         
         unipost = (Unipost) postRepository.findById(unipostID).orElse(null);
 
@@ -139,7 +139,7 @@ public class PostRepositoryTests {
         poster = personRepository.save(poster);
         post = postRepository.save(post);
 
-        long postID = post.getId();
+        Long postID = post.getId();
         
         post = postRepository.findById(postID).orElse(null);
 

@@ -4,13 +4,13 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 
 public class UniversityResponseDto {
 
-    private long id;
+    private Long id;
     private String name;
     private String codename;
     private String description;
     private String moderation;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
