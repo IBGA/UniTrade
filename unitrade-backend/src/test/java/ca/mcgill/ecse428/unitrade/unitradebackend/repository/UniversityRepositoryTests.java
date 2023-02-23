@@ -47,11 +47,11 @@ public class UniversityRepositoryTests {
         moderators = List.of(role);
 
         String name = "McGill University";
-        String codename = "McGill";
+        String city = "McGill";
         String description = "A university in Montreal, Canada";
 
         university.setName(name);
-        university.setCodename(codename);
+        university.setCity(city);
         university.setDescription(description);
         university.setModeration(moderators);
         
@@ -65,7 +65,7 @@ public class UniversityRepositoryTests {
 
         assertNotNull(university);
         assertEquals(name, university.getName());
-        assertEquals(codename, university.getCodename());
+        assertEquals(city, university.getCity());
         assertEquals(description, university.getDescription());
         assertEquals(moderators, university.getModeration());
 

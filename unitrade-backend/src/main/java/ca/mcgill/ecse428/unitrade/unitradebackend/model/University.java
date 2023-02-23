@@ -12,7 +12,7 @@ public class University {
     private Long id;
 
     private String name;
-    private String codename;
+    private String city;
     private String description;
     @OneToMany private List<Role> moderation;
 
@@ -32,12 +32,12 @@ public class University {
         this.name = name;
     }
 
-    public String getCodename() {
-        return codename;
+    public String getCity() {
+        return city;
     }
 
-    public void setCodename(String codename) {
-        this.codename = codename;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getDescription() {
