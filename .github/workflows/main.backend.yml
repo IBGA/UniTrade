@@ -2,27 +2,27 @@ name: Gradle Build
 on:
   # Triggers the workflow on push or pull request events but only for the "main" or "dev" branch
   push:
-    branches: [ "main","dev" ]
+    branches: ['main', 'dev']
   pull_request:
-    branches: [ "main","dev" ]
-    
+    branches: ['main', 'dev']
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     # Setup Node
     strategy:
       matrix:
         node-version: [18.x]
-    
-    # Tell it to run in the unitrade-backend folder, but does not work for external actions 
+
+    # Tell it to run in the unitrade-backend folder, but does not work for external actions
     # only for running our own scripts
-    defaults: 
+    defaults:
       run:
         working-directory: unitrade-backend
-        
+
     steps:
-       # setup Postgres DB
+      # setup Postgres DB
       - name: Set up PostgreSQL database
         uses: harmon758/postgresql-action@v1
         with:
@@ -39,7 +39,7 @@ jobs:
           distribution: 'adopt'
       # Run build which runs the tests as well
       #- name: Build with Gradle
-       # run: ./gradlew build
+      # run: ./gradlew build
       # Frontend build and test
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
@@ -47,6 +47,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
+          cache-dependency-path: ../unitrade-frontend/package-lock.json
       - run: npm ci # Continuous Integration / Clean Install
+        working-directory: ../unitrade-frontend
       - run: npm run build
+        working-directory: ../unitrade-frontend
       - run: npm run test
+        working-directory: ../unitrade-frontend
