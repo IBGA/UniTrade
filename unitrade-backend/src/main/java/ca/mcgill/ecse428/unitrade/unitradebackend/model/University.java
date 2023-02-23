@@ -14,7 +14,7 @@ public class University {
     private String name;
     private String codename;
     private String description;
-    @OneToMany private List<ModerationTier> moderation;
+    @OneToMany private List<Role> moderation;
 
     public Long getId() {
         return id;
@@ -48,11 +48,11 @@ public class University {
         this.description = description;
     }
 
-    public List<ModerationTier> getModeration() {
+    public List<Role> getModeration() {
         return moderation;
     }
 
-    public void setModeration(List<ModerationTier> moderation) {
+    public void setModeration(List<Role> moderation) {
         this.moderation = moderation;
     }
 

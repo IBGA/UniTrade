@@ -1,7 +1,7 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.repository;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.ModerationTier;
+import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +26,7 @@ public class UniversityRepositoryTests {
     PersonRepository personRepository;
 
     @Autowired
-    ModerationTierRepository moderationTierRepository;
+    RoleRepository roleRepository;
 
     @AfterEach
     public void clearDatabase() {
@@ -36,15 +36,15 @@ public class UniversityRepositoryTests {
     @Test
     public void testPersistAndLoadUniversity() {
         University university = new University();
-        List<ModerationTier> moderators;
+        List<Role> moderators;
         Person moderator = new Person();
-        ModerationTier moderationTier = new ModerationTier();
+        Role role = new Role();
 
-        ModerationTier.ModerationRole role = ModerationTier.ModerationRole.ADMINISTRATOR;
+        Role.ModerationRole modRole = Role.ModerationRole.ADMINISTRATOR;
         moderator.setUsername("moderator");
-        moderationTier.setRole(role);
-        moderationTier.setPerson(moderator);
-        moderators = List.of(moderationTier);
+        role.setRole(modRole);
+        role.setPerson(moderator);
+        moderators = List.of(role);
 
         String name = "McGill University";
         String codename = "McGill";
@@ -56,7 +56,7 @@ public class UniversityRepositoryTests {
         university.setModeration(moderators);
         
         moderator = personRepository.save(moderator);
-        moderationTier = moderationTierRepository.save(moderationTier);
+        role = roleRepository.save(role);
         university = universityRepository.save(university);
 
         Long universityID = university.getId();
