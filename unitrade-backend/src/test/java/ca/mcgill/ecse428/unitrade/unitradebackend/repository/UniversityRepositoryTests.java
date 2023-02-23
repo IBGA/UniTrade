@@ -59,7 +59,7 @@ public class UniversityRepositoryTests {
         moderationTier = moderationTierRepository.save(moderationTier);
         university = universityRepository.save(university);
 
-        long universityID = university.getId();
+        Long universityID = university.getId();
 
         university = universityRepository.findById(universityID).orElse(null);
 

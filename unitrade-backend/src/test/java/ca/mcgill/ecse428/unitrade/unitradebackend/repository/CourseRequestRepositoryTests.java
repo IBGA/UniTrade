@@ -58,7 +58,7 @@ public class CourseRequestRepositoryTests {
         courseRepository.save(course);
         courseRequestRepository.save(courseRequest);
 
-        long courseRequestId = courseRequest.getId();
+        Long courseRequestId = courseRequest.getId();
 
         courseRequest = courseRequestRepository.findById(courseRequestId).orElse(null);
 

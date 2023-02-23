@@ -45,7 +45,7 @@ public class PersonRepositoryTests {
 
         person = personRepository.save(person);
 
-        long personID = person.getId();
+        Long personID = person.getId();
 
         person = personRepository.findById(personID).orElse(null);
 

@@ -48,8 +48,8 @@ public class CourseRepositoryTests {
         university = universityRepository.save(university);
         course = courseRepository.save(course);
 
-        long courseID = course.getId();
-        long universityID = university.getId();
+        Long courseID = course.getId();
+        Long universityID = university.getId();
 
         course = courseRepository.findById(courseID).orElse(null);
         university = universityRepository.findById(universityID).orElse(null);

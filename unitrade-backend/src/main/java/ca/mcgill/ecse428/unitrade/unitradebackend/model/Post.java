@@ -10,7 +10,7 @@ public class Post {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String title;
     private String description;
     private Date datePosted;
@@ -18,11 +18,11 @@ public class Post {
     @OneToOne private Person poster;
     @OneToMany private List<Course> courses;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

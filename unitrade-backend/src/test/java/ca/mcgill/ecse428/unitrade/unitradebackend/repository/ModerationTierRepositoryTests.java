@@ -44,8 +44,8 @@ public class ModerationTierRepositoryTests {
         moderator = personRepository.save(moderator);
         moderationTier = moderationTierRepository.save(moderationTier);
 
-        long moderationTierID = moderationTier.getId();
-        long moderatorID = moderator.getId();
+        Long moderationTierID = moderationTier.getId();
+        Long moderatorID = moderator.getId();
 
         moderator = personRepository.findById(moderatorID).orElse(null);
         moderationTier = moderationTierRepository.findById(moderationTierID).orElse(null);

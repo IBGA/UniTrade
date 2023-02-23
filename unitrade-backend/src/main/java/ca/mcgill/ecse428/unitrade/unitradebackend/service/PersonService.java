@@ -147,7 +147,7 @@ public class PersonService {
 
     @Transactional
     public Person updatePersonInformation(
-            long id,
+            Long id,
             String firstName,
             String lastName,
             String profilePicture) {
@@ -173,7 +173,7 @@ public class PersonService {
     }
 
     @Transactional
-    public Person updatePersonPassword(long id, String password) {
+    public Person updatePersonPassword(Long id, String password) {
         Person person = personRepository.findById(id).orElse(null);
 
         if (password == null || password.isEmpty()) {
@@ -190,7 +190,7 @@ public class PersonService {
     }
 
     @Transactional
-    public Person updatePersonCurrentUniversity(long id, long universityId) {
+    public Person updatePersonCurrentUniversity(Long id, Long universityId) {
 
         Person person = personRepository.findById(id).orElse(null);
 
@@ -210,7 +210,7 @@ public class PersonService {
     }
 
     @Transactional
-    public Person updatePersonEnrolledCourses(long id, List<Long> enrolledCoursesIds) {
+    public Person updatePersonEnrolledCourses(Long id, List<Long> enrolledCoursesIds) {
         Person person = personRepository.findById(id).orElse(null);
 
         if (person == null) {
@@ -232,7 +232,7 @@ public class PersonService {
     }
 
     @Transactional
-    public void deletePerson(long id) {
+    public void deletePerson(Long id) {
         Person person = personRepository.findById(id).orElse(null);
         if (person == null)
             throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Person with id '%d' not found", id));

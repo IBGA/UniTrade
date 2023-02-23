@@ -51,9 +51,9 @@ public class ChatMessageRepositoryTests {
         receiver = personRepository.save(receiver);
         message = chatMessageRepository.save(message);
 
-        long messageID = message.getId();
-        long senderID = sender.getId();
-        long receiverID = receiver.getId();
+        Long messageID = message.getId();
+        Long senderID = sender.getId();
+        Long receiverID = receiver.getId();
 
         message = chatMessageRepository.findById(messageID).orElse(null);
         sender = personRepository.findById(senderID).orElse(null);
