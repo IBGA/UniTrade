@@ -3,8 +3,6 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import logo from '../assets/unitrade-nav.png';
 import styled from "styled-components";
-import { Form } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
 
 const NavMenuStyle = styled.div`
     .bg-white{
@@ -15,13 +13,22 @@ const NavMenuStyle = styled.div`
         color: var(--black);
         font-size: 1rem;
     }
+
+    .get-started-link {
+        padding: 10px;
+       background-color: #00c2cb7d;
+       transition: background-color .2s linear;
+       box-shadow: 0 2px 10px 0 rgb(55 51 115 / 30%);
+       border-radius: 4px;
+       font-weight: 550;
+    }
 `;
 
 export function NavMenu() {
     return (
         <>
             <NavMenuStyle>
-                <Navbar bg="white" variant="light" fixed="top">
+                <Navbar bg="white" variant="light" sticky="top">
                     <Container>
                         <Navbar.Brand href="/">
                             <img
@@ -37,15 +44,7 @@ export function NavMenu() {
                             <Nav.Link href="/">Pricing</Nav.Link>
                             <Nav.Link href="/">About</Nav.Link>
                         </Nav>
-                        <Form className="d-flex">
-                            <Form.Control
-                                type="search"
-                                placeholder="Search"
-                                className="me-2"
-                                aria-label="Search"
-                            />
-                            <Button variant="outline-success">Search</Button>
-                        </Form>
+                        <Nav.Link className="get-started-link" href="/login">Get Started</Nav.Link>
                     </Container>
                 </Navbar>
             </NavMenuStyle>
