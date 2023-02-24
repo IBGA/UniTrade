@@ -47,10 +47,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: ../unitrade-frontend/package-lock.json
+          cache-dependency-path: unitrade-frontend/package-lock.json
       - run: npm ci # Continuous Integration / Clean Install
-        working-directory: ../unitrade-frontend
+        working-directory: unitrade-frontend
       - run: npm run build
-        working-directory: ../unitrade-frontend
+        working-directory: unitrade-frontend
       - run: npm run test
-        working-directory: ../unitrade-frontend
+        working-directory: unitrade-frontend
