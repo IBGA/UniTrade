@@ -26,7 +26,7 @@ Given user is logged in
 And user is on the "Add Course" page
 And user has filled in at least one field "<incorrectly_filled_fields>" incorrectly
 When user clicks "Add Course" button
-Then a "Fields filled in incorrectly" error message is issued and the field(s) "<incorrectly_filled_fields>" is/are highlighted
+Then a "Fields filled in incorrectly" error message is issued and the "<incorrectly_filled_fields>" field(s) is or are highlighted
     Examples:
         | incorrectly_filled_fields |
         | course_name               |
