@@ -1,6 +1,5 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.exception.ServiceLayerException;
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
-import ca.mcgill.ecse428.unitrade.unitradebackend.repository.CourseRepository;
-import ca.mcgill.ecse428.unitrade.unitradebackend.repository.PersonRepository;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.UniversityRepository;
 
 @Service
@@ -128,5 +123,22 @@ public class UniversityService {
         return universityRepository.findAll();
     }
     
+    @Transactional
+    public void deleteUniversity(Long id) {
+        // Validate input syntax (Error -> 400)
+        if (id == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+        }
+
+        // Check if university exists (Error -> 404)
+        University university = universityRepository.findById(id).orElse(null);
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("University with id %d not found", id));
+        }
+
+        // Delete university
+        universityRepository.delete(university);
+    }
     
 }

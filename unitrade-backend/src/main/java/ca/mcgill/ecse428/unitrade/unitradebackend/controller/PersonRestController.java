@@ -1,10 +1,15 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.controller;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +45,7 @@ public class PersonRestController {
                 body.getLastName(),
                 body.getPassword(),
                 body.getProfilePicture(),
-                body.getEnrolledCourses(),
+                body.getEnrolledCourseIds(),
                 body.getUniversityId());
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(person), HttpStatus.CREATED);
@@ -53,4 +58,78 @@ public class PersonRestController {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.getPerson(id)), HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/person/{email}" })
+    public ResponseEntity<PersonResponseDto> getPersonByEmail(@PathVariable("email") String email) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.getPerson(email)), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/person" })
+    public ResponseEntity<List<PersonResponseDto>> getAllPersons() {
+        List<Person> persons = personService.getAllPersons();
+        List<PersonResponseDto> personResponseDtos = new ArrayList<PersonResponseDto>();
+        for (Person person : persons) {
+            personResponseDtos.add(PersonResponseDto.createDto(person));
+        }
+
+        return new ResponseEntity<List<PersonResponseDto>>(
+                personResponseDtos, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/person/{id}" })
+    public ResponseEntity<PersonResponseDto> updatePersonInformation(@PathVariable("id") Long id, @RequestBody PersonRequestDto body) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.updatePersonInformation(
+                        id,
+                        body.getFirstName(),
+                        body.getLastName(),
+                        body.getProfilePicture())), HttpStatus.OK);
+
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/person/{id}/password" })
+    public ResponseEntity<PersonResponseDto> updatePersonPassword(@PathVariable("id") Long id, @RequestBody PersonRequestDto body) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.updatePersonPassword(
+                        id,
+                        body.getPassword())), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/person/{id}/enrolledCourses" })
+    public ResponseEntity<PersonResponseDto> updatePersonEnrolledCourses(@PathVariable("id") Long id, @RequestBody PersonRequestDto body) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.updatePersonEnrolledCourses(
+                        id,
+                        body.getEnrolledCourseIds())), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/person/{id}/universityId" })
+    public ResponseEntity<PersonResponseDto> updatePersonCurrentUniversity(@PathVariable("id") Long id, @RequestBody PersonRequestDto body) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.updatePersonCurrentUniversity(
+                        id,
+                        body.getUniversityId())), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = { "/person/{id}" })
+    public ResponseEntity<PersonResponseDto> deletePerson(@PathVariable("id") Long id) {
+        personService.deletePerson(id);
+        return new ResponseEntity<PersonResponseDto>(HttpStatus.OK);
+    }
+    
 }

@@ -1,5 +1,8 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.controller;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,6 +49,7 @@ public class UniversityRestController {
             UniversityResponseDto.createDto(university), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/university/{id}" })
     public ResponseEntity<UniversityResponseDto> getUniversity(@PathVariable("id") Long id) {
@@ -51,5 +57,50 @@ public class UniversityRestController {
         return new ResponseEntity<UniversityResponseDto>(
             UniversityResponseDto.createDto(university), HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/university/{city}/{name}" })
+    public ResponseEntity<UniversityResponseDto> getUniversity(@PathVariable("city") String city, @PathVariable("name") String name) {
+        University university = universityService.getUniversity(city, name);
+        return new ResponseEntity<UniversityResponseDto>(
+            UniversityResponseDto.createDto(university), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/university/{id}" })
+    public ResponseEntity<UniversityResponseDto> updateUniversity(@PathVariable("id") Long id, @RequestBody UniversityRequestDto body) {
+        University university = universityService.updateUniversity(
+            id, 
+            body.getName(), 
+            body.getCity(), 
+            body.getDescription());
+        return new ResponseEntity<UniversityResponseDto>(
+            UniversityResponseDto.createDto(university), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/university" })
+    public ResponseEntity<List<UniversityResponseDto>> getAllUniversities() {
+        List<University> universities = universityService.getAllUniversities();
+        List<UniversityResponseDto> universityResponseDtos = new ArrayList<UniversityResponseDto>();
+        for (University university : universities) {
+            universityResponseDtos.add(UniversityResponseDto.createDto(university));
+        }
+
+        return new ResponseEntity<List<UniversityResponseDto>>(
+                universityResponseDtos, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = { "/university/{id}" })
+    public ResponseEntity<UniversityResponseDto> deleteUniversity(@PathVariable("id") Long id) {
+        universityService.deleteUniversity(id);
+        return new ResponseEntity<UniversityResponseDto>(HttpStatus.OK);
+    }
+
 
 }
