@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
+@PreAuthorize("hasRole('USER')")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Person created"),
         @ApiResponse(responseCode = "400", description = "Invalid input"),
@@ -36,6 +37,7 @@ public class PersonRestController {
     PersonService personService;
 
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("permitAll()")
     @PostMapping(value = { "/person" })
     public ResponseEntity<PersonResponseDto> createPerson(@RequestBody PersonRequestDto body) {
         Person person = personService.createPerson(
@@ -51,7 +53,6 @@ public class PersonRestController {
                 PersonResponseDto.createDto(person), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/person/{id}" })
     public ResponseEntity<PersonResponseDto> getPerson(@PathVariable("id") Long id) {
@@ -59,7 +60,6 @@ public class PersonRestController {
                 PersonResponseDto.createDto(personService.getPerson(id)), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/person/{email}" })
     public ResponseEntity<PersonResponseDto> getPersonByEmail(@PathVariable("email") String email) {
@@ -67,7 +67,6 @@ public class PersonRestController {
                 PersonResponseDto.createDto(personService.getPerson(email)), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/person" })
     public ResponseEntity<List<PersonResponseDto>> getAllPersons() {
@@ -81,55 +80,49 @@ public class PersonRestController {
                 personResponseDtos, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/person/{id}" })
-    public ResponseEntity<PersonResponseDto> updatePersonInformation(@PathVariable("id") Long id, @RequestBody PersonRequestDto body) {
+    public ResponseEntity<PersonResponseDto> updatePersonInformation(@RequestBody PersonRequestDto body) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonInformation(
-                        id,
+                        body.getId(),
                         body.getFirstName(),
                         body.getLastName(),
                         body.getProfilePicture())), HttpStatus.OK);
 
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/person/{id}/password" })
-    public ResponseEntity<PersonResponseDto> updatePersonPassword(@PathVariable("id") Long id, @RequestBody PersonRequestDto body) {
+    public ResponseEntity<PersonResponseDto> updatePersonPassword(@RequestBody PersonRequestDto body) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonPassword(
-                        id,
+                        body.getId(),
                         body.getPassword())), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/person/{id}/enrolledCourses" })
-    public ResponseEntity<PersonResponseDto> updatePersonEnrolledCourses(@PathVariable("id") Long id, @RequestBody PersonRequestDto body) {
+    public ResponseEntity<PersonResponseDto> updatePersonEnrolledCourses(@RequestBody PersonRequestDto body) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonEnrolledCourses(
-                        id,
+                        body.getId(),
                         body.getEnrolledCourseIds())), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/person/{id}/universityId" })
-    public ResponseEntity<PersonResponseDto> updatePersonCurrentUniversity(@PathVariable("id") Long id, @RequestBody PersonRequestDto body) {
+    public ResponseEntity<PersonResponseDto> updatePersonCurrentUniversity(@RequestBody PersonRequestDto body) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonCurrentUniversity(
-                        id,
+                        body.getId(),
                         body.getUniversityId())), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = { "/person/{id}" })
     public ResponseEntity<PersonResponseDto> deletePerson(@PathVariable("id") Long id) {
         personService.deletePerson(id);
         return new ResponseEntity<PersonResponseDto>(HttpStatus.OK);
     }
-    
 }

@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 
 @RestController
+@PreAuthorize("hasRole('USER')")
 @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "University created"),
     @ApiResponse(responseCode = "400", description = "Invalid input"),
@@ -37,19 +38,17 @@ public class UniversityRestController {
     @Autowired
     UniversityService universityService;
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = { "/university" })
     public ResponseEntity<UniversityResponseDto> createUniversity(@RequestBody UniversityRequestDto body) {
         University university = universityService.createUniversity(
-            body.getName(), 
-            body.getCity(), 
+            body.getName(),
+            body.getCity(),
             body.getDescription());
         return new ResponseEntity<UniversityResponseDto>(
             UniversityResponseDto.createDto(university), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/university/{id}" })
     public ResponseEntity<UniversityResponseDto> getUniversity(@PathVariable("id") Long id) {
@@ -58,7 +57,6 @@ public class UniversityRestController {
             UniversityResponseDto.createDto(university), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/university/{city}/{name}" })
     public ResponseEntity<UniversityResponseDto> getUniversity(@PathVariable("city") String city, @PathVariable("name") String name) {
@@ -67,20 +65,18 @@ public class UniversityRestController {
             UniversityResponseDto.createDto(university), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/university/{id}" })
-    public ResponseEntity<UniversityResponseDto> updateUniversity(@PathVariable("id") Long id, @RequestBody UniversityRequestDto body) {
+    public ResponseEntity<UniversityResponseDto> updateUniversity(@RequestBody UniversityRequestDto body) {
         University university = universityService.updateUniversity(
-            id, 
-            body.getName(), 
-            body.getCity(), 
+            body.getId(),
+            body.getName(),
+            body.getCity(),
             body.getDescription());
         return new ResponseEntity<UniversityResponseDto>(
             UniversityResponseDto.createDto(university), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/university" })
     public ResponseEntity<List<UniversityResponseDto>> getAllUniversities() {
@@ -94,13 +90,10 @@ public class UniversityRestController {
                 universityResponseDtos, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasRole('USER')")
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = { "/university/{id}" })
     public ResponseEntity<UniversityResponseDto> deleteUniversity(@PathVariable("id") Long id) {
         universityService.deleteUniversity(id);
         return new ResponseEntity<UniversityResponseDto>(HttpStatus.OK);
     }
-
-
 }
