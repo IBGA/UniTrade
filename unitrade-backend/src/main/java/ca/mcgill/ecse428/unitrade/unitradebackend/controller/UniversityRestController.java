@@ -66,7 +66,7 @@ public class UniversityRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = { "/university/{id}" })
+    @PutMapping(value = { "/university" })
     public ResponseEntity<UniversityResponseDto> updateUniversity(@RequestBody UniversityRequestDto body) {
         University university = universityService.updateUniversity(
             body.getId(),
