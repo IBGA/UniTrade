@@ -81,7 +81,7 @@ public class PersonRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = { "/person/{id}" })
+    @PutMapping(value = { "/person" })
     public ResponseEntity<PersonResponseDto> updatePersonInformation(@RequestBody PersonRequestDto body) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonInformation(
@@ -93,7 +93,7 @@ public class PersonRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = { "/person/{id}/password" })
+    @PutMapping(value = { "/person/password" })
     public ResponseEntity<PersonResponseDto> updatePersonPassword(@RequestBody PersonRequestDto body) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonPassword(
@@ -102,7 +102,7 @@ public class PersonRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = { "/person/{id}/enrolledCourses" })
+    @PutMapping(value = { "/person/enrolledCourses" })
     public ResponseEntity<PersonResponseDto> updatePersonEnrolledCourses(@RequestBody PersonRequestDto body) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonEnrolledCourses(
@@ -111,7 +111,7 @@ public class PersonRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = { "/person/{id}/universityId" })
+    @PutMapping(value = { "/person/universityId" })
     public ResponseEntity<PersonResponseDto> updatePersonCurrentUniversity(@RequestBody PersonRequestDto body) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonCurrentUniversity(
