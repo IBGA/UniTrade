@@ -25,12 +25,12 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .cors()
                 .and()
-                .authorizeHttpRequests(
-                    auth -> {
-                        auth.requestMatchers("/").permitAll();
-                        auth.requestMatchers("/swagger-ui/**").permitAll();
+                // .authorizeHttpRequests(
+                //     auth -> {
+                        // auth.requestMatchers("/").permitAll();
+                        // auth.requestMatchers("/swagger-ui/**").permitAll();
                         // ... other rules
-                    })
+                //     })
                 .userDetailsService(userDetailsService)
                 .httpBasic(Customizer.withDefaults()) // HTTP Basic Authentication
                 .build();
