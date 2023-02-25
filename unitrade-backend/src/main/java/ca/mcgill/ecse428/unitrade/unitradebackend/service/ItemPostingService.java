@@ -119,6 +119,49 @@ public class ItemPostingService {
     }
 
     @Transactional
+    public List<ItemPosting> getAllItemPostingsByUniversity(Long id) {
+        if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+        
+        University university = universityRepository.findById(id).orElse(null);
+        if (university == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("University with id '%d' not found", id));
+
+        List<ItemPosting> itemPostings = itemPostingRepository.findByUniversity(university);
+        if (itemPostings == null || itemPostings.isEmpty()) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Item posting with unniversity id '%d' not found", id));
+        
+        return itemPostings;
+    }
+
+    @Transactional
+    public List<ItemPosting> getAllItemPostingsByCourse(Long id) {
+        if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+        
+        Course course = courseRepository.findById(id).orElse(null);
+        if (course == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Course with id '%d' not found", id));
+
+        List<ItemPosting> courses = itemPostingRepository.findByCourses(course);
+        if (courses == null || courses.isEmpty()) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Item posting with course id '%d' not found", id));
+        
+        return courses;
+    }
+
+    @Transactional
+    public List<ItemPosting> getAllItemPostingsByUniversityAndCourse(Long universityId, Long courseId) {
+        if (universityId == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+        if (courseId == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+
+        University university = universityRepository.findById(universityId).orElse(null);
+        if (university == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("University with id '%d' not found", universityId));
+        
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Course with id '%d' not found", courseId));
+
+        List<ItemPosting> courses = itemPostingRepository.findByUniversityAndCourses(university, course);
+        if (courses == null || courses.isEmpty()) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Item posting with university id '%d' and course id '%d' not found", universityId, courseId));
+        
+        return courses;
+    }
+
+    @Transactional
     public List<ItemPosting> getAllItemPostings() {
         return itemPostingRepository.findAll();
     }

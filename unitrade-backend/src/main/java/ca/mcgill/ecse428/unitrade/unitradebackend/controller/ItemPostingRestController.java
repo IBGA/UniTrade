@@ -58,6 +58,45 @@ public class ItemPostingRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/itemposting/university/{id}" })
+    public ResponseEntity<List<ItemPostingResponseDto>> getAllItemPostingsByUniversity(@PathVariable("id") Long id) {
+        List<ItemPosting> itemPostings = itemPostingService.getAllItemPostingsByUniversity(id);
+        List<ItemPostingResponseDto> itemPostingResponseDtos = new ArrayList<ItemPostingResponseDto>();
+        for (ItemPosting itemPost : itemPostings) {
+            itemPostingResponseDtos.add(ItemPostingResponseDto.createDto(itemPost));
+        }
+
+        return new ResponseEntity<List<ItemPostingResponseDto>>(
+                itemPostingResponseDtos, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/itemposting/course/{id}" })
+    public ResponseEntity<List<ItemPostingResponseDto>> getAllItemPostingsByCourse(@PathVariable("id") Long id) {
+        List<ItemPosting> itemPostings = itemPostingService.getAllItemPostingsByCourse(id);
+        List<ItemPostingResponseDto> itemPostingResponseDtos = new ArrayList<ItemPostingResponseDto>();
+        for (ItemPosting itemPost : itemPostings) {
+            itemPostingResponseDtos.add(ItemPostingResponseDto.createDto(itemPost));
+        }
+
+        return new ResponseEntity<List<ItemPostingResponseDto>>(
+                itemPostingResponseDtos, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/itemposting/university/{universityId}/course/{courseId}" })
+    public ResponseEntity<List<ItemPostingResponseDto>> getAllItemPostingsByCourse(@PathVariable("universityId") Long universityId, @PathVariable("courseId") Long courseId) {
+        List<ItemPosting> itemPostings = itemPostingService.getAllItemPostingsByUniversityAndCourse(universityId, courseId);
+        List<ItemPostingResponseDto> itemPostingResponseDtos = new ArrayList<ItemPostingResponseDto>();
+        for (ItemPosting itemPost : itemPostings) {
+            itemPostingResponseDtos.add(ItemPostingResponseDto.createDto(itemPost));
+        }
+
+        return new ResponseEntity<List<ItemPostingResponseDto>>(
+                itemPostingResponseDtos, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/itemposting" })
     public ResponseEntity<List<ItemPostingResponseDto>> getAllItemPostings() {
         List<ItemPosting> itemPostings = itemPostingService.getAllItemPostings();
