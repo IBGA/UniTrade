@@ -23,7 +23,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
-@PreAuthorize("hasRole('USER')")
 @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "Person created"),
     @ApiResponse(responseCode = "400", description = "Invalid input"),
@@ -35,7 +34,6 @@ public class PostRestController {
     PostService postService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("permitAll()")
     @PostMapping(value = { "/post" })
     public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto body) {
         Post post = postService.createPost(
