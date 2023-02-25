@@ -3,6 +3,7 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 import jakarta.persistence.*;
 
 @Entity
+@DiscriminatorValue("ItemPosting")
 public class ItemPosting extends Post{
 
     private boolean isAvailable;
