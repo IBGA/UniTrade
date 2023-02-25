@@ -6,11 +6,11 @@ public class ItemPostingRequestDto extends PostRequestDto{
     private Double price;
     private Long buyerId;
 
-    public Long getBuyer() {
+    public Long getBuyerId() {
         return buyerId;
     }
 
-    public void setBuyer(Long buyerId) {
+    public void setBuyerId(Long buyerId) {
         this.buyerId = buyerId;
     }
 

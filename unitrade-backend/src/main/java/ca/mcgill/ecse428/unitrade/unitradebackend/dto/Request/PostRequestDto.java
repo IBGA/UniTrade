@@ -44,27 +44,27 @@ public class PostRequestDto {
         this.datePosted = datePosted;
     }
 
-    public Long getUniversity() {
+    public Long getUniversityId() {
         return universityId;
     }
 
-    public void setUniversity(Long universityId) {
+    public void setUniversityId(Long universityId) {
         this.universityId = universityId;
     }
 
-    public Long getPoster() {
+    public Long getPosterId() {
         return posterId;
     }
 
-    public void setPoster(Long posterId) {
+    public void setPosterId(Long posterId) {
         this.posterId = posterId;
     }
 
-    public List<Long> getCourses() {
+    public List<Long> getCourseIds() {
         return courseIds;
     }
 
-    public void setCourses(List<Long> courseIds) {
+    public void setCourseIds(List<Long> courseIds) {
         this.courseIds = courseIds;
     }
 }
