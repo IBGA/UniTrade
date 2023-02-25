@@ -5,6 +5,7 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { LoginPage } from "./pages/LoginPage";
 import { SignupPage } from "./pages/SignupPage";
 import { NavMenu } from './components/NavMenu';
+import { CreateUniversity } from './components/CreateUniversity';
 import { Footer } from './components/Footer';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="/login"  element={<LoginPage />} />
           <Route path="/signup"  element={<SignupPage />} />
+          <Route path="/create-university" element={<CreateUniversity />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
