@@ -98,11 +98,11 @@ public class PersonRequestDto {
         this.profilePicture = profilePicture;
     }
 
-    public List<Long> getEnrolledCourses() {
+    public List<Long> getEnrolledCourseIds() {
         return enrolledCoursesIds;
     }
 
-    public void setEnrolledCourses(List<Long> enrolledCoursesIds) {
+    public void setEnrolledCourseIds(List<Long> enrolledCoursesIds) {
         this.enrolledCoursesIds = enrolledCoursesIds;
     }
 
@@ -110,7 +110,7 @@ public class PersonRequestDto {
         return universityId;
     }
 
-    public void setUniversity(Long universityId) {
+    public void setUniversityId(Long universityId) {
         this.universityId = universityId;
     }
 }

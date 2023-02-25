@@ -1,9 +1,15 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.controller;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +24,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @RestController
+@PreAuthorize("hasRole('USER')")
 @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Person created"),
         @ApiResponse(responseCode = "400", description = "Invalid input"),
@@ -30,6 +37,7 @@ public class PersonRestController {
     PersonService personService;
 
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("permitAll()")
     @PostMapping(value = { "/person" })
     public ResponseEntity<PersonResponseDto> createPerson(@RequestBody PersonRequestDto body) {
         Person person = personService.createPerson(
@@ -39,7 +47,7 @@ public class PersonRestController {
                 body.getLastName(),
                 body.getPassword(),
                 body.getProfilePicture(),
-                body.getEnrolledCourses(),
+                body.getEnrolledCourseIds(),
                 body.getUniversityId());
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(person), HttpStatus.CREATED);
@@ -49,7 +57,72 @@ public class PersonRestController {
     @GetMapping(value = { "/person/{id}" })
     public ResponseEntity<PersonResponseDto> getPerson(@PathVariable("id") Long id) {
         return new ResponseEntity<PersonResponseDto>(
-                PersonResponseDto.createDto(personService.getPerson(id)),
-                HttpStatus.CREATED);
+                PersonResponseDto.createDto(personService.getPerson(id)), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/person/{email}" })
+    public ResponseEntity<PersonResponseDto> getPersonByEmail(@PathVariable("email") String email) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.getPerson(email)), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/person" })
+    public ResponseEntity<List<PersonResponseDto>> getAllPersons() {
+        List<Person> persons = personService.getAllPersons();
+        List<PersonResponseDto> personResponseDtos = new ArrayList<PersonResponseDto>();
+        for (Person person : persons) {
+            personResponseDtos.add(PersonResponseDto.createDto(person));
+        }
+
+        return new ResponseEntity<List<PersonResponseDto>>(
+                personResponseDtos, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/person/{id}" })
+    public ResponseEntity<PersonResponseDto> updatePersonInformation(@RequestBody PersonRequestDto body) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.updatePersonInformation(
+                        body.getId(),
+                        body.getFirstName(),
+                        body.getLastName(),
+                        body.getProfilePicture())), HttpStatus.OK);
+
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/person/{id}/password" })
+    public ResponseEntity<PersonResponseDto> updatePersonPassword(@RequestBody PersonRequestDto body) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.updatePersonPassword(
+                        body.getId(),
+                        body.getPassword())), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/person/{id}/enrolledCourses" })
+    public ResponseEntity<PersonResponseDto> updatePersonEnrolledCourses(@RequestBody PersonRequestDto body) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.updatePersonEnrolledCourses(
+                        body.getId(),
+                        body.getEnrolledCourseIds())), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/person/{id}/universityId" })
+    public ResponseEntity<PersonResponseDto> updatePersonCurrentUniversity(@RequestBody PersonRequestDto body) {
+        return new ResponseEntity<PersonResponseDto>(
+                PersonResponseDto.createDto(personService.updatePersonCurrentUniversity(
+                        body.getId(),
+                        body.getUniversityId())), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = { "/person/{id}" })
+    public ResponseEntity<PersonResponseDto> deletePerson(@PathVariable("id") Long id) {
+        personService.deletePerson(id);
+        return new ResponseEntity<PersonResponseDto>(HttpStatus.OK);
     }
 }

@@ -1,20 +1,15 @@
-package ca.mcgill.ecse428.unitrade.unitradebackend.model;
-
-import jakarta.persistence.*;
+package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request;
 
 import java.util.List;
 
-@Entity
-public class University {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UniversityRequestDto {
+
     private Long id;
 
     private String name;
     private String city;
     private String description;
-    @OneToMany private List<Role> moderation;
+    private List<Long> moderationIds;
 
     public Long getId() {
         return id;
@@ -48,12 +43,12 @@ public class University {
         this.description = description;
     }
 
-    public List<Role> getModeration() {
-        return moderation;
+    public List<Long> getModerationIds() {
+        return moderationIds;
     }
 
-    public void setModeration(List<Role> moderation) {
-        this.moderation = moderation;
+    public void setModerationIds(List<Long> moderationIds) {
+        this.moderationIds = moderationIds;
     }
 
 }

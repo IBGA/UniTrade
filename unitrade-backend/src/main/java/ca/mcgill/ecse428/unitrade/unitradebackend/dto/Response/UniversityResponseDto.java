@@ -6,7 +6,7 @@ public class UniversityResponseDto {
 
     private Long id;
     private String name;
-    private String codename;
+    private String city;
     private String description;
     private String moderation;
 
@@ -18,8 +18,8 @@ public class UniversityResponseDto {
         return name;
     }
 
-    public String getCodename() {
-        return codename;
+    public String getCity() {
+        return city;
     }
 
     public String getDescription() {
@@ -34,7 +34,7 @@ public class UniversityResponseDto {
         UniversityResponseDto dto = new UniversityResponseDto();
         dto.id = university.getId();
         dto.name = university.getName();
-        dto.codename = university.getCodename();
+        dto.city = university.getCity();
         dto.description = university.getDescription();
         dto.moderation = university.getModeration().toString();
         return dto;
