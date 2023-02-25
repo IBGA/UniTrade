@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 
 @RestController
+@PreAuthorize("hasRole('USER')")
 @ApiResponses(value = {
     @ApiResponse(responseCode = "201", description = "University created"),
     @ApiResponse(responseCode = "400", description = "Invalid input"),
