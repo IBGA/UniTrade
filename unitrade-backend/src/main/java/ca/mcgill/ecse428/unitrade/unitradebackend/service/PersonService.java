@@ -230,6 +230,8 @@ public class PersonService {
 
     @Transactional
     public void deletePerson(Long id) {
+        if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+        
         Person person = personRepository.findById(id).orElse(null);
         if (person == null)
             throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Person with id '%d' not found", id));
