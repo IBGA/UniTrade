@@ -1,13 +1,9 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Post;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.PersonResponseDto;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.UniversityResponseDto;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.CourseResponseDto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +15,16 @@ public class PostResponseDto {
     private UniversityResponseDto university;
     private PersonResponseDto poster;
     private List<CourseResponseDto> courses;
+
+    public PostResponseDto(Long id, String title, String description, Date datePosted, UniversityResponseDto university, PersonResponseDto poster, List<CourseResponseDto> courses) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.datePosted = datePosted;
+        this.university = university;
+        this.poster = poster;
+        this.courses = courses;
+    }
 
     public Long getId() {
         return id;
@@ -36,26 +42,33 @@ public class PostResponseDto {
         return datePosted;
     }
 
-    public University getUniversity() {
+    public UniversityResponseDto getUniversity() {
         return university;
     }
 
-    public Person getPoster() {
+    public PersonResponseDto getPoster() {
         return poster;
     }
 
-    public List<Course> getCourses() {
+    public List<CourseResponseDto> getCourses() {
         return courses;
     }
 
     public static PostResponseDto createDto(Post post) {
-        PostResponseDto dto = new PostResponseDto();
-        dto.title = post.getTitle();
-        dto.description = post.getDescription();
-        dto.datePosted = post.getDatePosted();
-        dto.university = UniversityResponseDto.createDto(post.getUniversity());
-        dto.poster = PersonResponseDto.createDto(post.getPoster());
-        dto.courses = CourseResponseDto.createDto(post.getCourses());
+        List<CourseResponseDto> courses = new ArrayList<CourseResponseDto>();
+        for (Course course : post.getCourses()) {
+            courses.add(CourseResponseDto.createDto(course));
+        }
 
+        PostResponseDto dto = new PostResponseDto(
+            post.getId(),
+            post.getTitle(),
+            post.getDescription(),
+            post.getDatePosted(),
+            UniversityResponseDto.createDto(post.getUniversity()),
+            PersonResponseDto.createDto(post.getPoster()),
+            courses
+        );
+        return dto;
     }
 }

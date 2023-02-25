@@ -12,61 +12,48 @@ public class CourseResponseDto {
     private boolean isApproved;
     private UniversityResponseDto university;
 
-    public Long getId() {
-        return id;
+    public CourseResponseDto(Long id, String title, String codename, String description, boolean isApproved, UniversityResponseDto university){
+        this.id = id;
+        this.title = title;
+        this.codename = codename;
+        this.description = description;
+        this.isApproved = isApproved;
+        this.university = university;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String string) {
-        this.title = string;
-    }
-
     public String getCodename() {
         return codename;
-    }
-
-    public void setCodename(String codeName) {
-        this.codename = codeName;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public boolean isApproved() {
         return isApproved;
-    }
-
-    public void setApproved(boolean approved) {
-        isApproved = approved;
     }
 
     public UniversityResponseDto getUniversity() {
         return university;
     }
 
-    public void setUniversity(UniversityResponseDto university) {
-        this.university = university;
-    }
-
     public static CourseResponseDto createDto(Course course) {
-        CourseResponseDto dto = new CourseResponseDto();
-        dto.title = course.getTitle();
-        dto.codename = course.getCodename();
-        dto.description = course.getDescription();
-        dto.isApproved = course.isApproved();
-        dto.university = UniversityResponseDto.createDto(course.getUniversity());
+        CourseResponseDto dto = new CourseResponseDto(
+            course.getId(),
+            course.getTitle(),
+            course.getCodename(),
+            course.getDescription(),
+            course.isApproved(),
+            UniversityResponseDto.createDto(course.getUniversity())
+        );
         return dto;
     }
 }
