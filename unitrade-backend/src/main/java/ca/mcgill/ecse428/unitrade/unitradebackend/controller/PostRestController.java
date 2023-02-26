@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,13 +23,14 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.service.PostService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+@CrossOrigin(origins = "${allowed.origins}")
 @RestController
 @PreAuthorize("hasRole('USER')")
 @ApiResponses(value = {
-    @ApiResponse(responseCode = "201", description = "Person created"),
-    @ApiResponse(responseCode = "400", description = "Invalid input"),
-    @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
-    @ApiResponse(responseCode = "409", description = "Unique constraint violation")
+        @ApiResponse(responseCode = "201", description = "Person created"),
+        @ApiResponse(responseCode = "400", description = "Invalid input"),
+        @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
+        @ApiResponse(responseCode = "409", description = "Unique constraint violation")
 })
 public class PostRestController {
     @Autowired
@@ -39,13 +41,12 @@ public class PostRestController {
     @PostMapping(value = { "/post" })
     public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto body) {
         Post post = postService.createPost(
-            body.getTitle(),
-            body.getDescription(),
-            body.getDatePosted(),
-            body.getUniversityId(),
-            body.getPosterId(),
-            body.getCourseIds()
-        );
+                body.getTitle(),
+                body.getDescription(),
+                body.getDatePosted(),
+                body.getUniversityId(),
+                body.getPosterId(),
+                body.getCourseIds());
         return new ResponseEntity<PostResponseDto>(PostResponseDto.createDto(post), HttpStatus.CREATED);
     }
 
@@ -53,7 +54,7 @@ public class PostRestController {
     @GetMapping(value = { "/post/{id}" })
     public ResponseEntity<PostResponseDto> getPost(@PathVariable("id") Long id) {
         return new ResponseEntity<PostResponseDto>(
-            PostResponseDto.createDto(postService.getPost(id)), HttpStatus.OK);
+                PostResponseDto.createDto(postService.getPost(id)), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)

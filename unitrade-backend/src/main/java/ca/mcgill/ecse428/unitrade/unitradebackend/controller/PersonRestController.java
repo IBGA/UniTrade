@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.service.PersonService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+@CrossOrigin(origins = "${allowed.origins}")
 @RestController
 @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Person created"),
@@ -86,7 +88,8 @@ public class PersonRestController {
                         body.getId(),
                         body.getFirstName(),
                         body.getLastName(),
-                        body.getProfilePicture())), HttpStatus.OK);
+                        body.getProfilePicture())),
+                HttpStatus.OK);
 
     }
 
@@ -96,7 +99,8 @@ public class PersonRestController {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonPassword(
                         body.getId(),
-                        body.getPassword())), HttpStatus.OK);
+                        body.getPassword())),
+                HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -105,7 +109,8 @@ public class PersonRestController {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonEnrolledCourses(
                         body.getId(),
-                        body.getEnrolledCourseIds())), HttpStatus.OK);
+                        body.getEnrolledCourseIds())),
+                HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -114,7 +119,8 @@ public class PersonRestController {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonCurrentUniversity(
                         body.getId(),
-                        body.getUniversityId())), HttpStatus.OK);
+                        body.getUniversityId())),
+                HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
