@@ -58,7 +58,7 @@ public class UniversityRestController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/university/{city}/{name}" })
-    public ResponseEntity<UniversityResponseDto> getUniversity(@PathVariable("city") String city, @PathVariable("name") String name) {
+    public ResponseEntity<UniversityResponseDto> getUniversity(@PathVariable("city") String city, @PathVariable("name") String name) {        
         University university = universityService.getUniversity(city, name);
         return new ResponseEntity<UniversityResponseDto>(
             UniversityResponseDto.createDto(university), HttpStatus.OK);

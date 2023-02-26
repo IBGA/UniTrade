@@ -64,7 +64,7 @@ public class UniversityService {
     }
 
     @Transactional
-    public University getUniversity(String name, String city) {
+    public University getUniversity(String city, String name) {
         // Validate input syntax (Error -> 400)
         if (name == null || name.isEmpty()) {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Name cannot be null or empty");
