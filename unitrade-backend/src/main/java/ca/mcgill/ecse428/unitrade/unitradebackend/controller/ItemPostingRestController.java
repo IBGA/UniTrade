@@ -23,7 +23,7 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.service.ItemPostingService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${allowed.origins}")
 @RestController
 @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Person created"),

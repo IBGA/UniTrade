@@ -108,7 +108,7 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
 
     @Then("an error is thrown")
     public void an_error_is_thrown() {
-        //check statsu
+        //check status
         assertTrue(statusCode.is4xxClientError());
     }
 

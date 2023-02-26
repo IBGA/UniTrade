@@ -35,6 +35,10 @@ public class PersonResponseDto {
         this.isEnabled = isEnabled;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getEmail() {
         return email;
     }

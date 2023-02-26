@@ -37,7 +37,13 @@ public class ItemPostingResponseDto extends PostResponseDto {
         for (Course course : itemPosting.getCourses()) {
             courses.add(CourseResponseDto.createDto(course));
         }
-        
+
+        PersonResponseDto buyer = null;
+
+        if (itemPosting.getBuyer() != null) {
+            buyer = PersonResponseDto.createDto(itemPosting.getBuyer());
+        }
+
         ItemPostingResponseDto dto = new ItemPostingResponseDto(
             itemPosting.getId(),
             itemPosting.getTitle(),
@@ -48,7 +54,7 @@ public class ItemPostingResponseDto extends PostResponseDto {
             courses,
             itemPosting.isAvailable(),
             itemPosting.getPrice(),
-            PersonResponseDto.createDto(itemPosting.getBuyer())
+            buyer
         );
         return dto;
     }
