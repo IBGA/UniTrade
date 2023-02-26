@@ -66,16 +66,12 @@ public class ItemPostingService {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "PosterId cannot be null");
         }
 
-        if (courseIds == null || courseIds.isEmpty()) {
-            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "CourseIds cannot be null or empty");
+        if (courseIds == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "CourseIds cannot be null");
         }
 
         if (price == null){
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Price cannot be null");
-        }
-
-        if (buyerId == null){
-            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "BuyerId cannot be null");
         }
 
         University university = universityRepository.findById(universityId).orElse(null);
@@ -91,9 +87,6 @@ public class ItemPostingService {
             courses.add(course);
         }
 
-        Person buyer = personRepository.findById(buyerId).orElse(null);
-        if (buyer == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Buyer with id '%d' not found", buyerId));
-
         ItemPosting itemPosting = new ItemPosting();
         itemPosting.setTitle(title);
         itemPosting.setDescription(description);
@@ -103,7 +96,12 @@ public class ItemPostingService {
         itemPosting.setCourses(courses);
         itemPosting.setAvailable(isAvailable);
         itemPosting.setPrice(price);
-        itemPosting.setBuyer(buyer);
+
+        if (buyerId != null) {
+            Person buyer = personRepository.findById(buyerId).orElse(null);
+            if (buyer == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Buyer with id '%d' not found", buyerId));
+            itemPosting.setBuyer(buyer);
+        }
 
         return itemPostingRepository.save(itemPosting);
     }
