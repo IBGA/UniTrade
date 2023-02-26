@@ -122,7 +122,7 @@ public class PersonService {
     }
 
     @Transactional
-    public Person getPerson(String email) {
+    public Person getPersonByEmail(String email) {
         if (email == null || email.isEmpty()) {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Email cannot be empty");
         }
@@ -132,6 +132,22 @@ public class PersonService {
         if (person == null) {
             throw new ServiceLayerException(HttpStatus.NOT_FOUND,
                     String.format("Person with email '%s' not found", email));
+        }
+
+        return person;
+    }
+
+    @Transactional
+    public Person getPersonByUsername(String username) {
+        if (username == null || username.isEmpty()) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Username cannot be empty");
+        }
+
+        Person person = personRepository.findByUsername(username);
+
+        if (person == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("Person with username '%s' not found", username));
         }
 
         return person;
