@@ -7,6 +7,7 @@ So that I can buy items that are relevant to me
 Scenario Outline: University and relevant postings are is found (Normal Flow)
 Given user is logged in
 And a university with name "<university_name>" and city "<university_city>" already exists in the system
+And there are item postings for university with name "<university_name>" and city "<university_city>" in the system
 When user searches for item postings for university with name "<university_name>" and city "<university_city>"
 Then a list of item postings for university with name "<university_name>" and city "<university_city>" is returned
 
