@@ -1,7 +1,6 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.UniversityResponseDto;
 
 public class CourseResponseDto {
 
