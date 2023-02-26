@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,29 +23,29 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.service.CourseService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+@CrossOrigin(origins = "*")
 @RestController
 @PreAuthorize("hasRole('USER')")
 @ApiResponses(value = {
-    @ApiResponse(responseCode = "201", description = "Course created"),
-    @ApiResponse(responseCode = "400", description = "Invalid input"),
-    @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
-    @ApiResponse(responseCode = "409", description = "Unique constraint violation")
+        @ApiResponse(responseCode = "201", description = "Course created"),
+        @ApiResponse(responseCode = "400", description = "Invalid input"),
+        @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
+        @ApiResponse(responseCode = "409", description = "Unique constraint violation")
 })
 public class CourseRestController {
-    
+
     @Autowired
     CourseService courseService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("permitAll()")
-    @PostMapping(value = { "/course"})
+    @PostMapping(value = { "/course" })
     public ResponseEntity<CourseResponseDto> createCourse(@RequestBody CourseRequestDto body) {
         Course course = courseService.createCourse(
-            body.getTitle(),
-            body.getCodename(),
-            body.getDescription(),
-            body.getUniversityId()
-        );
+                body.getTitle(),
+                body.getCodename(),
+                body.getDescription(),
+                body.getUniversityId());
         return new ResponseEntity<CourseResponseDto>(CourseResponseDto.createDto(course), HttpStatus.CREATED);
     }
 
@@ -78,6 +79,7 @@ public class CourseRestController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/course/{id}/approve" })
     public ResponseEntity<CourseResponseDto> approveCourse(@PathVariable("id") Long id) {
-        return new ResponseEntity<CourseResponseDto>(CourseResponseDto.createDto(courseService.approve(id)), HttpStatus.OK);
+        return new ResponseEntity<CourseResponseDto>(CourseResponseDto.createDto(courseService.approve(id)),
+                HttpStatus.OK);
     }
 }
