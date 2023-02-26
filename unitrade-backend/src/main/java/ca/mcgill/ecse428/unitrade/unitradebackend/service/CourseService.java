@@ -11,7 +11,6 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.exception.ServiceLayerExceptio
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.CourseRepository;
-import ca.mcgill.ecse428.unitrade.unitradebackend.repository.CourseRequestRepository;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.UniversityRepository;
 
 @Service
@@ -45,6 +44,7 @@ public class CourseService {
 
         Course course = new Course();
         course.setTitle(title);
+        course.setCodename(codename);
         course.setApproved(false);
         course.setDescription(description);
 
