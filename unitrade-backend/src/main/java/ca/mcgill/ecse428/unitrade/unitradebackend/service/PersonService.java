@@ -75,16 +75,20 @@ public class PersonService {
         }
 
         // Validate that university and courses exist (Error -> 404)
-        if (universityRepository.findById(universityId).orElse(null) == null) {
+        University university = universityRepository.findById(universityId).orElse(null);
+        if (university == null) {
             throw new ServiceLayerException(HttpStatus.NOT_FOUND,
                     String.format("University with id '%d' not found", universityId));
         }
 
+        List<Course> enrolledCourses = new ArrayList<Course>();
         for (Long courseId : enrolledCoursesIds) {
-            if (courseRepository.findById(courseId).orElse(null) == null) {
+            Course course = courseRepository.findById(courseId).orElse(null);
+            if (course == null) {
                 throw new ServiceLayerException(HttpStatus.NOT_FOUND,
                         String.format("Course with id '%d' not found", courseId));
             }
+            enrolledCourses.add(course);
         }
 
         // Code reaches here -> No errors.
@@ -97,14 +101,7 @@ public class PersonService {
         person.setPassword(password);
         person.setProfilePicture(profilePicture);
 
-        List<Course> enrolledCourses = new ArrayList<Course>();
-        for (Long courseId : enrolledCoursesIds) {
-            enrolledCourses.add(courseRepository.findById(courseId).orElse(null));
-        }
-
         person.setEnrolledCourses(enrolledCourses);
-
-        University university = universityRepository.findById(universityId).orElse(null);
         person.setUniversity(university);
         return personRepository.save(person);
     }
@@ -233,6 +230,8 @@ public class PersonService {
 
     @Transactional
     public void deletePerson(Long id) {
+        if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+        
         Person person = personRepository.findById(id).orElse(null);
         if (person == null)
             throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Person with id '%d' not found", id));

@@ -13,8 +13,8 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private @NonNull String email = "defaultEmail";
-    private @NonNull String username = "defaultUsername";
+    private @NonNull @Column(unique = true) String email = "defaultEmail";
+    private @NonNull @Column(unique = true) String username = "defaultUsername";
     private @NonNull String firstName = "defaultFirstName";
     private @NonNull String lastName = "defaultLastName";
     private @NonNull String password = "defaultPassword";

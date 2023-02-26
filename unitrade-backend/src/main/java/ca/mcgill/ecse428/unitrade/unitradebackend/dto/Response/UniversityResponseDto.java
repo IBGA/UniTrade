@@ -1,5 +1,8 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response;
 
+import java.util.List;
+
+import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 
 public class UniversityResponseDto {
@@ -9,6 +12,14 @@ public class UniversityResponseDto {
     private String city;
     private String description;
     private String moderation;
+
+    public UniversityResponseDto(Long id, String name, String city, String description, String moderation){
+        this.id = id;
+        this.name = name;
+        this.city = city;
+        this.description = description;
+        this.moderation = moderation;
+    }
 
     public Long getId() {
         return id;
@@ -31,12 +42,18 @@ public class UniversityResponseDto {
     }
 
     public static UniversityResponseDto createDto(University university) {
-        UniversityResponseDto dto = new UniversityResponseDto();
-        dto.id = university.getId();
-        dto.name = university.getName();
-        dto.city = university.getCity();
-        dto.description = university.getDescription();
-        dto.moderation = university.getModeration().toString();
+        List<Role> moderation = university.getModeration();
+        String modStr = "";
+        if (moderation != null) {
+            modStr = moderation.toString();
+        }
+        UniversityResponseDto dto = new UniversityResponseDto(
+            university.getId(),
+            university.getName(),
+            university.getCity(),
+            university.getDescription(),
+            modStr
+        );
         return dto;
     }
 }

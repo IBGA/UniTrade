@@ -1,21 +1,17 @@
-package ca.mcgill.ecse428.unitrade.unitradebackend.model;
+package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request;
 
-import jakarta.persistence.*;
-
-@Entity
-@DiscriminatorValue("ItemPosting")
-public class ItemPosting extends Post{
-
+public class ItemPostingRequestDto extends PostRequestDto{
+    
     private boolean isAvailable;
     private Double price;
-    @OneToOne private Person buyer;
+    private Long buyerId;
 
-    public Person getBuyer() {
-        return buyer;
+    public Long getBuyerId() {
+        return buyerId;
     }
 
-    public void setBuyer(Person buyer) {
-        this.buyer = buyer;
+    public void setBuyerId(Long buyerId) {
+        this.buyerId = buyerId;
     }
 
     public boolean isAvailable() {
@@ -33,4 +29,5 @@ public class ItemPosting extends Post{
     public void setPrice(double price) {
         this.price = price;
     }
+
 }

@@ -1,6 +1,7 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
@@ -8,6 +9,7 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 
 public class PersonResponseDto {
 
+    private Long id;
     private String email;
     private String username;
     private String firstName;
@@ -17,8 +19,21 @@ public class PersonResponseDto {
     private String profilePicture;
     private boolean isOnline;
     private boolean isEnabled;
-    private List<Course> enrolledCourses;
+    private List<CourseResponseDto> enrolledCourses;
     private UniversityResponseDto university;
+
+    public PersonResponseDto(Long id, String email, String username, String firstName, String lastName, String password, Date lastOnline, String profilePicture, boolean isOnline, boolean isEnabled, List<CourseResponseDto> enrolledCourses, UniversityResponseDto university){
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.lastOnline = lastOnline;
+        this.profilePicture = profilePicture;
+        this.isOnline = isOnline;
+        this.isEnabled = isEnabled;
+    }
 
     public String getEmail() {
         return email;
@@ -56,7 +71,7 @@ public class PersonResponseDto {
         return profilePicture;
     }
 
-    public List<Course> getEnrolledCourses() {
+    public List<CourseResponseDto> getEnrolledCourses() {
         return enrolledCourses;
     }
 
@@ -65,18 +80,25 @@ public class PersonResponseDto {
     }
 
     public static PersonResponseDto createDto(Person person) {
-        PersonResponseDto dto = new PersonResponseDto();
-        dto.email = person.getEmail();
-        dto.username = person.getUsername();
-        dto.firstName = person.getFirstName();
-        dto.lastName = person.getLastName();
-        dto.password = person.getPassword();
-        dto.lastOnline = person.getLastOnline();
-        dto.profilePicture = person.getProfilePicture();
-        dto.isOnline = person.isOnline();
-        dto.isEnabled = person.isEnabled();
-        dto.enrolledCourses = person.getEnrolledCourses();
-        dto.university = UniversityResponseDto.createDto(person.getUniversity());
+        List<CourseResponseDto> courses = new ArrayList<CourseResponseDto>();
+        for (Course course : person.getEnrolledCourses()) {
+            courses.add(CourseResponseDto.createDto(course));
+        }
+
+        PersonResponseDto dto = new PersonResponseDto(
+            person.getId(),
+            person.getEmail(),
+            person.getUsername(),
+            person.getFirstName(),
+            person.getLastName(),
+            person.getPassword(),
+            person.getLastOnline(),
+            person.getProfilePicture(),
+            person.isOnline(),
+            person.isEnabled(),
+            courses,
+            UniversityResponseDto.createDto(person.getUniversity())
+        );
         return dto;
     }
 }
