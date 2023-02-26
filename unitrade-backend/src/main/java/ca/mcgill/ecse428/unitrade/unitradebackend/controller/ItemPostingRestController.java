@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,12 +23,13 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.service.ItemPostingService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
+@CrossOrigin(origins = "*")
 @RestController
 @ApiResponses(value = {
-    @ApiResponse(responseCode = "201", description = "Person created"),
-    @ApiResponse(responseCode = "400", description = "Invalid input"),
-    @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
-    @ApiResponse(responseCode = "409", description = "Unique constraint violation")
+        @ApiResponse(responseCode = "201", description = "Person created"),
+        @ApiResponse(responseCode = "400", description = "Invalid input"),
+        @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
+        @ApiResponse(responseCode = "409", description = "Unique constraint violation")
 })
 public class ItemPostingRestController {
     @Autowired
@@ -37,24 +39,24 @@ public class ItemPostingRestController {
     @PostMapping(value = { "/itemposting" })
     public ResponseEntity<ItemPostingResponseDto> createItemPosting(@RequestBody ItemPostingRequestDto body) {
         ItemPosting itemPosting = itemPostingService.createItemPosting(
-            body.getTitle(),
-            body.getDescription(),
-            body.getDatePosted(),
-            body.getUniversityId(),
-            body.getPosterId(),
-            body.getCourseIds(),
-            body.isAvailable(),
-            body.getPrice(),
-            body.getBuyerId()
-        );
-        return new ResponseEntity<ItemPostingResponseDto>(ItemPostingResponseDto.createDto(itemPosting), HttpStatus.CREATED);
+                body.getTitle(),
+                body.getDescription(),
+                body.getDatePosted(),
+                body.getUniversityId(),
+                body.getPosterId(),
+                body.getCourseIds(),
+                body.isAvailable(),
+                body.getPrice(),
+                body.getBuyerId());
+        return new ResponseEntity<ItemPostingResponseDto>(ItemPostingResponseDto.createDto(itemPosting),
+                HttpStatus.CREATED);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/itemposting/{id}" })
     public ResponseEntity<ItemPostingResponseDto> getItemPosting(@PathVariable("id") Long id) {
         return new ResponseEntity<ItemPostingResponseDto>(
-            ItemPostingResponseDto.createDto(itemPostingService.getItemPosting(id)), HttpStatus.OK);
+                ItemPostingResponseDto.createDto(itemPostingService.getItemPosting(id)), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -85,8 +87,10 @@ public class ItemPostingRestController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/itemposting/university/{universityId}/course/{courseId}" })
-    public ResponseEntity<List<ItemPostingResponseDto>> getAllItemPostingsByCourse(@PathVariable("universityId") Long universityId, @PathVariable("courseId") Long courseId) {
-        List<ItemPosting> itemPostings = itemPostingService.getAllItemPostingsByUniversityAndCourse(universityId, courseId);
+    public ResponseEntity<List<ItemPostingResponseDto>> getAllItemPostingsByCourse(
+            @PathVariable("universityId") Long universityId, @PathVariable("courseId") Long courseId) {
+        List<ItemPosting> itemPostings = itemPostingService.getAllItemPostingsByUniversityAndCourse(universityId,
+                courseId);
         List<ItemPostingResponseDto> itemPostingResponseDtos = new ArrayList<ItemPostingResponseDto>();
         for (ItemPosting itemPost : itemPostings) {
             itemPostingResponseDtos.add(ItemPostingResponseDto.createDto(itemPost));
