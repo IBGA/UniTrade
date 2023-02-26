@@ -52,14 +52,14 @@ public class PersonRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/person/{id}" })
+    @GetMapping(value = { "/person/id/{id}" })
     public ResponseEntity<PersonResponseDto> getPerson(@PathVariable("id") Long id) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.getPerson(id)), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/person/{email}" })
+    @GetMapping(value = { "/person/email/{email}" })
     public ResponseEntity<PersonResponseDto> getPersonByEmail(@PathVariable("email") String email) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.getPerson(email)), HttpStatus.OK);
