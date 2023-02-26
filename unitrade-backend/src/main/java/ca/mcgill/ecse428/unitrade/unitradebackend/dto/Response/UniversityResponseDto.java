@@ -13,6 +13,9 @@ public class UniversityResponseDto {
     private String description;
     private String moderation;
 
+    public UniversityResponseDto() {
+    }
+
     public UniversityResponseDto(Long id, String name, String city, String description, String moderation){
         this.id = id;
         this.name = name;
