@@ -24,5 +24,5 @@ And a new university with name "<university_name>", city "<university_city>", an
 
 Examples:
 | university_name      | university_city | university_description |
-| University of Sydney | Sydney          | A university in Sydney |
-| University of Oxford | Oxford          | A university in Oxford |
+| University of Disney | Disney          | A university in Disney |
+| University of Roquefort | Roquefort          | A university in Roquefort |
