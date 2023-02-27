@@ -24,7 +24,6 @@ export function CreateUniversity() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const university = {name, city, description, moderation:[]};
-        console.log(await get('university'));
         await post('university', university);
     }
 
