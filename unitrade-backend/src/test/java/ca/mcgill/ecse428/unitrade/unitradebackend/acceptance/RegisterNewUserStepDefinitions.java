@@ -176,6 +176,9 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
             person.setLastName("last");
             person.setEnrolledCourseIds(new ArrayList<>());
             person.setUniversityId(universityId);
+
+            url = "http://localhost:8080/person";
+            restTemplate.postForEntity(url, person, PersonResponseDto.class);
         }
     }
 
