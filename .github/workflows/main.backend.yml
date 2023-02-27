@@ -39,7 +39,7 @@ jobs:
           distribution: 'adopt'
       # Run build which runs the tests as well
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew test
       # Frontend build and test
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
