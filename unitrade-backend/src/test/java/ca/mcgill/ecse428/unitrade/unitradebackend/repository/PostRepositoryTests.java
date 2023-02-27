@@ -45,12 +45,16 @@ public class PostRepositoryTests {
         String title = "Item For Sale";
         String description = "This is a description";
         String posterName = "poster";
+        String posterEmail = "poster@email.com";
+        String buyerEmail = "buyer@email.com";
         String buyerName = "buyer";
         Double price = 10.0;
         Boolean isAvailable = false;
 
         university.setName(uniName);
         poster.setUsername(posterName);
+        poster.setEmail(posterEmail);
+        buyer.setEmail(buyerEmail);
         buyer.setUsername(buyerName);
         itemPosting.setTitle(title);
         itemPosting.setDescription(description);
@@ -62,11 +66,12 @@ public class PostRepositoryTests {
 
         university = universityRepository.save(university);
         poster = personRepository.save(poster);
+
         buyer = personRepository.save(buyer);
         itemPosting = postRepository.save(itemPosting);
 
         Long itemPostingID = itemPosting.getId();
-        
+
         itemPosting = (ItemPosting) postRepository.findById(itemPostingID).orElse(null);
 
         assertNotNull(itemPosting);
@@ -75,10 +80,11 @@ public class PostRepositoryTests {
         assertEquals(description, itemPosting.getDescription());
         assertEquals(price, itemPosting.getPrice());
         assertEquals(posterName, itemPosting.getPoster().getUsername());
+        assertEquals(posterEmail, itemPosting.getPoster().getEmail());
         assertEquals(buyerName, itemPosting.getBuyer().getUsername());
+        assertEquals(buyerEmail, itemPosting.getBuyer().getEmail());
         assertEquals(isAvailable, itemPosting.isAvailable());
         assertEquals(uniName, itemPosting.getUniversity().getName());
-
     }
 
     @Test

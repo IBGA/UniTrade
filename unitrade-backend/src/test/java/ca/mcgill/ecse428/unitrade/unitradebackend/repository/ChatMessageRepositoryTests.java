@@ -35,9 +35,13 @@ public class ChatMessageRepositoryTests {
 
         String senderUsername = "sender";
         String receiverUsername = "receiver";
+        String senderEmail = "sender@email.com";
+        String receiverEmail = "receiver@email.com";
 
         sender.setUsername(senderUsername);
+        sender.setEmail(senderEmail);
         receiver.setUsername(receiverUsername);
+        receiver.setEmail(receiverEmail);
         Date date = new Date();
 
         ChatMessage message = new ChatMessage();
@@ -64,7 +68,9 @@ public class ChatMessageRepositoryTests {
         assertNotNull(receiver);
 
         assertEquals(sender.getId(), message.getSender().getId());
+        assertEquals(sender.getEmail(), message.getSender().getEmail());
         assertEquals(receiver.getId(), message.getReceiver().getId());
+        assertEquals(receiver.getEmail(), message.getReceiver().getEmail());
         assertEquals(content, message.getContent());
         assertEquals(date, message.getSendDate());
 

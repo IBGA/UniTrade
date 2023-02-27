@@ -42,14 +42,18 @@ public class CourseRequestRepositoryTests {
 
         String codename = "ECSE428";
         String requesterName = "Requester";
+        String requesterEmail = "requester@email.com";
+        String validatorEmail = "validator@email.com";
         String validatorName = "Validator";
         boolean approved = true;
 
         course.setCodename(codename);
         courseRequest.setCourse(course);
         requester.setUsername(requesterName);
+        requester.setEmail(requesterEmail);
         courseRequest.setRequester(requester);
         validator.setUsername(validatorName);
+        validator.setEmail(validatorEmail);
         courseRequest.setValidator(validator);
         courseRequest.setApproved(approved);
 

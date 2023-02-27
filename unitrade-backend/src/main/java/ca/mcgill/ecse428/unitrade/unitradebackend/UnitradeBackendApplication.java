@@ -19,7 +19,7 @@ public class UnitradeBackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(UnitradeBackendApplication.class, args);
-    }
+    }   
 
     @RequestMapping("/")
     public String greeting() {
