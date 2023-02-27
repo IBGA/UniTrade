@@ -21,11 +21,11 @@ let city = '';
 let description = '';
 
 let error = ''
+let universityCount = 0;
 
 defineFeature(feature, (test) => {
   beforeEach(() => {
-
-
+    error = '';
   });
 
   test('Fields are filled in correctly (Normal Flow)', ({
@@ -68,7 +68,6 @@ defineFeature(feature, (test) => {
       /^a new university with name (.*), city (.*), and description (.*) is added to the system$/,
       async (arg0, arg1, arg2) => {
         let universities = await get('university');
-        console.log(universities)
         let university = universities[universities.length - 1];
         expect(university.name).toBe(arg0);
         expect(university.city).toBe(arg1);
@@ -87,19 +86,57 @@ defineFeature(feature, (test) => {
 
     and(
       /^a university with name (.*) and city (.*) already exists in the system$/,
-      (arg0, arg1) => {}
+      async (arg0, arg1) => {
+        try {
+          name = arg0;
+          city = arg1;
+          description = "description";
+
+          nameInput.props.onChange({ target: { value: name } });
+          cityInput.props.onChange({ target: { value: city } });
+          descriptionInput.props.onChange({ target: { value: description } });
+
+        
+          await form.props.onSubmit({ preventDefault: () => {} });
+        } catch (e) {
+          error = e;
+        }
+
+        let universities = await get('university');
+        universityCount = universities.length;
+      }
     );
 
     when(
       /^user attempts to create a university with name (.*), city (.*), and description (.*)$/,
-      (arg0, arg1, arg2) => {}
+      async (arg0, arg1, arg2) => {
+        try {
+          name = arg0;
+          city = arg1;
+          description = arg2;
+  
+          nameInput.props.onChange({ target: { value: name } });
+          cityInput.props.onChange({ target: { value: city } });
+          descriptionInput.props.onChange({ target: { value: description } });
+  
+          await form.props.onSubmit({ preventDefault: () => {} });
+        }
+        catch (err) {
+          error = err;
+        }
+      }
     );
 
-    then('an error is thrown', () => {});
+    then('an error is thrown', () => {
+      expect(error).not.toBe('');
+    });
 
     and(
       /^a new university with name (.*), city (.*), and description (.*) is not added to the system$/,
-      (arg0, arg1, arg2) => {}
+      async (arg0, arg1, arg2) => {
+        let universities = await get('university');
+        expect(universities.length).toBe(universityCount);
+      }
     );
   });
 });
