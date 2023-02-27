@@ -39,9 +39,11 @@ export function ItemPostingThumbnail(props) {
             <Card.Subtitle className="mb-2 text-muted">{date}</Card.Subtitle>
             <Card.Subtitle className="mb-2 text-muted">{person}</Card.Subtitle>
             <Card.Text>{description}</Card.Text>
-            <Card.Text>
-              <strong>Courses:</strong> {courses}
-            </Card.Text>
+            {courses.length > 0 &&
+              <Card.Text>
+                <strong>Courses:</strong> {courses}
+              </Card.Text>
+            }
           </Card.Body>
         </Card>
       </Container>
@@ -50,48 +52,34 @@ export function ItemPostingThumbnail(props) {
 }
 
 export function ItemPostingSearchHeader(props) {
-  const {universities, courses} = props;
   const [universityOptions, setUniversityOptions] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:8080/university', {
-      method: 'GET'
-    }).then(response => response.json())
-      .then(data => { 
-        console.log(data);
-        const options = data.map(d => ({ value: d.id, label: d.name }));
+    fetch('http://localhost:8080/university')
+      .then(response => response.json())
+      .then(data => {
+        const options = [{ value: '*', label: "All Universities" }].concat(data.map(d => ({ value: d.id, label: d.name })));
         setUniversityOptions(options);
       })
       .catch(error => console.error(error))
-    }, []);
+  }, []);
+
+  const handleUniversitySelect = (option) => {
+    props.onUniversitySelect(option);
+  }
 
   return (
     <div className="mx-auto my-4 d-flex">
       <Select
         className="basic-single w-25 mx-2"
         classNamePrefix="select"
-        isLoading={universityOptions.length === 0}
-        isClearable={true}
+        isLoading={universityOptions.length === 1}
         isSearchable={true}
+        defaultValue={{ value: '*', label: "All Universities" }}
         noOptionsMessage={() => "University not found"}
         name="university"
         options={universityOptions}
-      />
-      <p></p>
-      <Select
-        className="basic-single w-25 mx-2"
-        classNamePrefix="select"
-        isLoading={false}
-        isClearable={true}
-        isSearchable={true}
-        isDisabled={true}
-        noOptionsMessage={() => "Course not found"}
-        name="course"
-        options={[
-          { value: 'chocolate', label: 'Chocolate' },
-          { value: 'strawberry', label: 'Strawberry' },
-          { value: 'vanilla', label: 'Vanilla' }
-        ]}
+        onChange={handleUniversitySelect}
       />
     </div>
   );
