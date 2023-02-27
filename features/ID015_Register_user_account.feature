@@ -24,5 +24,5 @@ Then an error message is thrown and no new user account is created
 
 Examples:
 | email                  | username          |
-| bob@gmail.com          | b.o.b.            |
-| samson@hotmail.com     | samsonmamson      |
+| yayzeus@gmail.com      | yayzeus           |
+| info@drpepper.com      | drpepper          |
