@@ -16,6 +16,9 @@ public class PostResponseDto {
     private PersonResponseDto poster;
     private List<CourseResponseDto> courses;
 
+    public PostResponseDto() {
+    }
+
     public PostResponseDto(Long id, String title, String description, Date datePosted, UniversityResponseDto university, PersonResponseDto poster, List<CourseResponseDto> courses) {
         this.id = id;
         this.title = title;

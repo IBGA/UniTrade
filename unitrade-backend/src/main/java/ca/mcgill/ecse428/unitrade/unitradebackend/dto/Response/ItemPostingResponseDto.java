@@ -13,6 +13,9 @@ public class ItemPostingResponseDto extends PostResponseDto {
     private Double price;
     private PersonResponseDto buyer;
 
+    public ItemPostingResponseDto() {
+    }
+
     public ItemPostingResponseDto(Long id, String title, String description, Date datePosted, UniversityResponseDto university, PersonResponseDto poster, List<CourseResponseDto> courses, boolean isAvailable, Double price, PersonResponseDto buyer){
         super(id, title, description, datePosted, university, poster, courses);
         this.isAvailable = isAvailable;

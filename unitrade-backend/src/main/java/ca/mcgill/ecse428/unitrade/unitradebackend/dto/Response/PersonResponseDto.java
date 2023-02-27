@@ -22,6 +22,9 @@ public class PersonResponseDto {
     private List<CourseResponseDto> enrolledCourses;
     private UniversityResponseDto university;
 
+    public PersonResponseDto() {
+    }
+
     public PersonResponseDto(Long id, String email, String username, String firstName, String lastName, String password, Date lastOnline, String profilePicture, boolean isOnline, boolean isEnabled, List<CourseResponseDto> enrolledCourses, UniversityResponseDto university){
         this.id = id;
         this.email = email;
