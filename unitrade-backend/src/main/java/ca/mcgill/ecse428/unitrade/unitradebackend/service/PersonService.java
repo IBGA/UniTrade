@@ -35,7 +35,6 @@ public class PersonService {
             String lastName,
             String password,
             String profilePicture,
-            List<Long> enrolledCoursesIds,
             Long universityId) {
 
         // Validate input syntax (Error -> 400)
@@ -59,10 +58,6 @@ public class PersonService {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Password cannot be null or empty");
         }
 
-        if (universityId == null) {
-            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University id cannot be null");
-        }
-
         // Validate that email and username are unique (Error -> 409)
         if (personRepository.findByEmail(email) != null) {
             throw new ServiceLayerException(HttpStatus.CONFLICT,
@@ -74,21 +69,15 @@ public class PersonService {
                     String.format("Username '%s' already exists in system", username));
         }
 
-        // Validate that university and courses exist (Error -> 404)
-        University university = universityRepository.findById(universityId).orElse(null);
-        if (university == null) {
-            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
-                    String.format("University with id '%d' not found", universityId));
-        }
+        University university = null;
 
-        List<Course> enrolledCourses = new ArrayList<Course>();
-        for (Long courseId : enrolledCoursesIds) {
-            Course course = courseRepository.findById(courseId).orElse(null);
-            if (course == null) {
+        if (universityId != null) {
+            // Validate that university and courses exist (Error -> 404)
+            university = universityRepository.findById(universityId).orElse(null);
+            if (university == null) {
                 throw new ServiceLayerException(HttpStatus.NOT_FOUND,
-                        String.format("Course with id '%d' not found", courseId));
+                        String.format("University with id '%d' not found", universityId));
             }
-            enrolledCourses.add(course);
         }
 
         // Code reaches here -> No errors.
@@ -101,7 +90,6 @@ public class PersonService {
         person.setPassword(password);
         person.setProfilePicture(profilePicture);
 
-        person.setEnrolledCourses(enrolledCourses);
         person.setUniversity(university);
         return personRepository.save(person);
     }

@@ -88,8 +88,11 @@ public class PersonResponseDto {
 
     public static PersonResponseDto createDto(Person person) {
         List<CourseResponseDto> courses = new ArrayList<CourseResponseDto>();
-        for (Course course : person.getEnrolledCourses()) {
-            courses.add(CourseResponseDto.createDto(course));
+
+        if (person.getEnrolledCourses() != null) {
+            for (Course course : person.getEnrolledCourses()) {
+                courses.add(CourseResponseDto.createDto(course));
+            }
         }
 
         PersonResponseDto dto = new PersonResponseDto(

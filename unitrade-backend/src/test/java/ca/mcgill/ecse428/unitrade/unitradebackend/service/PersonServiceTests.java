@@ -6,7 +6,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -132,10 +131,9 @@ public class PersonServiceTests {
         String lastName = "Simard";
         String password = "my_password";
         String profilePicture = "pic.jpg";
-        List<Long> enrolledCourseIds = List.of(COURSE_KEY);
         Long universityId = MCGILL_KEY;
 
-        Person person = personService.createPerson(email, username, firstName, lastName, password, profilePicture, enrolledCourseIds, universityId);
+        Person person = personService.createPerson(email, username, firstName, lastName, password, profilePicture, universityId);
 
         assertNotNull(person);
         assertEquals(email, person.getEmail());
@@ -144,9 +142,6 @@ public class PersonServiceTests {
         assertEquals(lastName, person.getLastName());
         assertEquals(password, person.getPassword());
         assertEquals(profilePicture, person.getProfilePicture());
-        for (int i=0; i<person.getEnrolledCourses().size(); i++) {
-            assertEquals(enrolledCourseIds.get(i), person.getEnrolledCourses().get(i).getId());
-        }
         assertEquals(universityId, person.getUniversity().getId());
     }
 
@@ -160,10 +155,9 @@ public class PersonServiceTests {
             String lastName = "Simard";
             String password = "my_password";
             String profilePicture = "pic.jpg";
-            List<Long> enrolledCourseIds = List.of(COURSE_KEY);
             Long universityId = MCGILL_KEY;
 
-            personService.createPerson(email, username, firstName, lastName, password, profilePicture, enrolledCourseIds, universityId);
+            personService.createPerson(email, username, firstName, lastName, password, profilePicture, universityId);
             fail();
         } catch (ServiceLayerException e) {
             assertEquals(HttpStatus.CONFLICT, e.getStatus());

@@ -47,7 +47,6 @@ public class PersonRestController {
                 body.getLastName(),
                 body.getPassword(),
                 body.getProfilePicture(),
-                body.getEnrolledCourseIds(),
                 body.getUniversityId());
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(person), HttpStatus.CREATED);
