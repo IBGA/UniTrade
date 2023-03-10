@@ -40,6 +40,7 @@ defineFeature(feature, (test) => {
       /^a university with name (.*) and city (.*) does not already exist in the system$/,
       async (arg0, arg1) => {
         let universities = await get('university');
+        console.log(universities);
         universities.forEach((university) => {
           if (university.name === arg0 && university.city === arg1) {
             error = 'University already exists';
