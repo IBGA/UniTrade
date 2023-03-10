@@ -16,8 +16,8 @@ public class ItemPostingResponseDto extends PostResponseDto {
     public ItemPostingResponseDto() {
     }
 
-    public ItemPostingResponseDto(Long id, String title, String description, Date datePosted, UniversityResponseDto university, PersonResponseDto poster, List<CourseResponseDto> courses, boolean isAvailable, Double price, PersonResponseDto buyer){
-        super(id, title, description, datePosted, university, poster, courses);
+    public ItemPostingResponseDto(Long id, String title, String description, String imageLink, Date datePosted, UniversityResponseDto university, PersonResponseDto poster, List<CourseResponseDto> courses, boolean isAvailable, Double price, PersonResponseDto buyer){
+        super(id, title, description, imageLink, datePosted, university, poster, courses);
         this.isAvailable = isAvailable;
         this.price = price;
         this.buyer = buyer;
@@ -42,17 +42,23 @@ public class ItemPostingResponseDto extends PostResponseDto {
         }
 
         PersonResponseDto buyer = null;
+        UniversityResponseDto university = null;
 
         if (itemPosting.getBuyer() != null) {
             buyer = PersonResponseDto.createDto(itemPosting.getBuyer());
+        }
+
+        if (itemPosting.getUniversity() != null) {
+            university = UniversityResponseDto.createDto(itemPosting.getUniversity());
         }
 
         ItemPostingResponseDto dto = new ItemPostingResponseDto(
             itemPosting.getId(),
             itemPosting.getTitle(),
             itemPosting.getDescription(),
+            itemPosting.getImageLink(),
             itemPosting.getDatePosted(),
-            UniversityResponseDto.createDto(itemPosting.getUniversity()),
+            university,
             PersonResponseDto.createDto(itemPosting.getPoster()),
             courses,
             itemPosting.isAvailable(),

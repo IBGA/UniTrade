@@ -11,6 +11,7 @@ public class PostResponseDto {
     private Long id;
     private String title;
     private String description;
+    private String imageLink;
     private Date datePosted;
     private UniversityResponseDto university;
     private PersonResponseDto poster;
@@ -19,10 +20,11 @@ public class PostResponseDto {
     public PostResponseDto() {
     }
 
-    public PostResponseDto(Long id, String title, String description, Date datePosted, UniversityResponseDto university, PersonResponseDto poster, List<CourseResponseDto> courses) {
+    public PostResponseDto(Long id, String title, String description, String imageLink, Date datePosted, UniversityResponseDto university, PersonResponseDto poster, List<CourseResponseDto> courses) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.imageLink = imageLink;
         this.datePosted = datePosted;
         this.university = university;
         this.poster = poster;
@@ -39,6 +41,10 @@ public class PostResponseDto {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getImageLink() {
+        return imageLink;
     }
 
     public Date getDatePosted() {
@@ -58,18 +64,31 @@ public class PostResponseDto {
     }
 
     public static PostResponseDto createDto(Post post) {
+
         List<CourseResponseDto> courses = new ArrayList<CourseResponseDto>();
         for (Course course : post.getCourses()) {
             courses.add(CourseResponseDto.createDto(course));
+        }
+
+        UniversityResponseDto university = null;
+        PersonResponseDto poster = null;
+
+        if (post.getUniversity() != null) {
+            university = UniversityResponseDto.createDto(post.getUniversity());
+        }
+
+        if (post.getPoster() != null) {
+            poster = PersonResponseDto.createDto(post.getPoster());
         }
 
         PostResponseDto dto = new PostResponseDto(
             post.getId(),
             post.getTitle(),
             post.getDescription(),
+            post.getImageLink(),
             post.getDatePosted(),
-            UniversityResponseDto.createDto(post.getUniversity()),
-            PersonResponseDto.createDto(post.getPoster()),
+            university,
+            poster,
             courses
         );
         return dto;
