@@ -25,19 +25,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 @CrossOrigin(origins = "${allowed.origins}")
 @RestController
-@PreAuthorize("hasRole('USER')")
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Person created"),
-        @ApiResponse(responseCode = "400", description = "Invalid input"),
-        @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
-        @ApiResponse(responseCode = "409", description = "Unique constraint violation")
+    @ApiResponse(responseCode = "201", description = "Person created"),
+    @ApiResponse(responseCode = "400", description = "Invalid input"),
+    @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
+    @ApiResponse(responseCode = "409", description = "Unique constraint violation")
 })
+@PreAuthorize("hasRole('USER')")
 public class PostRestController {
     @Autowired
     PostService postService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("permitAll()")
     @PostMapping(value = { "/post" })
     public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto body) {
         Post post = postService.createPost(

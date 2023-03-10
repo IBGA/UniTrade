@@ -88,11 +88,16 @@ public class PersonResponseDto {
 
     public static PersonResponseDto createDto(Person person) {
         List<CourseResponseDto> courses = new ArrayList<CourseResponseDto>();
+        UniversityResponseDto universityDto = null;
 
         if (person.getEnrolledCourses() != null) {
             for (Course course : person.getEnrolledCourses()) {
                 courses.add(CourseResponseDto.createDto(course));
             }
+        }
+
+        if (person.getUniversity() != null) {
+            universityDto = UniversityResponseDto.createDto(person.getUniversity());
         }
 
         PersonResponseDto dto = new PersonResponseDto(
@@ -107,7 +112,7 @@ public class PersonResponseDto {
             person.isOnline(),
             person.isEnabled(),
             courses,
-            UniversityResponseDto.createDto(person.getUniversity())
+            universityDto
         );
         return dto;
     }

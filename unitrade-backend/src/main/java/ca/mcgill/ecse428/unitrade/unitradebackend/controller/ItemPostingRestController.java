@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
         @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
         @ApiResponse(responseCode = "409", description = "Unique constraint violation")
 })
+@PreAuthorize("hasRole('USER')")
 public class ItemPostingRestController {
     @Autowired
     ItemPostingService itemPostingService;

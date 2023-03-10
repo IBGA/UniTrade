@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
         @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
         @ApiResponse(responseCode = "409", description = "Unique constraint violation")
 })
+@PreAuthorize("hasRole('USER')")
 public class PersonRestController {
 
     @Autowired
@@ -39,6 +40,7 @@ public class PersonRestController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = { "/person" })
+    @PreAuthorize("permitAll()")
     public ResponseEntity<PersonResponseDto> createPerson(@RequestBody PersonRequestDto body) {
         Person person = personService.createPerson(
                 body.getEmail(),
