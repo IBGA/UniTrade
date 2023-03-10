@@ -37,6 +37,7 @@ public class PostService {
     public Post createPost(
             String title,
             String description,
+            String imageLink,
             Date datePosted,
             Long universityId,
             Long posterId,
@@ -82,6 +83,7 @@ public class PostService {
         Post post = new Post();
         post.setTitle(title);
         post.setDescription(description);
+        post.setImageLink(imageLink);
         post.setDatePosted(datePosted);
         post.setUniversity(university);
         post.setPoster(poster);

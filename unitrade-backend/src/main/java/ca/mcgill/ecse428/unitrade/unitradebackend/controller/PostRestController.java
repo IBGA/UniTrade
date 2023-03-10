@@ -43,6 +43,7 @@ public class PostRestController {
         Post post = postService.createPost(
                 body.getTitle(),
                 body.getDescription(),
+                body.getImageLink(),
                 body.getDatePosted(),
                 body.getUniversityId(),
                 body.getPosterId(),

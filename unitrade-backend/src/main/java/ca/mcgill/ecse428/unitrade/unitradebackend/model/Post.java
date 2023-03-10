@@ -15,6 +15,7 @@ public class Post {
     private Long id;
     private String title;
     private String description;
+    private String imageLink;
     private Date datePosted;
     @ManyToOne private University university;
     @OneToOne private Person poster;
@@ -42,6 +43,14 @@ public class Post {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 
     public Date getDatePosted() {

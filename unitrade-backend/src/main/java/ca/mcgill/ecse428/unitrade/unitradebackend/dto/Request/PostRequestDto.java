@@ -7,6 +7,7 @@ public class PostRequestDto {
     private Long id;
     private String title;
     private String description;
+    private String imageLink;
     private Date datePosted;
     private Long universityId;
     private Long posterId;
@@ -34,6 +35,14 @@ public class PostRequestDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getImageLink() {
+        return imageLink;
+    }
+
+    public void setImageLink(String imageLink) {
+        this.imageLink = imageLink;
     }
 
     public Date getDatePosted() {
