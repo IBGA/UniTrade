@@ -40,6 +40,9 @@ jobs:
       # Run build which runs the tests as well
       - name: Build with Gradle
         run: ./gradlew build
+      # Run the backend in the background for the frontend tests
+      - name: Run backend
+        run: ./gradlew bootRun &
       # Frontend build and test
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
