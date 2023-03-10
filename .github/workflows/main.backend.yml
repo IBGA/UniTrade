@@ -40,12 +40,6 @@ jobs:
       # Run build which runs the tests as well
       - name: Build with Gradle
         run: ./gradlew build
-      # Run the backend in the background for the frontend tests
-      - name: Run backend
-        run: ./gradlew bootRun &
-      # Sleep so that the backend can completely set up
-      - name: Wait for backend to set up
-        run: sleep 10
       # Frontend build and test
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
@@ -54,9 +48,15 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: unitrade-frontend/package-lock.json
-      - run: npm ci # Continuous Integration / Clean Install
+      - run: npm install
         working-directory: unitrade-frontend
       - run: npm run build
         working-directory: unitrade-frontend
+      # Run the backend in the background for the frontend tests
+      - name: Run backend
+        run: ./gradlew bootRun &
+      # Sleep so that the backend can completely set up
+      - name: Wait for backend to set up
+        run: sleep 10
       - run: npm run test
         working-directory: unitrade-frontend
