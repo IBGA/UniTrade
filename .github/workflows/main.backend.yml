@@ -43,6 +43,9 @@ jobs:
       # Run the backend in the background for the frontend tests
       - name: Run backend
         run: ./gradlew bootRun &
+      # Sleep so that the backend can completely set up
+      - name: Wait for backend to set up
+        run: sleep 10
       # Frontend build and test
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
