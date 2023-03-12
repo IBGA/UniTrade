@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.PersonRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.PersonResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
+import ca.mcgill.ecse428.unitrade.unitradebackend.security.CustomUserDetails;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.PersonService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -91,9 +94,21 @@ public class PersonRestController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/person" })
     public ResponseEntity<PersonResponseDto> updatePersonInformation(@RequestBody PersonRequestDto body) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Get the email of the authenticated user
+        Long authId = null;
+
+        if (principal instanceof UserDetails) {
+            authId = ((CustomUserDetails) principal).getId();
+        } else {
+            return new ResponseEntity<PersonResponseDto>(HttpStatus.EXPECTATION_FAILED);
+        }
+
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonInformation(
-                        body.getId(),
+                        authId,
                         body.getFirstName(),
                         body.getLastName(),
                         body.getProfilePicture())),
@@ -104,9 +119,21 @@ public class PersonRestController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/person/password" })
     public ResponseEntity<PersonResponseDto> updatePersonPassword(@RequestBody PersonRequestDto body) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Get the email of the authenticated user
+        Long authId = null;
+
+        if (principal instanceof UserDetails) {
+            authId = ((CustomUserDetails) principal).getId();
+        } else {
+            return new ResponseEntity<PersonResponseDto>(HttpStatus.EXPECTATION_FAILED);
+        }
+
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonPassword(
-                        body.getId(),
+                        authId,
                         body.getPassword())),
                 HttpStatus.OK);
     }
@@ -114,9 +141,21 @@ public class PersonRestController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/person/enrolledCourses" })
     public ResponseEntity<PersonResponseDto> updatePersonEnrolledCourses(@RequestBody PersonRequestDto body) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Get the email of the authenticated user
+        Long authId = null;
+
+        if (principal instanceof UserDetails) {
+            authId = ((CustomUserDetails) principal).getId();
+        } else {
+            return new ResponseEntity<PersonResponseDto>(HttpStatus.EXPECTATION_FAILED);
+        }
+
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonEnrolledCourses(
-                        body.getId(),
+                        authId,
                         body.getEnrolledCourseIds())),
                 HttpStatus.OK);
     }
@@ -124,9 +163,21 @@ public class PersonRestController {
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/person/universityId" })
     public ResponseEntity<PersonResponseDto> updatePersonCurrentUniversity(@RequestBody PersonRequestDto body) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Get the email of the authenticated user
+        Long authId = null;
+
+        if (principal instanceof UserDetails) {
+            authId = ((CustomUserDetails) principal).getId();
+        } else {
+            return new ResponseEntity<PersonResponseDto>(HttpStatus.EXPECTATION_FAILED);
+        }
+
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.updatePersonCurrentUniversity(
-                        body.getId(),
+                        authId,
                         body.getUniversityId())),
                 HttpStatus.OK);
     }

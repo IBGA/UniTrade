@@ -58,13 +58,13 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
             statusCode = e.getStatusCode();
         }
 
-        try {
-            url = "http://localhost:8080/person";
-            ResponseEntity<PersonResponseDto[]> persons = restTemplate.getForEntity(url, PersonResponseDto[].class);
-            posterId = persons.getBody()[0].getId();
-        } catch (HttpClientErrorException e) {
-            statusCode = e.getStatusCode();
-        }
+        // try {
+        //     url = "http://localhost:8080/person";
+        //     ResponseEntity<PersonResponseDto[]> persons = restTemplate.getForEntity(url, PersonResponseDto[].class);
+        //     posterId = persons.getBody()[0].getId();
+        // } catch (HttpClientErrorException e) {
+        //     statusCode = e.getStatusCode();
+        // }
 
         url = "http://localhost:8080/itemposting";
 
@@ -73,7 +73,7 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
         itemPostingRequestDto.setDescription(description);
         itemPostingRequestDto.setPrice(price);
         itemPostingRequestDto.setUniversityId(universityId);
-        itemPostingRequestDto.setPosterId(posterId);
+        // itemPostingRequestDto.setPosterId(posterId);
         itemPostingRequestDto.setDatePosted(new Date(2));
         itemPostingRequestDto.setCourseIds(new ArrayList<>());
         itemPostingRequestDto.setBuyerId(null);

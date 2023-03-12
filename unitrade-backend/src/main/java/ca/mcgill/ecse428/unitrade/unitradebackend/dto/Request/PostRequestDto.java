@@ -10,7 +10,6 @@ public class PostRequestDto {
     private String imageLink;
     private Date datePosted;
     private Long universityId;
-    private Long posterId;
     private List<Long> courseIds;
 
     public Long getId() {
@@ -59,14 +58,6 @@ public class PostRequestDto {
 
     public void setUniversityId(Long universityId) {
         this.universityId = universityId;
-    }
-
-    public Long getPosterId() {
-        return posterId;
-    }
-
-    public void setPosterId(Long posterId) {
-        this.posterId = posterId;
     }
 
     public List<Long> getCourseIds() {

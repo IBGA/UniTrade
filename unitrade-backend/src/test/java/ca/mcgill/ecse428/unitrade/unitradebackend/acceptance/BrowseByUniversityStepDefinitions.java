@@ -78,14 +78,14 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
 
                         url = "http://localhost:8080/person";
                         ResponseEntity<PersonResponseDto> personResponse = restTemplate.postForEntity(url, person, PersonResponseDto.class);
-                        posterID = personResponse.getBody().getId();
+                        // posterID = personResponse.getBody().getId(); Uncommented this and the line 5 lines below because itemPostingRequest doesn't take poster Ids anymore
                     }
 
                     ItemPostingRequestDto itemPosting = new ItemPostingRequestDto();
                     itemPosting.setTitle("test");
                     itemPosting.setUniversityId(id);
                     itemPosting.setPrice(100);
-                    itemPosting.setPosterId(posterID);
+                    // itemPosting.setPosterId(posterID);
                     itemPosting.setDescription("test");
                     itemPosting.setDatePosted(new Date(2));
                     itemPosting.setCourseIds(new ArrayList<>());
