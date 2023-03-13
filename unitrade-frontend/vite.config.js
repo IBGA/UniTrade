@@ -8,5 +8,8 @@ export default defineConfig({
     target: 'esnext',
     ssr: false,
   },
-  test: { globals: true },
+  test: {
+    globals: true,
+    environment: "happy-dom"
+  },
 });
