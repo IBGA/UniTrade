@@ -44,8 +44,7 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
 
     @Given("user is not logged in")
     public void user_is_not_logged_in() {
-        // Write code here that turns the phrase above into concrete actions
-        //throw new io.cucumber.java.PendingException();
+
     }
 
     @Given("a user with email {string} or username {string} does not already exist in the system")
