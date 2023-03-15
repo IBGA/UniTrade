@@ -8,10 +8,13 @@ const GlobalStyles = createGlobalStyle`
   }
   
   :root{
-    --primary: #00C2CB;
+    --primary: #2EAF7D;
+    --secondary: #3FD0C9;
     --black: #000000;
     --white: #FFFFFF;
-    --grey: #727072;
+    --grey: #02353C;
+    --pale: #C1F6ED;
+    --green: #449342;
     --red: #E63946;
   }
   ul, li{
@@ -20,5 +23,6 @@ const GlobalStyles = createGlobalStyle`
   a {
     text-decoration: none;
   }
+
 `;
 export default GlobalStyles;
