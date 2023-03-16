@@ -152,7 +152,7 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
         } catch (HttpClientErrorException e) {
             statusCode = e.getStatusCode();
         }
-    }
+    } 
 
     @Then("an error is thrown")
     public void an_error_is_thrown() {
