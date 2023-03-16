@@ -2,6 +2,7 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.acceptance;
 import io.cucumber.java.en.*;
 
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -46,8 +47,15 @@ public class BrowseAllItemPostingsStepDefinitions extends AcceptanceTest {
             RestTemplate restTemplate = new RestTemplate();
             String url = "http://localhost:8080/itemposting";
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization",
+                    "Basic " + Base64.getEncoder().encodeToString(("testEmail" + ":" + "testPassword").getBytes()));
+            headers.set("Access-Control-Allow-Credentials", "true");
+    
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
             try {
-                restTemplate.getForEntity(url, ItemPostingResponseDto[].class);
+                restTemplate.exchange(url, HttpMethod.GET, entity, ItemPostingResponseDto[].class);
             } catch (HttpClientErrorException e) {
                 //create posting
             }
@@ -58,8 +66,15 @@ public class BrowseAllItemPostingsStepDefinitions extends AcceptanceTest {
             RestTemplate restTemplate = new RestTemplate();
             String url = "http://localhost:8080/itemposting";
 
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization",
+                    "Basic " + Base64.getEncoder().encodeToString(("testEmail" + ":" + "testPassword").getBytes()));
+            headers.set("Access-Control-Allow-Credentials", "true");
+    
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
             try {
-                response = restTemplate.getForEntity(url, ItemPostingResponseDto[].class);
+                response = restTemplate.exchange(url, HttpMethod.GET, entity, ItemPostingResponseDto[].class);
                 statusCode = response.getStatusCode();
             } catch (HttpClientErrorException e) {
                 statusCode = e.getStatusCode();
@@ -76,10 +91,18 @@ public class BrowseAllItemPostingsStepDefinitions extends AcceptanceTest {
             RestTemplate restTemplate = new RestTemplate();
             String url = "http://localhost:8080/itemposting";
 
+
+            HttpHeaders headers = new HttpHeaders();
+
+            headers.set("Authorization",
+                    "Basic " + Base64.getEncoder().encodeToString(("testEmail" + ":" + "testPassword").getBytes()));
+
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
             try {
-                response = restTemplate.getForEntity(url, ItemPostingResponseDto[].class);
+                response = restTemplate.exchange(url, HttpMethod.GET, entity, ItemPostingResponseDto[].class);
                 for (ItemPostingResponseDto itemPosting : response.getBody()) {
-                    restTemplate.delete(url + "/" + itemPosting.getId());
+                    restTemplate.exchange(url + "/" + itemPosting.getId(), HttpMethod.DELETE, entity, ItemPostingResponseDto[].class);
                 }
             } catch (HttpClientErrorException e) {
                 //do nothing
