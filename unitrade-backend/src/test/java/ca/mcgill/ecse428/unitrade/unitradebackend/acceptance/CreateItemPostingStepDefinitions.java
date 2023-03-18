@@ -2,18 +2,12 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.acceptance;
 
 import io.cucumber.java.en.*;
 
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.List;
 import java.util.ArrayList;
 import java.sql.Date;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.http.HttpStatus;
 
 
 import org.springframework.http.HttpEntity;
@@ -24,20 +18,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.controller.UniversityRestController;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.UniversityResponseDto;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.UniversityRequestDto;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.controller.ItemPostingRestController;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.ItemPostingResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.ItemPostingRequestDto;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.controller.PersonRestController;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.PersonResponseDto;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.PersonRequestDto;
 
 public class CreateItemPostingStepDefinitions extends AcceptanceTest {
     HttpStatusCode statusCode;
@@ -47,7 +34,6 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
     public void user_creates_an_item_posting_with_title_and_description_and_price_for_university_with_name_and_city(String title, String description, Long price, String universityName, String universityCity) {
         RestTemplate restTemplate = new RestTemplate();
         Long universityId = null;
-        Long posterId = null;
         //Long price = Long.parseLong(itemPrice);
 
         String url = "http://localhost:8080/university/" + universityCity + "/" + universityName;
@@ -94,7 +80,6 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
     public void the_item_posting_is_created_and_linked_to_the_university_with_name_and_city(String universityName, String universityCity) {
         RestTemplate restTemplate = new RestTemplate();
         Long universityId = null;
-        Long posterId = null;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization",
