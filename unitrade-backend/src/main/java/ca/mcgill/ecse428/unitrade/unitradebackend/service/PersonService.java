@@ -15,6 +15,7 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.CourseRepository;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.PersonRepository;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.UniversityRepository;
+import ca.mcgill.ecse428.unitrade.unitradebackend.security.CredentialsEncoder;
 
 @Service
 public class PersonService {
@@ -80,6 +81,13 @@ public class PersonService {
             }
         }
 
+        CredentialsEncoder encoder = new CredentialsEncoder();
+        String encodedPassword = encoder.encode(password);
+
+        if (encodedPassword == null || encodedPassword.isEmpty()) {
+            throw new ServiceLayerException(HttpStatus.INTERNAL_SERVER_ERROR, "Password encoding failed");
+        }
+
         // Code reaches here -> No errors.
         // So create person and save to database
         Person person = new Person();
@@ -87,9 +95,8 @@ public class PersonService {
         person.setUsername(username);
         person.setFirstName(firstName);
         person.setLastName(lastName);
-        person.setPassword(password);
+        person.setPassword(encodedPassword);
         person.setProfilePicture(profilePicture);
-
         person.setUniversity(university);
         return personRepository.save(person);
     }
