@@ -28,16 +28,16 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
     @And ("there are item postings for university with name {string} and city {string} in the system")
     public void there_are_item_postings_for_university_with_name_and_city_in_the_system(String name, String city) {
         String url = "http://localhost:8080/university/" + city + "/" + name;
-
+        RequestHelperClass helper = new RequestHelperClass(true);
         try {
-            ResponseEntity<UniversityResponseDto> response = RequestHelperClass.get(url, UniversityResponseDto.class, true);
+            ResponseEntity<UniversityResponseDto> response = helper.get(url, UniversityResponseDto.class, true);
             if (response.getStatusCode().is2xxSuccessful()) {
                 Long id = response.getBody().getId();
 
                 url = "http://localhost:8080/itemposting/university/" + id;
 
                 try {
-                    ResponseEntity<ItemPostingResponseDto[]> itemPostings = RequestHelperClass.get(url, ItemPostingResponseDto[].class, true);
+                    ResponseEntity<ItemPostingResponseDto[]> itemPostings = helper.get(url, ItemPostingResponseDto[].class, true);
                     statusCode = itemPostings.getStatusCode();
 
                 } catch (HttpClientErrorException e) {
@@ -46,7 +46,7 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
 
                     try {
                         url = "http://localhost:8080/person/email/browsebyuniversity";
-                        ResponseEntity<PersonResponseDto> browseResponse = RequestHelperClass.get(url, PersonResponseDto.class, true);
+                        ResponseEntity<PersonResponseDto> browseResponse = helper.get(url, PersonResponseDto.class, true);
                         posterID = browseResponse.getBody().getId();
                     } catch (HttpClientErrorException e1) {
                         // create person
@@ -60,7 +60,7 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
                         person.setUniversityId(id);
 
                         url = "http://localhost:8080/person";
-                        ResponseEntity<PersonResponseDto> personResponse = RequestHelperClass.post(url, PersonResponseDto.class, person, true);
+                        ResponseEntity<PersonResponseDto> personResponse = helper.post(url, PersonResponseDto.class, person, true);
                         // posterID = personResponse.getBody().getId(); Uncommented this and the line 5 lines below because itemPostingRequest doesn't take poster Ids anymore
                     }
 
@@ -77,7 +77,7 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
 
                     url = "http://localhost:8080/itemposting";
                     try {
-                        ResponseEntity<ItemPostingResponseDto> itemPostingResponse = RequestHelperClass.post(url,
+                        ResponseEntity<ItemPostingResponseDto> itemPostingResponse = helper.post(url,
                                 ItemPostingResponseDto.class, itemPosting, true);
                         statusCode = itemPostingResponse.getStatusCode();
                     } catch (HttpClientErrorException e2) {
@@ -94,15 +94,17 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
     public void user_searches_for_item_postings_for_university_with_name_and_city(String name, String city) {
         String url = "http://localhost:8080/university/" + city + "/" + name;
 
+        RequestHelperClass helper = new RequestHelperClass(true);
+
         try {
-            ResponseEntity<UniversityResponseDto> university = RequestHelperClass.get(url, UniversityResponseDto.class, true);
+            ResponseEntity<UniversityResponseDto> university = helper.get(url, UniversityResponseDto.class, true);
             if (university.getStatusCode().is2xxSuccessful()) {
                 Long id = university.getBody().getId();
 
                 url = "http://localhost:8080/itemposting/university/" + id;
 
                 try {
-                    ResponseEntity<ItemPostingResponseDto[]> itemPostings = RequestHelperClass.get(url, ItemPostingResponseDto[].class, true);
+                    ResponseEntity<ItemPostingResponseDto[]> itemPostings = helper.get(url, ItemPostingResponseDto[].class, true);
                     statusCode = itemPostings.getStatusCode();
                 } catch (HttpClientErrorException e) {
                     statusCode = e.getStatusCode();

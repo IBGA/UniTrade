@@ -21,8 +21,11 @@ public class BrowseAllItemPostingsStepDefinitions extends AcceptanceTest {
         @And("there exists at least one item posting")
         public void there_exists_at_least_one_item_posting() {
             String url = "http://localhost:8080/itemposting";
+
+            RequestHelperClass helper = new RequestHelperClass(true);
+
             try {
-                RequestHelperClass.get(url, ItemPostingResponseDto[].class, true);
+                helper.get(url, ItemPostingResponseDto[].class, true);
             } catch (HttpClientErrorException e) {
                 //create posting
             }
@@ -32,8 +35,10 @@ public class BrowseAllItemPostingsStepDefinitions extends AcceptanceTest {
         public void user_searches_for_all_available_item_postings() {
             String url = "http://localhost:8080/itemposting";
 
+            RequestHelperClass helper = new RequestHelperClass(true);
+
             try {
-                response = RequestHelperClass.get(url, ItemPostingResponseDto[].class, true);
+                response = helper.get(url, ItemPostingResponseDto[].class, true);
                 statusCode = response.getStatusCode();
             } catch (HttpClientErrorException e) {
                 statusCode = e.getStatusCode();
@@ -49,12 +54,14 @@ public class BrowseAllItemPostingsStepDefinitions extends AcceptanceTest {
         public void there_are_no_available_item_postings() {
             String url = "http://localhost:8080/itemposting";
 
+            RequestHelperClass helper = new RequestHelperClass(true);
+
             try {
-                response = RequestHelperClass.get(url, ItemPostingResponseDto[].class, true);
+                response = helper.get(url, ItemPostingResponseDto[].class, true);
                 ItemPostingResponseDto[] itemPostings = response.getBody();
                 assertNotNull(itemPostings);
                 for (ItemPostingResponseDto itemPosting : itemPostings) {
-                    RequestHelperClass.delete(url + "/" + itemPosting.getId(), true);
+                    helper.delete(url + "/" + itemPosting.getId(), true);
                 }
             } catch (HttpClientErrorException e) {
                 //do nothing

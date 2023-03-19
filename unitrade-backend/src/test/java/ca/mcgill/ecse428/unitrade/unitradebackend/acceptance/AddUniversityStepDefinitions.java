@@ -1,5 +1,6 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.acceptance;
 
+import io.cucumber.java.BeforeAll;
 import io.cucumber.java.en.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,9 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import org.springframework.http.HttpStatusCode;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.PersonResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.UniversityResponseDto;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.PersonRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.UniversityRequestDto;
 
 public class AddUniversityStepDefinitions extends AcceptanceTest {
@@ -22,32 +21,22 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
 
     @Given("user is logged in")
     public void user_is_logged_in() {
-        PersonRequestDto body = new PersonRequestDto();
-        body.setEmail("testEmail");
-        body.setUsername("testUsername");
-        body.setPassword("testPassword");
-        body.setFirstName("testFirstName");
-        body.setLastName("testLastName");
 
-        try {
-            String url = "http://localhost:8080/person";
-            RequestHelperClass.post(url, PersonResponseDto.class, body, false);
-        } catch (HttpClientErrorException e) {
-            statusCode = e.getStatusCode();
-        }
     }
 
     @And("a university with name {string} and city {string} does not already exist in the system")
     public void a_university_with_name_and_city_does_not_already_exist_in_the_system(String name, String city) {
         String url = "http://localhost:8080/university/" + city + "/" + name;
 
+        RequestHelperClass helper = new RequestHelperClass(true);
+
         try {
-            ResponseEntity<UniversityResponseDto> response = RequestHelperClass.get(url, UniversityResponseDto.class, false);
+            ResponseEntity<UniversityResponseDto> response = helper.get(url, UniversityResponseDto.class, false);
             UniversityResponseDto university = response.getBody();
             assertNotNull(university);
             if (response.getStatusCode().is2xxSuccessful()) {
                 url = "http://localhost:8080/university/" + university.getId();
-                RequestHelperClass.delete(url, false);
+                helper.delete(url, false);
             }
         } catch (HttpClientErrorException e) {
 
@@ -63,8 +52,10 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
         body.setCity(city);
         body.setDescription(description);
 
+        RequestHelperClass helper = new RequestHelperClass(true);
+
         try {
-            ResponseEntity<UniversityResponseDto> response = RequestHelperClass.post("http://localhost:8080/university",
+            ResponseEntity<UniversityResponseDto> response = helper.post("http://localhost:8080/university",
                     UniversityResponseDto.class, body, true);
             statusCode = response.getStatusCode();
         } catch (HttpClientErrorException e) {
@@ -78,8 +69,10 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
 
         String url = "http://localhost:8080/university/" + city + "/" + name;
 
+        RequestHelperClass helper = new RequestHelperClass(true);
+
         try {
-            ResponseEntity<UniversityResponseDto> response = RequestHelperClass.get(url, UniversityResponseDto.class, true);
+            ResponseEntity<UniversityResponseDto> response = helper.get(url, UniversityResponseDto.class, true);
             UniversityResponseDto university = response.getBody();
             assertNotNull(university);
             assertEquals(name, university.getName());
@@ -100,8 +93,10 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
 
         String url = "http://localhost:8080/university";
 
+        RequestHelperClass helper = new RequestHelperClass(true);
+
         try {
-            RequestHelperClass.post(url, UniversityResponseDto.class, body, true);
+            helper.post(url, UniversityResponseDto.class, body, true);
         } catch (HttpClientErrorException e) {
             statusCode = e.getStatusCode();
         }
@@ -119,8 +114,10 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
 
         String url = "http://localhost:8080/university/" + city + "/" + name;
 
+        RequestHelperClass helper = new RequestHelperClass(true);
+
         try {
-            RequestHelperClass.get(url, UniversityResponseDto.class, true);
+            helper.get(url, UniversityResponseDto.class, true);
         } catch (HttpClientErrorException e) {
             assertEquals(404, e.getStatusCode().value());
         }
