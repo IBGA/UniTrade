@@ -1,12 +1,11 @@
 import { Container } from "react-bootstrap"
-import { Toast } from "react-bootstrap"
+import { Toast, ToastContainer } from "react-bootstrap"
 
 const ErrorToast = ({message, onClose, show}) => {
     return (
-        <Container style={{width:1000}}>
+        <ToastContainer position="top-start" style={{padding:20}}>
         <Toast
         bg="danger"
-        position="top-center"
         delay={3000}
         autohide
         show={show}
@@ -19,7 +18,7 @@ const ErrorToast = ({message, onClose, show}) => {
             {message}
           </Toast.Body>
         </Toast>
-        </Container>
+        </ToastContainer>
     )
 }
 

@@ -5,6 +5,8 @@ import Container from 'react-bootstrap/Container';
 import styled from "styled-components";
 import { useState } from 'react';
 import {get, post} from "../utils/client";
+import Nav from 'react-bootstrap/Nav';
+import ErrorToast from './toasts/ErrorToast';
 
 const SignupStyle = styled.div`
     .signup-button {
@@ -42,6 +44,12 @@ export function Signup() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [username, setUsername] = useState('');
 
+    const [loginSuccessful, setLoginSuccessful] = useState(false);
+
+    const [error , setError] = useState('');
+    const [showError, setShowError] = useState(false);
+
+
     const handleChangeFirstName = (e) => setFirstName(e.target.value);
     const handleChangeLastName = (e) => setLastName(e.target.value);
     const handleChangeEmail = (e) => setEmail(e.target.value);
@@ -49,35 +57,57 @@ export function Signup() {
     const handleChangeUsername = (e) => setUsername(e.target.value);
     const handleChangeConfirmPassword = (e) => setConfirmPassword(e.target.value);
 
+    const handleCloseError = () => setShowError(false);
+
     const submitForm = async (e) => {
-        e.preventDefault();
+        try {
+            e.preventDefault();
 
-        if (password !== confirmPassword) {
-            alert("Passwords do not match");
-            return;
+            if (password !== confirmPassword) {
+                throw new Error('Passwords do not match');
+            }
+
+            let response = await post('person', {firstName, lastName, email, password, username});
+            if (typeof response === 'string') {
+                throw new Error(response);
+            }
+            setLoginSuccessful(true);
+        } catch (error) {
+            console.log(error)
+            setError(error.message);
+            setShowError(true);
         }
-
-        let result = await post('person', {firstName, lastName, email, password, username});
-
-        console.log(result);
     }
+
+    if (loginSuccessful) {
+        return (
+            <Container>
+                <h1>Signup Successful</h1>
+                <Nav.Link className="login-link" href="/login">Click here to login!</Nav.Link>
+            </Container>
+        )
+    }
+    
     return (
         <SignupStyle>
+            <ErrorToast message={error} onClose={handleCloseError} show={showError} />
             <Container className='signup-container'>
                 <Card border="light">
                     <Card.Body>
                         <Card.Title className="text-center signup-title"><b>Create Account</b></Card.Title>
                         <Form onSubmit={submitForm}>
-                            <Form.Group className="mb-3" controlId="formBasicFirstName">
-                                <Form.Label>First Name</Form.Label>
-                                <Form.Control type="text" placeholder="First Name" onChange={handleChangeFirstName} />
-                            </Form.Group>
+                            <Container style={{display:'flex', justifyContent:'space-between'}}>
+                                <Form.Group className="mb-3" controlId="formBasicFirstName">
+                                    <Form.Label>First Name</Form.Label>
+                                    <Form.Control type="text" placeholder="First Name" onChange={handleChangeFirstName} />
+                                </Form.Group>
+                                <Form.Group className="mb-3" controlId="formBasicLastName">
+                                    <Form.Label>Last Name</Form.Label>
+                                    <Form.Control type="text" placeholder="Last Name" onChange={handleChangeLastName} />
+                                </Form.Group>
+                            </Container>
 
-                            <Form.Group className="mb-3" controlId="formBasicLastName">
-                                <Form.Label>Last Name</Form.Label>
-                                <Form.Control type="text" placeholder="Last Name" onChange={handleChangeLastName} />
-                            </Form.Group>
-
+                            <Container style={{display:'flex', justifyContent:'space-between'}}>
                             <Form.Group className="mb-3" controlId="formBasicUsername">
                                 <Form.Label>Username</Form.Label>
                                 <Form.Control type="text" placeholder="Last Name" onChange={handleChangeUsername} />
@@ -87,7 +117,9 @@ export function Signup() {
                                 <Form.Label>Email</Form.Label>
                                 <Form.Control type="email" placeholder="Enter email" onChange={handleChangeEmail}/>
                             </Form.Group>
+                            </Container>
 
+                            <Container style={{display:'flex', justifyContent:'space-between'}}>
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type="password" placeholder="Password" onChange={handleChangePassword}/>
@@ -97,6 +129,7 @@ export function Signup() {
                                 <Form.Label>Confirm Password</Form.Label>
                                 <Form.Control type="password" placeholder="Confirm Password" onChange={handleChangeConfirmPassword} />
                             </Form.Group>
+                            </Container>
 
                             <Button variant="dark" type="submit" className='signup-button'>
                                 Sign up
