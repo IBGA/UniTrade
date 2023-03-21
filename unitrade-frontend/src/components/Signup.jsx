@@ -41,7 +41,6 @@ export function Signup() {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [username, setUsername] = useState('');
 
     const [loginSuccessful, setLoginSuccessful] = useState(false);
@@ -55,17 +54,12 @@ export function Signup() {
     const handleChangeEmail = (e) => setEmail(e.target.value);
     const handleChangePassword = (e) => setPassword(e.target.value);
     const handleChangeUsername = (e) => setUsername(e.target.value);
-    const handleChangeConfirmPassword = (e) => setConfirmPassword(e.target.value);
 
     const handleCloseError = () => setShowError(false);
 
     const submitForm = async (e) => {
         try {
             e.preventDefault();
-
-            if (password !== confirmPassword) {
-                throw new Error('Passwords do not match');
-            }
 
             let response = await post('person', {firstName, lastName, email, password, username});
             if (typeof response === 'string') {
@@ -120,14 +114,9 @@ export function Signup() {
                             </Container>
 
                             <Container style={{display:'flex', justifyContent:'space-between'}}>
-                            <Form.Group className="mb-3" controlId="formBasicPassword">
+                            <Form.Group className="mb-3" controlId="formBasicPassword" style={{width:"100%"}}>
                                 <Form.Label>Password</Form.Label>
                                 <Form.Control type="password" placeholder="Password" onChange={handleChangePassword}/>
-                            </Form.Group>
-
-                            <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
-                                <Form.Label>Confirm Password</Form.Label>
-                                <Form.Control type="password" placeholder="Confirm Password" onChange={handleChangeConfirmPassword} />
                             </Form.Group>
                             </Container>
 
