@@ -52,15 +52,15 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
         }
     }
 
-    @When("user registers with email {string} and username {string}")
-    public void user_registers_with_email_and_username(String email, String username) {
+    @When("user registers with email {string}, username {string}, first name {string}, last name {string} and password {string}")
+    public void user_registers_with_email_and_username(String email, String username, String first_name, String last_name, String password) {
         String url;
         PersonRequestDto person = new PersonRequestDto();
         person.setEmail(email);
         person.setUsername(username);
-        person.setPassword("password");
-        person.setFirstName("first");
-        person.setLastName("last");
+        person.setPassword(password);
+        person.setFirstName(first_name);
+        person.setLastName(last_name);
 
         url = "http://localhost:8080/person";
 
@@ -75,8 +75,8 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
         }
     }
 
-    @Then("a new user account with email {string} and username {string} is created")
-    public void a_new_user_account_with_email_and_username_is_created(String email, String username) {
+    @Then("a new user account with email {string}, username {string}, first name {string}, last name {string} and password {string} is created")
+    public void a_new_user_account_with_email_and_username_is_created(String email, String username, String first_name, String last_name, String password) {
         String url;
 
         assertEquals(HttpStatus.CREATED, statusCode);
@@ -87,6 +87,9 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
 
         ResponseEntity<PersonResponseDto> response = helper.get(url, PersonResponseDto.class, true);
         assertEquals(username, response.getBody().getUsername());
+        assertEquals(first_name, response.getBody().getFirstName());
+        assertEquals(last_name, response.getBody().getLastName());
+        
     }
 
     @Given("a user with email {string} or username {string} already exists in the system")
@@ -114,7 +117,7 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
         }
     }
 
-    @Then("an error message is thrown and no new user account is created")
+    @Then("an error is thrown and no new user account is created")
     public void an_error_message_is_thrown() {
         assertTrue(statusCode.is4xxClientError());
     }
@@ -131,23 +134,22 @@ So that I can trade in the online marketplace
 Scenario Outline: User email and username does not already exist in system. (Normal Flow)
 Given user is not logged in
 And a user with email "<email>" or username "<username>" does not already exist in the system
-When user registers with email "<email>" and username "<username>"
-Then a new user account with email "<email>" and username "<username>" is created
+When user registers with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>"
+Then a new user account with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>" is created
 
-Examples:
-| email                  | username          |
-| bob@gmail.com          | b.o.b.            |
-| samson@hotmail.com     | samsonmamson      |
+Examples: 
+| email             | username      | first_name    | last_name     | password      |
+| zidane@zidane.com | zidane        | Zinedine      | Zidane        | zidane        |
+| amidon@gmail.com  | amidon        | Andre         | Agassi        | amidon        |
 
-
-Scenario Outline: User email or username already exists in system. (Error Flow)
+Scenario Outline: User email or username already exist in system. (Error Flow)
 Given user is not logged in
 And a user with email "<email>" or username "<username>" already exists in the system
-When user registers with email "<email>" and username "<username>"
-Then an error is thrown
+When user registers with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>"
+Then a new user account with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>" is not created
 
 Examples:
-| email                  | username          |
-| bob@gmail.com          | b.o.b.            |
-| samson@hotmail.com     | samsonmamson      |
+| email               | username      | first_name    | last_name     | password      |
+| etienne@hotmail.com | etienne       | Etienne       | Capoue        | etienne       |
+| dean35@outlook.com  | dean35        | Dean          | Henderson     | dean35        |
 */
