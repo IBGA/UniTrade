@@ -44,7 +44,7 @@ public class RoleRestController {
     RoleService roleService;
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/role/{id}" })
+    @GetMapping(value = { "/role/id/{id}" })
     public ResponseEntity<RoleResponseDto> getRole(@PathVariable("id") Long id) {
         Role role = roleService.getRole(id);
         return new ResponseEntity<RoleResponseDto>(
