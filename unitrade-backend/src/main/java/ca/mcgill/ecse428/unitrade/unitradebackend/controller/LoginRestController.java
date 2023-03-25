@@ -18,9 +18,9 @@ import jakarta.servlet.http.HttpSession;
         @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
         @ApiResponse(responseCode = "409", description = "Unique constraint violation")
 })
-@PreAuthorize("permitAll()")
 public class LoginRestController {
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/login")
     public void login(HttpServletRequest request) {
         request.getSession();  // create new session (or get current one)

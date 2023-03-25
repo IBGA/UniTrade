@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:8080/';
 
-function headersConstructor(includeSession = true) {
+function headersConstructor(customHeaders = {}) {
   let headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
@@ -8,51 +8,25 @@ function headersConstructor(includeSession = true) {
     'Access-Control-Allow-Headers': 'Content-Type',
   }
 
-  if (includeSession) {
-    headers['Authorization'] = `Basic ${getUserKey()}`;
-    headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
-    headers["Access-Control-Allow-Credentials"] = "true";
+  // Merge custom headers with default headers
+  if (customHeaders) {
+    headers = { ...headers, ...customHeaders };
   }
 
   return headers;
 }
 
-function getUserKey() {
-  const expTime = localStorage.getItem('expTime');
-  if (!expTime || expTime < Date.now()) {
-    localStorage.removeItem('userKey'); // Clear the expired key
-    throw new Error('Session expired');
-  }
-  const userKey = localStorage.getItem('userKey');
-  if (!userKey) throw new Error('Session expired');
-  return userKey;
-}
-
-/**
- * Set or update the user key in the local storage
- * @param {string} email - The email of the user in plain text
- * @param {string} password - The password of the user in plain text
- * @param {number} durationInDays - The duration of the session in days. Default is 1 day
- */
-function setUserKey(email, password, durationInDays = 1) {
-  // Construct the user key
-  const userKey = btoa(`${email}:${password}`);
-  const expTime = Date.now() + 1000 * 60 * 60 * 24 * durationInDays;
-  localStorage.setItem('userKey', userKey);
-  localStorage.setItem('expTime', expTime);
-}
-
 /**
  * GET request to the API
  * @param {string} path - The path of the API. E.g. "api/users"
- * @param {boolean} includeSession - Whether to include the session key in the request. Default is true
+ * @param {object} customHeaders - Custom object of headers to be added to the request
  * @returns Promise<any>
  */
-async function GET(path, includeSession = true) {
+async function GET(path, customHeaders = {}) {
   try {
     let response = await fetch(`${BASE_URL}${path}`, {
       method: 'GET',
-      headers: headersConstructor(includeSession),
+      headers: headersConstructor(customHeaders),
     });
     return response.json();
 
@@ -65,14 +39,14 @@ async function GET(path, includeSession = true) {
 /**
  * POST request to the API
  * @param {string} path - The path of the API. E.g. "api/users"
- * @param {boolean} includeSession - Whether to include the session key in the request. Default is true
+ * @param {object} customHeaders - Custom object of headers to be added to the request
  * @returns Promise<any>
  */
-async function POST(path, body, includeSession = true) {
+async function POST(path, body, customHeaders = {}) {
   try {
     let response = await fetch(`${BASE_URL}${path}`, {
       method: 'POST',
-      headers: headersConstructor(includeSession),
+      headers: headersConstructor(customHeaders),
       body: JSON.stringify(body),
     });
     return response.json();
@@ -85,14 +59,14 @@ async function POST(path, body, includeSession = true) {
 /**
  * PUT request to the API
  * @param {string} path - The path of the API. E.g. "api/users"
- * @param {boolean} includeSession - Whether to include the session key in the request. Default is true
+ * @param {object} customHeaders - Custom object of headers to be added to the request
  * @returns Promise<any>
  */
-async function PUT(path, body = {}, includeSession = true) {
+async function PUT(path, body = {}, customHeaders = {}) {
   try {
     let response = await fetch(`${BASE_URL}${path}`, {
       method: 'PUT',
-      headers: headersConstructor(includeSession),
+      headers: headersConstructor(customHeaders),
       body: JSON.stringify(body),
     });
     return response.json();
@@ -105,14 +79,14 @@ async function PUT(path, body = {}, includeSession = true) {
 /**
  * DELETE request to the API
  * @param {string} path - The path of the API. E.g. "api/users"
- * @param {boolean} includeSession - Whether to include the session key in the request. Default is true
+ * @param {object} customHeaders - Custom object of headers to be added to the request
  * @returns Promise<any>
  */
-async function DELETE(path, includeSession = true) {
+async function DELETE(path, customHeaders = {}) {
   try {
     let response = await fetch(`${BASE_URL}${path}`, {
       method: 'DELETE',
-      headers: headersConstructor(includeSession)
+      headers: headersConstructor(customHeaders)
     });
     return response.json();
   } catch (e) {
@@ -121,4 +95,21 @@ async function DELETE(path, includeSession = true) {
   }
 }
 
-export { GET, POST, PUT, DELETE, setUserKey };
+async function LOGIN(email, password) {
+
+  // Clear the cookies
+  document.cookie = "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+  userKey = btoa(`${email}:${password}`);
+  return POST("login", {
+    'Authorization': `Basic ${userKey}`,
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  });
+}
+
+async function LOGOUT() {
+  return GET("logout");
+}
+
+export { GET, POST, PUT, DELETE, LOGIN, LOGOUT };
