@@ -2,17 +2,12 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.acceptance;
 
 import io.cucumber.java.en.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Base64;
 import java.util.ArrayList;
 import java.sql.Date;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.http.HttpStatus;
 
 
 import org.springframework.http.HttpEntity;
@@ -23,20 +18,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.controller.UniversityRestController;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.UniversityResponseDto;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.UniversityRequestDto;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.controller.ItemPostingRestController;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.ItemPostingResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.ItemPostingRequestDto;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.controller.PersonRestController;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.PersonResponseDto;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.PersonRequestDto;
 
 public class CreateItemPostingStepDefinitions extends AcceptanceTest {
     HttpStatusCode statusCode;
@@ -46,24 +34,24 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
     public void user_creates_an_item_posting_with_title_and_description_and_price_for_university_with_name_and_city(String title, String description, Long price, String universityName, String universityCity) {
         RestTemplate restTemplate = new RestTemplate();
         Long universityId = null;
-        Long posterId = null;
         //Long price = Long.parseLong(itemPrice);
 
         String url = "http://localhost:8080/university/" + universityCity + "/" + universityName;
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization",
+                "Basic " + Base64.getEncoder().encodeToString(("testEmail" + ":" + "testPassword").getBytes()));
+        headers.set("Access-Control-Allow-Credentials", "true");
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
         try {
-            ResponseEntity<UniversityResponseDto> response = restTemplate.getForEntity(url, UniversityResponseDto.class);
+            ResponseEntity<UniversityResponseDto> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+                    UniversityResponseDto.class);
             universityId = response.getBody().getId();
         } catch (HttpClientErrorException e) {
             statusCode = e.getStatusCode();
-        }
-
-        try {
-            url = "http://localhost:8080/person";
-            ResponseEntity<PersonResponseDto[]> persons = restTemplate.getForEntity(url, PersonResponseDto[].class);
-            posterId = persons.getBody()[0].getId();
-        } catch (HttpClientErrorException e) {
-            statusCode = e.getStatusCode();
+            if(statusCode.value() == 404) return;
         }
 
         url = "http://localhost:8080/itemposting";
@@ -73,33 +61,44 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
         itemPostingRequestDto.setDescription(description);
         itemPostingRequestDto.setPrice(price);
         itemPostingRequestDto.setUniversityId(universityId);
-        itemPostingRequestDto.setPosterId(posterId);
+        // itemPostingRequestDto.setPosterId(posterId);
         itemPostingRequestDto.setDatePosted(new Date(2));
         itemPostingRequestDto.setCourseIds(new ArrayList<>());
         itemPostingRequestDto.setBuyerId(null);
         itemPostingRequestDto.setAvailable(true);
 
+        HttpEntity<ItemPostingRequestDto> itemPostingEntity = new HttpEntity<>(itemPostingRequestDto, headers);
+
         try {
-            restTemplate.postForEntity(url, itemPostingRequestDto, ItemPostingResponseDto.class);
+            restTemplate.exchange(url, HttpMethod.POST, itemPostingEntity, ItemPostingResponseDto.class);
         } catch (HttpClientErrorException e) {
             statusCode = e.getStatusCode();
         }
-
     }
 
     @Then("the item posting is created and linked to the university with name {string} and city {string}")
     public void the_item_posting_is_created_and_linked_to_the_university_with_name_and_city(String universityName, String universityCity) {
         RestTemplate restTemplate = new RestTemplate();
         Long universityId = null;
-        Long posterId = null;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization",
+                "Basic " + Base64.getEncoder().encodeToString(("testEmail" + ":" + "testPassword").getBytes()));
+        headers.set("Access-Control-Allow-Credentials", "true");
 
         String url = "http://localhost:8080/university/" + universityCity + "/" + universityName;
 
-        ResponseEntity<UniversityResponseDto> response = restTemplate.getForEntity(url, UniversityResponseDto.class);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<UniversityResponseDto> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+                UniversityResponseDto.class);
+
         universityId = response.getBody().getId();
 
         url = "http://localhost:8080/itemposting/university/" + universityId;
-        ResponseEntity<ItemPostingResponseDto[]> itemPostings = restTemplate.getForEntity(url, ItemPostingResponseDto[].class);
+        ResponseEntity<ItemPostingResponseDto[]> itemPostings = restTemplate.exchange(url, HttpMethod.GET, entity,
+                ItemPostingResponseDto[].class);
+
         for (ItemPostingResponseDto itemPosting : itemPostings.getBody()) {
             if (itemPosting.getTitle().equals("CSC108 textbook")) {
                 assertEquals("CSC108 textbook", itemPosting.getTitle());
@@ -116,7 +115,7 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
 
     @Then("the item posting is not created and an error is thrown")
     public void the_item_posting_is_not_created_and_an_error_is_thrown() {
-        assertTrue(statusCode.is4xxClientError());
+        assertEquals(404, statusCode.value());
     }
 }
 

@@ -3,14 +3,15 @@ import { beforeEach } from 'vitest';
 import TestRenderer from 'react-test-renderer';
 import { BrowseItemPostingPage } from '../../pages/BrowseItemPostingPage';
 import { get, post } from '../../utils/client';
+import {ItemPostingThumbnail} from "../../components/ItemPosting.jsx";
 
 const feature = loadFeature('../features/ID021_Browse_all_item_postings.feature');
 
-jest.mock('react-select', () => ({
-  // Mock implementation for startListeningComposition function
-  startListeningComposition: () => {},
-  // You can add more mock implementations for other functions used by react-select here
-}));
+// vitest.mock('react-select', () => ({
+//   // Mock implementation for startListeningComposition function
+//   startListeningComposition: () => {},
+//   // You can add more mock implementations for other functions used by react-select here
+// }));
 
 let testRenderer = TestRenderer.create(<BrowseItemPostingPage/>);
 let testInstance = testRenderer.root;
@@ -68,9 +69,10 @@ defineFeature(feature, (test) => {
       // empty cz UI sets the default to all postings
     });
 
-    then('all available item postings are displayed', () => {
+    then('all available item postings are displayed', async () => {
       let itemPostings = testInstance.findAllByType(ItemPostingThumbnail);
-      expect(itemPostings.length).toBe(get('itemposting').length);
+      let onDatabase = await get('itemposting');
+      expect(itemPostings.length).toBe(onDatabase.length);
     });
   });
 
@@ -80,8 +82,8 @@ defineFeature(feature, (test) => {
       // not implemented yet
     });
 
-    and('there are no available item postings', () => {
-      itemPostingIds = get('itemposting').map(item => item.id);
+    and('there are no available item postings', async () => {
+      let itemPostingIds = (await get('itemposting')).map(item => item.id);
       itemPostingIds.forEach(id => {
         delete('itemposting', id);
       });

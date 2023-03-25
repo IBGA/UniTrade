@@ -1,13 +1,15 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.service;
 
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.PersonRepository;
+import ca.mcgill.ecse428.unitrade.unitradebackend.security.CustomUserDetails;
 
 @Service
 public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
@@ -18,17 +20,15 @@ public class UserDetailsService implements org.springframework.security.core.use
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         Person person = personRepository.findByEmail(email);
-        if (person == null) throw new UsernameNotFoundException("User does not exist or is not available.");
-        if (!person.isEnabled()) throw new UsernameNotFoundException("User does not exist or is not available.");
-        
-        String[] roles = {"USER"}; // Default logged-in user role
+        if (person == null || !person.isEnabled()) throw new UsernameNotFoundException("User does not exist or is not available.");
 
-        UserDetails userDetails = 
-            User.withUsername(person.getEmail())
-                .password(person.getPassword())
-                .roles(roles)
-                .build();
+        String[] roles = {"ROLE_USER"}; // Default logged-in user role
+
+        UserDetails userDetails = new CustomUserDetails(
+                person.getId(),
+                person.getEmail(),
+                person.getPassword(),
+                AuthorityUtils.createAuthorityList(roles));
         return userDetails;
     }
-    
 }

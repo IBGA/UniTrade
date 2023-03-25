@@ -7,8 +7,10 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.UserDetailsService;
 
@@ -22,7 +24,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf(csrf -> csrf.disable())
+        http.csrf(csrf -> csrf.disable())
                 .cors()
                 .and()
                 // .authorizeHttpRequests(
@@ -33,7 +35,16 @@ public class SecurityConfig {
                 //     })
                 .userDetailsService(userDetailsService)
                 .httpBasic(Customizer.withDefaults()) // HTTP Basic Authentication
-                .build();
+                .securityContext(context -> context
+                    .securityContextRepository(new HttpSessionSecurityContextRepository())
+                )
+                .sessionManagement(sessionManagement -> sessionManagement
+                    .sessionCreationPolicy(SessionCreationPolicy.NEVER)
+                    .sessionConcurrency((sessionConcurrency) -> sessionConcurrency
+                             .maximumSessions(1)
+                     )
+                );
+        return http.build();
     }
 
     @Bean

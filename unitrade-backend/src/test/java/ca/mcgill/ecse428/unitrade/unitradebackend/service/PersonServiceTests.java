@@ -27,6 +27,7 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.CourseRepository;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.PersonRepository;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.UniversityRepository;
+import ca.mcgill.ecse428.unitrade.unitradebackend.security.CredentialsEncoder;
 
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
@@ -140,7 +141,10 @@ public class PersonServiceTests {
         assertEquals(username, person.getUsername());
         assertEquals(firstName, person.getFirstName());
         assertEquals(lastName, person.getLastName());
-        assertEquals(password, person.getPassword());
+        // assertEquals(password, person.getPassword());
+        CredentialsEncoder encoder = new CredentialsEncoder();
+        assertTrue(encoder.matches(password, person.getPassword()));
+
         assertEquals(profilePicture, person.getProfilePicture());
         assertEquals(universityId, person.getUniversity().getId());
     }

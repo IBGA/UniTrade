@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.ItemPostingRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.ItemPostingResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.ItemPosting;
+import ca.mcgill.ecse428.unitrade.unitradebackend.security.CustomUserDetails;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.ItemPostingService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -31,6 +34,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
         @ApiResponse(responseCode = "404", description = "Referenced resource not found"),
         @ApiResponse(responseCode = "409", description = "Unique constraint violation")
 })
+@PreAuthorize("hasRole('USER')")
 public class ItemPostingRestController {
     @Autowired
     ItemPostingService itemPostingService;
@@ -38,12 +42,24 @@ public class ItemPostingRestController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = { "/itemposting" })
     public ResponseEntity<ItemPostingResponseDto> createItemPosting(@RequestBody ItemPostingRequestDto body) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Get the email of the authenticated user
+        Long authId = null;
+
+        if (principal instanceof UserDetails) {
+            authId = ((CustomUserDetails) principal).getId();
+        } else {
+            return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.EXPECTATION_FAILED);
+        }
+
         ItemPosting itemPosting = itemPostingService.createItemPosting(
                 body.getTitle(),
                 body.getDescription(),
                 body.getDatePosted(),
                 body.getUniversityId(),
-                body.getPosterId(),
+                authId,
                 body.getCourseIds(),
                 body.isAvailable(),
                 body.getPrice(),
