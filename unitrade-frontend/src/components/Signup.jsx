@@ -66,8 +66,8 @@ export function Signup() {
         e.preventDefault();
 
         const res = await POST('person', {firstName, lastName, email, password, username}, false);
-        if (res.error) {
-            setError(res.error.toString());
+        if (typeof res === 'string') {
+            setError(res);
             setShowError(true);
         } else {
             setAccountCreated(true);
