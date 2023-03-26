@@ -90,6 +90,48 @@ public class PersonRestController {
         return new ResponseEntity<List<PersonResponseDto>>(
                 personResponseDtos, HttpStatus.OK);
     }
+//     @ResponseStatus(HttpStatus.OK)
+//     @GetMapping(value = { "/person/id/{id}" })
+//     public ResponseEntity<PersonResponseDto> getPerson(@PathVariable("id") Long id) {
+//         return new ResponseEntity<PersonResponseDto>(
+//                 PersonResponseDto.createDto(personService.getPerson(id), true), HttpStatus.OK);
+//     }
+
+//     @ResponseStatus(HttpStatus.OK)
+//     @GetMapping(value = { "/person/email/{email}" })
+//     public ResponseEntity<PersonResponseDto> getPersonByEmail(@PathVariable("email") String email) {
+//         return new ResponseEntity<PersonResponseDto>(
+//                 PersonResponseDto.createDto(personService.getPersonByEmail(email), true), HttpStatus.OK);
+//     }
+
+//     @ResponseStatus(HttpStatus.OK)
+//     @GetMapping(value = { "/person" })
+//     public ResponseEntity<List<PersonResponseDto>> getAllPersons() {
+//         List<Person> persons = personService.getAllPersons();
+//         List<PersonResponseDto> personResponseDtos = new ArrayList<PersonResponseDto>();
+//         for (Person person : persons) {
+//             personResponseDtos.add(PersonResponseDto.createDto(person));
+//         }
+
+//         return new ResponseEntity<List<PersonResponseDto>>(
+//                 personResponseDtos, HttpStatus.OK);
+//     }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/person/exists/email/{email}" })
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<Boolean> personExistsWithEmail(@PathVariable("email") String email) {
+        return new ResponseEntity<Boolean>(
+                personService.personExistsWithEmail(email), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/person/exists/username/{username}" })
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<Boolean> personExistsWithUsername(@PathVariable("username") String username) {
+        return new ResponseEntity<Boolean>(
+                personService.personExistsWithUsername(username), HttpStatus.OK);
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/person" })
