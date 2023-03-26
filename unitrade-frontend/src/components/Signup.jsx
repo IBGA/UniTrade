@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import styled from "styled-components";
 import { useState } from 'react';
-import {get, post} from "../utils/client";
+import {GET, POST} from "../utils/client";
 import Nav from 'react-bootstrap/Nav';
 import ErrorToast from './toasts/ErrorToast';
 

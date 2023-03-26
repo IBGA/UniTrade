@@ -3,9 +3,8 @@ const BASE_URL = 'http://localhost:8080/';
 function headersConstructor(customHeaders = {}) {
   let headers = {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type'
   }
 
   // Merge custom headers with default headers
@@ -13,6 +12,7 @@ function headersConstructor(customHeaders = {}) {
     headers = { ...headers, ...customHeaders };
   }
 
+  console.log(headers)
   return headers;
 }
 
@@ -22,13 +22,19 @@ function headersConstructor(customHeaders = {}) {
  * @param {object} customHeaders - Custom object of headers to be added to the request
  * @returns Promise<any>
  */
-async function GET(path, customHeaders = {}) {
+async function GET(path, customHeaders = {}, excludeCredentials = false) {
   try {
     let response = await fetch(`${BASE_URL}${path}`, {
       method: 'GET',
       headers: headersConstructor(customHeaders),
+      credentials: excludeCredentials ? 'omit' : 'include'
     });
-    return response.json();
+    let data = await response.text();
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return data;
+    }
 
   } catch (e) {
     console.log(e);
@@ -39,6 +45,7 @@ async function GET(path, customHeaders = {}) {
 /**
  * POST request to the API
  * @param {string} path - The path of the API. E.g. "api/users"
+ * @param {object} body - The body of the request
  * @param {object} customHeaders - Custom object of headers to be added to the request
  * @returns Promise<any>
  */
@@ -48,8 +55,14 @@ async function POST(path, body, customHeaders = {}) {
       method: 'POST',
       headers: headersConstructor(customHeaders),
       body: JSON.stringify(body),
+      credentials: 'include'
     });
-    return response.json();
+    let data = await response.text();
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return data;
+    }
   } catch (e) {
     console.log(e);
     return { error: e };
@@ -59,6 +72,7 @@ async function POST(path, body, customHeaders = {}) {
 /**
  * PUT request to the API
  * @param {string} path - The path of the API. E.g. "api/users"
+ * @param {object} body - The body of the request. E.g. { "name": "John"
  * @param {object} customHeaders - Custom object of headers to be added to the request
  * @returns Promise<any>
  */
@@ -68,8 +82,14 @@ async function PUT(path, body = {}, customHeaders = {}) {
       method: 'PUT',
       headers: headersConstructor(customHeaders),
       body: JSON.stringify(body),
+      credentials: 'include'
     });
-    return response.json();
+    let data = await response.text();
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return data;
+    }
   } catch (e) {
     console.log(e);
     return { error: e };
@@ -86,9 +106,15 @@ async function DELETE(path, customHeaders = {}) {
   try {
     let response = await fetch(`${BASE_URL}${path}`, {
       method: 'DELETE',
-      headers: headersConstructor(customHeaders)
+      headers: headersConstructor(customHeaders),
+      credentials: 'include',
     });
-    return response.json();
+    let data = await response.text();
+    try {
+      return JSON.parse(data);
+    } catch (e) {
+      return data;
+    }
   } catch (e) {
     console.log(e);
     return { error: e };
@@ -97,15 +123,11 @@ async function DELETE(path, customHeaders = {}) {
 
 async function LOGIN(email, password) {
 
-  // Clear the cookies
-  document.cookie = "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-  userKey = btoa(`${email}:${password}`);
-  return POST("login", {
-    'Authorization': `Basic ${userKey}`,
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Credentials': 'true'
-  });
+  const login = await POST("login", {}, {'Authorization': `Basic ${btoa(`${email}:${password}`)}`,
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Credentials': 'true'});
+  if (res.error) return res;
+  return GET("authenticated");
 }
 
 async function LOGOUT() {
