@@ -3,14 +3,17 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import styled from "styled-components";
-import { useState } from 'react';
-import {GET, POST} from "../utils/client";
+import { useState, useEffect } from 'react';
 import Nav from 'react-bootstrap/Nav';
 import ErrorToast from './toasts/ErrorToast';
+import { useAuth } from "./AuthProvider";
+import { POST } from "../utils/client";
 
 const SignupStyle = styled.div`
     .signup-button {
         width: 100%;
+        background-color: var(--secondary);
+        border: none;
     }
 
     .signup-container {
@@ -29,6 +32,7 @@ const SignupStyle = styled.div`
 
     .login-link {
         margin-top: 20px;
+        color: var(--primary);
     }
 
     .login-link-btn {
@@ -37,13 +41,14 @@ const SignupStyle = styled.div`
 `;
 
 export function Signup() {
+    const {auth} = useAuth();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
 
-    const [loginSuccessful, setLoginSuccessful] = useState(false);
+    const [accountCreated, setAccountCreated] = useState(false);
 
     const [error , setError] = useState('');
     const [showError, setShowError] = useState(false);
@@ -57,26 +62,27 @@ export function Signup() {
 
     const handleCloseError = () => setShowError(false);
 
-    const submitForm = async (e) => {
-        try {
-            e.preventDefault();
+    const handleSignupSubmit = async (e) => {
+        e.preventDefault();
 
-            let response = await post('person', {firstName, lastName, email, password, username});
-            if (typeof response === 'string') {
-                throw new Error(response);
-            }
-            setLoginSuccessful(true);
-        } catch (error) {
-            console.log(error)
-            setError(error.message);
+        const res = await POST('person', {firstName, lastName, email, password, username}, false);
+        if (res.error) {
+            setError(res.error.toString());
             setShowError(true);
+        } else {
+            setAccountCreated(true);
         }
     }
 
-    if (loginSuccessful) {
+    useEffect(() => {
+        // If already logged in, redirect to home page
+        if (auth) navigate('/');
+    });
+
+    if (accountCreated) {
         return (
             <Container>
-                <h1>Signup Successful</h1>
+                <h1>You have successfully created an account!</h1>
                 <Nav.Link className="login-link" href="/login">Click here to login!</Nav.Link>
             </Container>
         )
@@ -89,7 +95,7 @@ export function Signup() {
                 <Card border="light">
                     <Card.Body>
                         <Card.Title className="text-center signup-title"><b>Create Account</b></Card.Title>
-                        <Form onSubmit={submitForm}>
+                        <Form onSubmit={handleSignupSubmit}>
                             <Container style={{display:'flex', justifyContent:'space-between'}}>
                                 <Form.Group className="mb-3" controlId="formBasicFirstName">
                                     <Form.Label>First Name</Form.Label>
