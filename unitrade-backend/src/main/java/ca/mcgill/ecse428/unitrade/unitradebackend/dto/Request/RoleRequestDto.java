@@ -1,7 +1,5 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role.ModerationRole;
-
 public class RoleRequestDto {
     private Long id;
     private Long personId;

@@ -71,6 +71,13 @@ public class RoleService {
                         String.format("Person with id %d not found", requesterId));
             }
 
+            // check if newMod is already a helper of university
+            Role existingRole = roleRepository.findByPersonAndUniversity(newMod, university);
+            if (existingRole != null) {
+                throw new ServiceLayerException(HttpStatus.BAD_REQUEST, String.format(
+                        "Person with id %d is already a %s of university with id %d", newModId, existingRole.getRole().toString(), universityId));
+            }
+
             try {
                 Role r = getRoleFromPersonAndUniversity(requesterId, universityId);
                 if (r.getRole() != ModerationRole.ADMINISTRATOR) {
@@ -110,11 +117,18 @@ public class RoleService {
 
         Role role = roleRepository.findByPerson(person);
 
-       // ModerationRole modRole = role.getRole();
-        roleRepository.save(role);
+        if (role == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Role with person id %d not found", personId));
+        }
 
         return role;
 
+    }
+
+    @Transactional
+    public boolean isAdministrator(Long requesterId, Long universityId) {
+        return getRoleFromPersonAndUniversity(requesterId, universityId).getRole() == ModerationRole.ADMINISTRATOR;
     }
 
     @Transactional

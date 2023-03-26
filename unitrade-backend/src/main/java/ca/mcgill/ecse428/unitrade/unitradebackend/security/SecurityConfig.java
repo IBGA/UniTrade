@@ -11,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.UserDetailsService;
 
@@ -27,6 +29,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors()
                 .and()
+                .formLogin().disable()
                 // .authorizeHttpRequests(
                 //     auth -> {
                         // auth.requestMatchers("/").permitAll();
@@ -51,5 +54,15 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new CredentialsEncoder();
     }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("http://localhost:5173").allowCredentials(true);
+			}
+		};
+	}
     
 }

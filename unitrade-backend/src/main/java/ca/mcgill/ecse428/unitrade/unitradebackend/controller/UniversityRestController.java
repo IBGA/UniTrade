@@ -75,6 +75,7 @@ public class UniversityRestController {
     @PutMapping(value = { "/university" })
     public ResponseEntity<UniversityResponseDto> updateUniversity(@RequestBody UniversityRequestDto body) {
         University university = universityService.updateUniversity(
+                ControllerHelper.getAuthenticatedUserId(),
                 body.getId(),
                 body.getName(),
                 body.getCity(),
@@ -99,7 +100,7 @@ public class UniversityRestController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = { "/university/{id}" })
     public ResponseEntity<UniversityResponseDto> deleteUniversity(@PathVariable("id") Long id) {
-        universityService.deleteUniversity(id);
+        universityService.deleteUniversity(ControllerHelper.getAuthenticatedUserId(), id);
         return new ResponseEntity<UniversityResponseDto>(HttpStatus.OK);
     }
 }

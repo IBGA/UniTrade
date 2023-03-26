@@ -87,6 +87,11 @@ public class PersonResponseDto {
     }
 
     public static PersonResponseDto createDto(Person person) {
+        return createDto(person, true);
+    }
+
+
+    public static PersonResponseDto createDto(Person person, boolean basicInfoOnly) {
         List<CourseResponseDto> courses = new ArrayList<CourseResponseDto>();
         UniversityResponseDto universityDto = null;
 
@@ -100,13 +105,22 @@ public class PersonResponseDto {
             universityDto = UniversityResponseDto.createDto(person.getUniversity());
         }
 
+        Long id = person.getId();
+        String email = person.getEmail();
+        String password = person.getPassword();
+
+        if (basicInfoOnly) {
+            id = null;
+            password = null;
+        }
+
         PersonResponseDto dto = new PersonResponseDto(
-            person.getId(),
-            person.getEmail(),
+            id,
+            email,
             person.getUsername(),
             person.getFirstName(),
             person.getLastName(),
-            person.getPassword(),
+            password,
             person.getLastOnline(),
             person.getProfilePicture(),
             person.isOnline(),

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.exception.ServiceLayerException;
+import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role.ModerationRole;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.PersonRepository;
@@ -106,12 +107,26 @@ public class UniversityService {
 
     @Transactional
     public University updateUniversity(
-            Long id,
+            Long authId,
+            Long universityId,
             String name,
             String city,
             String description) {
+
+        Person requester = personRepository.findById(authId).orElse(null);
+        if (requester == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("Person with id %d not found", authId));
+        }
+
+        // Check if requester is an administrator (Error -> 403)
+        if (!roleService.isAdministrator(authId, universityId)) {
+            throw new ServiceLayerException(HttpStatus.FORBIDDEN,
+                    String.format("Person with id %d is not an administrator of university with id %d", authId, universityId));
+        }
+
         // Validate input syntax (Error -> 400)
-        if (id == null) {
+        if (universityId == null) {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
         }
 
@@ -124,10 +139,10 @@ public class UniversityService {
         }
 
         // Check if university exists (Error -> 404)
-        University university = universityRepository.findById(id).orElse(null);
+        University university = universityRepository.findById(universityId).orElse(null);
         if (university == null) {
             throw new ServiceLayerException(HttpStatus.NOT_FOUND,
-                    String.format("University with id %d not found", id));
+                    String.format("University with id %d not found", universityId));
         }
 
         // Update university
@@ -143,17 +158,30 @@ public class UniversityService {
     }
 
     @Transactional
-    public void deleteUniversity(Long id) {
+    public void deleteUniversity(Long authId, Long universityId) {
+
+        Person requester = personRepository.findById(authId).orElse(null);
+        if (requester == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("Person with id %d not found", authId));
+        }
+
+        // Check if requester is an administrator (Error -> 403)
+        if (!roleService.isAdministrator(authId, universityId)) {
+            throw new ServiceLayerException(HttpStatus.FORBIDDEN,
+                    String.format("Person with id %d is not an administrator of university with id %d", authId, universityId));
+        }
+
         // Validate input syntax (Error -> 400)
-        if (id == null) {
+        if (universityId == null) {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
         }
 
         // Check if university exists (Error -> 404)
-        University university = universityRepository.findById(id).orElse(null);
+        University university = universityRepository.findById(universityId).orElse(null);
         if (university == null) {
             throw new ServiceLayerException(HttpStatus.NOT_FOUND,
-                    String.format("University with id %d not found", id));
+                    String.format("University with id %d not found", universityId));
         }
 
         // Delete university
