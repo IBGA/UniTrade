@@ -10,18 +10,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.RoleRequestDto;
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.PersonResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.RoleResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role.ModerationRole;
-import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.PersonService;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.RoleService;
 

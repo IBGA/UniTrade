@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.ItemPostingRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.ItemPostingResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.ItemPosting;
-import ca.mcgill.ecse428.unitrade.unitradebackend.security.CustomUserDetails;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.ItemPostingService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -43,16 +40,7 @@ public class ItemPostingRestController {
     @PostMapping(value = { "/itemposting" })
     public ResponseEntity<ItemPostingResponseDto> createItemPosting(@RequestBody ItemPostingRequestDto body) {
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        // Get the email of the authenticated user
-        Long authId = null;
-
-        if (principal instanceof UserDetails) {
-            authId = ((CustomUserDetails) principal).getId();
-        } else {
-            return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.EXPECTATION_FAILED);
-        }
+        Long authId = ControllerHelper.getAuthenticatedUserId();
 
         ItemPosting itemPosting = itemPostingService.createItemPosting(
                 body.getTitle(),
@@ -133,16 +121,7 @@ public class ItemPostingRestController {
     @DeleteMapping(value = { "/itemposting/{id}" })
     public ResponseEntity<ItemPostingResponseDto> deleteItemPosting(@PathVariable("id") Long id) {
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        // Get the email of the authenticated user
-        Long authId = null;
-
-        if (principal instanceof UserDetails) {
-            authId = ((CustomUserDetails) principal).getId();
-        } else {
-            return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.EXPECTATION_FAILED);
-        }
+        Long authId = ControllerHelper.getAuthenticatedUserId();
 
         ItemPosting itemPosting = itemPostingService.getItemPosting(id);
 
