@@ -111,7 +111,6 @@ public class PersonResponseDto {
 
         if (basicInfoOnly) {
             id = null;
-            email = null;
             password = null;
         }
 
