@@ -169,6 +169,17 @@ public class PersonService {
     }
 
     @Transactional
+    public List<String> getAllUsernames() {
+        List<Person> persons = personRepository.findAll();
+        List<String> usernames = new ArrayList<>();
+
+        for (Person person : persons) {
+            usernames.add(person.getUsername());
+        }
+        return usernames;
+    }
+
+    @Transactional
     public Person updatePersonInformation(
             Long id,
             String firstName,
