@@ -58,28 +58,28 @@ public class PersonRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/person/id/{id}" })
+    // @GetMapping(value = { "/person/id/{id}" })
     public ResponseEntity<PersonResponseDto> getPerson(@PathVariable("id") Long id) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.getPerson(id)), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/person/email/{email}" })
+    // @GetMapping(value = { "/person/email/{email}" })
     public ResponseEntity<PersonResponseDto> getPersonByEmail(@PathVariable("email") String email) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.getPersonByEmail(email)), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/person/username/{username}" })
+    // @GetMapping(value = { "/person/username/{username}" })
     public ResponseEntity<PersonResponseDto> getPersonByUsername(@PathVariable("username") String username) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.getPersonByUsername(username)), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/person" })
+    // @GetMapping(value = { "/person" })
     public ResponseEntity<List<PersonResponseDto>> getAllPersons() {
         List<Person> persons = personService.getAllPersons();
         List<PersonResponseDto> personResponseDtos = new ArrayList<PersonResponseDto>();
@@ -89,6 +89,14 @@ public class PersonRestController {
 
         return new ResponseEntity<List<PersonResponseDto>>(
                 personResponseDtos, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/person/exists/{email}" })
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<Boolean> personExists(@PathVariable("email") String email) {
+        return new ResponseEntity<Boolean>(
+                personService.isPersonExist(email), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)

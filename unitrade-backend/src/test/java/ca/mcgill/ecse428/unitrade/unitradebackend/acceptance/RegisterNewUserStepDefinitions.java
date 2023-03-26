@@ -27,29 +27,29 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
 
     @Given("a user with email {string} or username {string} does not already exist in the system")
     public void a_user_with_email_or_username_does_not_already_exist_in_the_system(String email, String username) {
-        Long id;
-        String url;
+        // Long id;
+        // String url;
 
-        RequestHelperClass helper = new RequestHelperClass(true);
+        // RequestHelperClass helper = new RequestHelperClass(true);
 
-        try {
-            url = "http://localhost:8080/person/email/" + email;
-            ResponseEntity<PersonResponseDto> response = helper.get(url, PersonResponseDto.class, true);
-            id = response.getBody().getId();
-            url = "http://localhost:8080/person/" + id;
-            helper.delete(url, true);
-        } catch (HttpClientErrorException e) {
-            statusCode = e.getStatusCode();
-        }
-        try {
-            url = "http://localhost:8080/person/username/" + username;
-            ResponseEntity<PersonResponseDto> response = helper.get(url, PersonResponseDto.class, true);
-            id = response.getBody().getId();
-            url = "http://localhost:8080/person/" + id;
-            helper.delete(url, true);
-        } catch (HttpClientErrorException e) {
-            statusCode = e.getStatusCode();
-        }
+        // try {
+        //     url = "http://localhost:8080/person/email/" + email;
+        //     ResponseEntity<PersonResponseDto> response = helper.get(url, PersonResponseDto.class, true);
+        //     id = response.getBody().getId();
+        //     url = "http://localhost:8080/person/" + id;
+        //     helper.delete(url, true);
+        // } catch (HttpClientErrorException e) {
+        //     statusCode = e.getStatusCode();
+        // }
+        // try {
+        //     url = "http://localhost:8080/person/username/" + username;
+        //     ResponseEntity<PersonResponseDto> response = helper.get(url, PersonResponseDto.class, true);
+        //     id = response.getBody().getId();
+        //     url = "http://localhost:8080/person/" + id;
+        //     helper.delete(url, true);
+        // } catch (HttpClientErrorException e) {
+        //     statusCode = e.getStatusCode();
+        // }
     }
 
     @When("user registers with email {string}, username {string}, first name {string}, last name {string} and password {string}")
@@ -81,15 +81,12 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
 
         assertEquals(HttpStatus.CREATED, statusCode);
 
-        url = "http://localhost:8080/person/email/" + email;
+        url = "http://localhost:8080/person/exists/" + email;
 
-        RequestHelperClass helper = new RequestHelperClass(true);
+        RequestHelperClass helper = new RequestHelperClass(false);
 
-        ResponseEntity<PersonResponseDto> response = helper.get(url, PersonResponseDto.class, true);
-        assertEquals(username, response.getBody().getUsername());
-        assertEquals(first_name, response.getBody().getFirstName());
-        assertEquals(last_name, response.getBody().getLastName());
-        
+        ResponseEntity<Boolean> response = helper.get(url, Boolean.class, false);
+        assertTrue(response.getBody());
     }
 
     @Given("a user with email {string} or username {string} already exists in the system")
