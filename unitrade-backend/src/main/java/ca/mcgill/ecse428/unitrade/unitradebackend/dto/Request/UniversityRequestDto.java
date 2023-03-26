@@ -1,7 +1,5 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request;
 
-import java.util.List;
-
 public class UniversityRequestDto {
 
     private Long id;
@@ -9,7 +7,6 @@ public class UniversityRequestDto {
     private String name;
     private String city;
     private String description;
-    private List<Long> moderationIds;
 
     public Long getId() {
         return id;
@@ -42,13 +39,4 @@ public class UniversityRequestDto {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public List<Long> getModerationIds() {
-        return moderationIds;
-    }
-
-    public void setModerationIds(List<Long> moderationIds) {
-        this.moderationIds = moderationIds;
-    }
-
 }

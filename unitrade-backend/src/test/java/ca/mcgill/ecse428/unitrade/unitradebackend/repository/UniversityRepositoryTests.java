@@ -7,7 +7,6 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,6 @@ public class UniversityRepositoryTests {
     @Test
     public void testPersistAndLoadUniversity() {
         University university = new University();
-        List<Role> moderators;
         Person moderator = new Person();
         Role role = new Role();
 
@@ -44,7 +42,6 @@ public class UniversityRepositoryTests {
         moderator.setUsername("moderator");
         role.setRole(modRole);
         role.setPerson(moderator);
-        moderators = List.of(role);
 
         String name = "McGill University";
         String city = "McGill";
@@ -53,8 +50,7 @@ public class UniversityRepositoryTests {
         university.setName(name);
         university.setCity(city);
         university.setDescription(description);
-        university.setModeration(moderators);
-        
+
         moderator = personRepository.save(moderator);
         role = roleRepository.save(role);
         university = universityRepository.save(university);
@@ -67,7 +63,5 @@ public class UniversityRepositoryTests {
         assertEquals(name, university.getName());
         assertEquals(city, university.getCity());
         assertEquals(description, university.getDescription());
-        assertEquals(moderators, university.getModeration());
-
     }
 }
