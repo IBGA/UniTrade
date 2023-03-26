@@ -8,16 +8,17 @@ import Spinner from 'react-bootstrap/Spinner';
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from 'react';
-import { LOGIN, GET } from "../utils/client";
-
+import { LOGIN } from "../utils/client";
+import { useAuth } from "./AuthProvider";
 
 const LoginStyle = styled.div`
     .login-button {
         width: 100%;
+        background-color: var(--secondary);
+        border: none;
     }
     .login-container {
         max-width: 600px;
-        min-height: 100vh;
         margin-top: 200px;
     }
     .border-light {
@@ -36,6 +37,7 @@ const LoginStyle = styled.div`
 
 export function Login() {
 
+    const {auth, setAuth} = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [waiting, setWaiting] = useState(false);
@@ -44,13 +46,8 @@ export function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        async function loginPulse() {
-            // Check if user is already logged in
-            const res = await GET('authenticated', {});
-            if (!res.error) navigate('/');
-        }
-        loginPulse();
-    }, []);
+        if (auth) navigate('/');
+    });
 
     async function handleLoginSubmit(e) {
         e.preventDefault();
@@ -70,6 +67,7 @@ export function Login() {
             setLoginError(true);
         } else {
             // Successful login, redirect to home page
+            setAuth(true);
             navigate('/');
         }
     }
@@ -89,12 +87,12 @@ export function Login() {
                         <Form onSubmit={handleLoginSubmit}>
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Email</Form.Label>
-                                <Form.Control type="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)}/>
+                                <Form.Control type="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)}/>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
+                                <Form.Control type="password" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)}/>
                             </Form.Group>
                             <Button variant="dark" type="submit" className='login-button' disabled={waiting}>
                                 {waiting && 

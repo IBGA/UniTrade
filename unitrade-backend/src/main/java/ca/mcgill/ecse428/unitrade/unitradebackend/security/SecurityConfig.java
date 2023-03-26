@@ -1,8 +1,5 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.security;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,9 +11,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -35,6 +29,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors()
                 .and()
+                .formLogin().disable()
                 // .authorizeHttpRequests(
                 //     auth -> {
                         // auth.requestMatchers("/").permitAll();

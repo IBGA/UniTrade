@@ -15,7 +15,7 @@ const GlobalStyles = createGlobalStyle`
     --grey: #02353C;
     --pale: #C1F6ED;
     --green: #449342;
-    --red: #E63946;
+    --red: #b52a34;
   }
   ul, li{
     list-style: none;

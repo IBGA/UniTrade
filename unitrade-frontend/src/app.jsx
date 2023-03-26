@@ -10,7 +10,6 @@ import { Footer } from './components/Footer';
 import { BrowseItemPostingPage } from "./pages/BrowseItemPostingPage.jsx";
 
 function App() {
-
   return (
     <>
       <NavMenu />
