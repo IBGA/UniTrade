@@ -6,6 +6,7 @@ public class RoleRequestDto {
     private Long id;
     private Long personId;
     private ModerationRole modRole;
+    private Long universityId;
 
     public Long getId() {
         return id;
@@ -29,5 +30,13 @@ public class RoleRequestDto {
 
     public void setPersonId(Long personId) {
         this.personId = personId;
+    }
+
+    public Long getUniversityId() {
+        return universityId;
+    }
+
+    public void setUniversityId(Long universityId) {
+        this.universityId = universityId;
     }
 }

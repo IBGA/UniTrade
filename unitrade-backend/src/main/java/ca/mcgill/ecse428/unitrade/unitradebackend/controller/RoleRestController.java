@@ -67,7 +67,6 @@ public class RoleRestController {
 
       return new ResponseEntity<RoleResponseDto>(
             RoleResponseDto.createDto(role), HttpStatus.OK);
-                                          
     }
 
     @ResponseStatus(HttpStatus.OK)

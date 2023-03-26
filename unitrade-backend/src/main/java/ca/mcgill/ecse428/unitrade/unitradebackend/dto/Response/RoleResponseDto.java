@@ -9,14 +9,16 @@ public class RoleResponseDto {
     private Long id;
     private PersonResponseDto person;
     private ModerationRole modRole;
+    private UniversityResponseDto university;
 
     public RoleResponseDto() {
 
     }
 
-    public RoleResponseDto(Long id, PersonResponseDto person){
+    public RoleResponseDto(Long id, PersonResponseDto person, UniversityResponseDto university){
         this.id = id;
-
+        this.person = person;
+        this.university = university;
     }
 
     public Long getId(){
@@ -39,14 +41,24 @@ public class RoleResponseDto {
         return person;
     }
 
+    public void setPerson(PersonResponseDto person){
+        this.person = person;
+    }
+
+    public UniversityResponseDto getUniversity(){
+        return university;
+    }
+
+    public void setUniversity(UniversityResponseDto university){
+        this.university = university;
+    }
+
     public static RoleResponseDto createDto(Role role) {
         RoleResponseDto dto = new RoleResponseDto(
             role.getId(),
-            //role.getRole()
-            PersonResponseDto.createDto(role.getPerson()));
+            PersonResponseDto.createDto(role.getPerson()),
+            UniversityResponseDto.createDto(role.getUniversity()));
 
         return dto;
     }
-
-
 }

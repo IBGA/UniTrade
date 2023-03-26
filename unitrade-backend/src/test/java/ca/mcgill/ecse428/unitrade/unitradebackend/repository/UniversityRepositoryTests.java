@@ -53,8 +53,7 @@ public class UniversityRepositoryTests {
         university.setName(name);
         university.setCity(city);
         university.setDescription(description);
-        university.setModeration(moderators);
-        
+
         moderator = personRepository.save(moderator);
         role = roleRepository.save(role);
         university = universityRepository.save(university);
@@ -67,7 +66,5 @@ public class UniversityRepositoryTests {
         assertEquals(name, university.getName());
         assertEquals(city, university.getCity());
         assertEquals(description, university.getDescription());
-        assertEquals(moderators, university.getModeration());
-
     }
 }

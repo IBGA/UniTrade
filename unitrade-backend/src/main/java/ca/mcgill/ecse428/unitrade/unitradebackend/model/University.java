@@ -14,7 +14,6 @@ public class University {
     private String name;
     private String city;
     private String description;
-    @OneToMany private List<Role> moderation;
 
     public Long getId() {
         return id;
@@ -46,14 +45,6 @@ public class University {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public List<Role> getModeration() {
-        return moderation;
-    }
-
-    public void setModeration(List<Role> moderation) {
-        this.moderation = moderation;
     }
 
 }
