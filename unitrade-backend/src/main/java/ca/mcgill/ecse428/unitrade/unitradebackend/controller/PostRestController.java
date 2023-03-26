@@ -88,6 +88,24 @@ public class PostRestController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = { "/post/{id}" })
     public ResponseEntity<PostResponseDto> deletePost(@PathVariable("id") Long id) {
+
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Get the email of the authenticated user
+        Long authId = null;
+
+        if (principal instanceof UserDetails) {
+            authId = ((CustomUserDetails) principal).getId();
+        } else {
+            return new ResponseEntity<PostResponseDto>(HttpStatus.EXPECTATION_FAILED);
+        }
+
+        Post post = postService.getPost(id);
+
+        if (post.getPoster().getId() != authId)
+            return new ResponseEntity<PostResponseDto>(HttpStatus.UNAUTHORIZED);
+
         postService.deletePost(id);
         return new ResponseEntity<PostResponseDto>(HttpStatus.OK);
     }

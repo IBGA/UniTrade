@@ -132,6 +132,24 @@ public class ItemPostingRestController {
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping(value = { "/itemposting/{id}" })
     public ResponseEntity<ItemPostingResponseDto> deleteItemPosting(@PathVariable("id") Long id) {
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Get the email of the authenticated user
+        Long authId = null;
+
+        if (principal instanceof UserDetails) {
+            authId = ((CustomUserDetails) principal).getId();
+        } else {
+            return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.EXPECTATION_FAILED);
+        }
+
+        ItemPosting itemPosting = itemPostingService.getItemPosting(id);
+
+        if (itemPosting.getPoster().getId() != authId) {
+            return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.UNAUTHORIZED);
+        }
+
         itemPostingService.deleteItemPosting(id);
         return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.OK);
     }

@@ -183,9 +183,20 @@ public class PersonRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(value = { "/person/{id}" })
-    public ResponseEntity<PersonResponseDto> deletePerson(@PathVariable("id") Long id) {
-        personService.deletePerson(id);
+    @DeleteMapping(value = { "/person" })
+    public ResponseEntity<PersonResponseDto> deletePerson() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // Get the email of the authenticated user
+        Long authId = null;
+
+        if (principal instanceof UserDetails) {
+            authId = ((CustomUserDetails) principal).getId();
+        } else {
+            return new ResponseEntity<PersonResponseDto>(HttpStatus.EXPECTATION_FAILED);
+        }
+
+        personService.deletePerson(authId);
         return new ResponseEntity<PersonResponseDto>(HttpStatus.OK);
     }
 }

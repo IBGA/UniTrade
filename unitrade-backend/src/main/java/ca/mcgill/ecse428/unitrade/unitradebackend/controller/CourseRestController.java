@@ -38,7 +38,6 @@ public class CourseRestController {
     CourseService courseService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("permitAll()")
     @PostMapping(value = { "/course" })
     public ResponseEntity<CourseResponseDto> createCourse(@RequestBody CourseRequestDto body) {
         Course course = courseService.createCourse(
