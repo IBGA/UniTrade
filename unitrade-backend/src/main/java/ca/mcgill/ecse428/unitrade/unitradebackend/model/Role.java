@@ -1,6 +1,5 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 
-import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -13,6 +12,7 @@ public class Role {
     public enum ModerationRole {
         ADMINISTRATOR, HELPER
     }
+    @Enumerated(EnumType.STRING)
     private ModerationRole modRole;
     @OneToOne private Person person;
     @ManyToOne private University university;

@@ -117,7 +117,7 @@ public class UniversityServiceTests {
         String city = "Montreal";
         String description = "Go Cheval Bleu!";
 
-        University university = universityService.createUniversity(name, city, description);
+        University university = universityService.createUniversity(null, name, city, description);
 
         assertNotNull(university);
         assertEquals(name, university.getName());
@@ -133,7 +133,7 @@ public class UniversityServiceTests {
             String city = "Montreal";
             String description = "Go Marlets!";
 
-            universityService.createUniversity(name, city, description);
+            universityService.createUniversity(null, name, city, description);
             fail();
         } catch (ServiceLayerException e) {
             assertEquals(HttpStatus.CONFLICT, e.getStatus());

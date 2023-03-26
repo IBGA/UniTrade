@@ -12,17 +12,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.PersonRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.RoleRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.PersonResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.RoleResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role;
+import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role.ModerationRole;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
+import ca.mcgill.ecse428.unitrade.unitradebackend.service.PersonService;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.RoleService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,43 +43,79 @@ public class RoleRestController {
     @Autowired
     RoleService roleService;
 
+    @Autowired
+    PersonService personService;
+
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/role/id/{id}" })
-    public ResponseEntity<RoleResponseDto> getRole(@PathVariable("id") Long id) {
-        Role role = roleService.getRole(id);
+    @PostMapping(value = { "/role/helper" })
+    public ResponseEntity<RoleResponseDto> createHelperRole(@RequestBody RoleRequestDto roleRequestDto) {
+
+        Long authId = ControllerHelper.getAuthenticatedUserId();
+
+        Role role = roleService.createRole(authId, roleRequestDto.getPersonId(),
+                roleRequestDto.getUniversityId(), ModerationRole.HELPER);
+        return new ResponseEntity<RoleResponseDto>(RoleResponseDto.createDto(role), HttpStatus.OK);
+    }
+
+    // @ResponseStatus(HttpStatus.OK)
+    // @GetMapping(value = { "/role/id/{id}" })
+    // public ResponseEntity<RoleResponseDto> getRole(@PathVariable("id") Long id) {
+    //     Role role = roleService.getRole(id);
+    //     return new ResponseEntity<RoleResponseDto>(
+    //             RoleResponseDto.createDto(role), HttpStatus.OK);
+    // }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/role/person/{personId}" })
+    public ResponseEntity<RoleResponseDto> getRoleFromPerson(@PathVariable("personId") Long personId) {
+        Role role = roleService.getRoleFromPerson(personId);
         return new ResponseEntity<RoleResponseDto>(
                 RoleResponseDto.createDto(role), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/role/{person}" })
-    public ResponseEntity<RoleResponseDto> getRole(@PathVariable("person") Person person) {
-        Role role = roleService.getRole(person);
+    @GetMapping(value = { "/role/personId/{personId}/universityId/{universityId}" })
+    public ResponseEntity<RoleResponseDto> getRoleFromPersonAndUniversity(@PathVariable("personId") Long personId,
+            @PathVariable("universityId") Long universityId) {
+        Role role = roleService.getRoleFromPersonAndUniversity(personId, universityId);
         return new ResponseEntity<RoleResponseDto>(
                 RoleResponseDto.createDto(role), HttpStatus.OK);
-    } 
-
-    @ResponseStatus(HttpStatus.OK)
-    @PutMapping(value = {"/role/{person}"})
-    public ResponseEntity<RoleResponseDto> updateRole(@RequestBody RoleRequestDto body) {
-      Role role = roleService.updateRole(body.getPersonId(),
-                                        body.getModRole());
-
-      return new ResponseEntity<RoleResponseDto>(
-            RoleResponseDto.createDto(role), HttpStatus.OK);
     }
 
+    // @ResponseStatus(HttpStatus.OK)
+    // @PutMapping(value = {"/role/{person}"})
+    // public ResponseEntity<RoleResponseDto> updateRole(@RequestBody RoleRequestDto
+    // body) {
+    // Role role = roleService.updateRole(body.getPersonId(),
+    // body.getModRole());
+
+    // return new ResponseEntity<RoleResponseDto>(
+    // RoleResponseDto.createDto(role), HttpStatus.OK);
+    // }
+
+    // @ResponseStatus(HttpStatus.OK)
+    // @GetMapping(value = { "/role/{id}" })
+    // public ResponseEntity<List<PersonResponseDto>> getAllPeronsWithRole(@RequestBody RoleRequestDto body) {
+    //     List<Person> persons = roleService.getAllPersonsWithRole(body.getId());
+    //     List<PersonResponseDto> PersonResponseDtos = new ArrayList<PersonResponseDto>();
+    //     for (Person person : persons) {
+    //         PersonResponseDtos.add(PersonResponseDto.createDto(person));
+    //     }
+
+    //     return new ResponseEntity<List<PersonResponseDto>>(
+    //             PersonResponseDtos, HttpStatus.OK);
+    // }
+
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = {"/role/{id}"})
-    public ResponseEntity<List<PersonResponseDto>> getAllPeronsWithRole(@RequestBody RoleRequestDto body){
-      List<Person> persons = roleService.getAllPersonsWithRole(body.getId());
-        List<PersonResponseDto> PersonResponseDtos = new ArrayList<PersonResponseDto>();
-        for (Person person : persons) {
-            PersonResponseDtos.add(PersonResponseDto.createDto(person));
+    @GetMapping(value = { "/role" })
+    public ResponseEntity<List<RoleResponseDto>> getAllRoles() {
+        List<Role> roles = roleService.getAllRoles();
+        List<RoleResponseDto> RoleResponseDtos = new ArrayList<RoleResponseDto>();
+        for (Role role : roles) {
+            RoleResponseDtos.add(RoleResponseDto.createDto(role));
         }
 
-        return new ResponseEntity<List<PersonResponseDto>>(
-                PersonResponseDtos, HttpStatus.OK);
+        return new ResponseEntity<List<RoleResponseDto>>(
+                RoleResponseDtos, HttpStatus.OK);
     }
-  }
-
+}
