@@ -149,6 +149,21 @@ public class PersonService {
     }
 
     @Transactional
+    public Boolean isPersonExist(String email) {
+        if (email == null || email.isEmpty()) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Email cannot be empty");
+        }
+
+        Person person = personRepository.findByEmail(email);
+
+        if (person == null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Transactional
     public List<Person> getAllPersons() {
         return personRepository.findAll();
     }

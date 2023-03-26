@@ -42,7 +42,11 @@ public class UniversityRestController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = { "/university" })
     public ResponseEntity<UniversityResponseDto> createUniversity(@RequestBody UniversityRequestDto body) {
+
+        Long authId = ControllerHelper.getAuthenticatedUserId();
+
         University university = universityService.createUniversity(
+                authId,
                 body.getName(),
                 body.getCity(),
                 body.getDescription());

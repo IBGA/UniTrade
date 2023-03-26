@@ -1,13 +1,14 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.ArrayList;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role;
+import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role.ModerationRole;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.RoleRepository;
+import ca.mcgill.ecse428.unitrade.unitradebackend.repository.UniversityRepository;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.PersonRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,86 @@ public class RoleService {
     @Autowired
     PersonRepository personRepository;
 
+    @Autowired
+    UniversityRepository universityRepository;
+
     @Transactional
-    public Role getRole(Person person){ // should we return a modrole or role
-        
-        if (person == null){
+    public Role createRole(
+        Long requesterId,
+        Long newModId,
+        Long universityId,
+        ModerationRole role
+    ) {
+        if (requesterId == newModId) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Requester and new moderator cannot be the same person");
+        }
+
+        if (newModId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Person Id cannot be null");
+        }
+
+        if (universityId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University Id cannot be null");
+        }
+
+        if (role == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Role cannot be null");
+        }
+
+        Person newMod = personRepository.findById(newModId).orElse(null);
+        if (newMod == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Person with id %d not found", newModId));
+        }
+
+        University university = universityRepository.findById(universityId).orElse(null);
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("University with id %d not found", universityId));
+        }
+
+        if (role == ModerationRole.HELPER) {
+            Person requester = personRepository.findById(requesterId).orElse(null);
+            if (requester == null) {
+                throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                        String.format("Person with id %d not found", requesterId));
+            }
+
+            try {
+                Role r = getRoleFromPersonAndUniversity(requesterId, universityId);
+                if (r.getRole() != ModerationRole.ADMINISTRATOR) {
+                    throw new ServiceLayerException(HttpStatus.FORBIDDEN, String.format(
+                            "Requester with id %d is not an admin of university with id %d", requesterId, universityId));
+                }
+            } catch (ServiceLayerException e) {
+                throw new ServiceLayerException(HttpStatus.FORBIDDEN, String.format(
+                        "Requester with id %d is not a admin of university with id %d", requesterId, universityId));
+            }
+        }
+
+        Role newRole = new Role();
+        newRole.setPerson(newMod);
+        newRole.setUniversity(university);
+        newRole.setRole(role);
+        return roleRepository.save(newRole);
+    }
+
+    @Transactional
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
+    }
+
+    @Transactional
+    public Role getRoleFromPerson(Long personId){ // should we return a modrole or role
+
+        if (personId == null){
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Person cannot be null"); 
+        }
+
+        Person person = personRepository.findById(personId).orElse(null);
+        if (person == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Person with id %d not found", personId));
         }
 
         Role role = roleRepository.findByPerson(person);
@@ -55,6 +131,36 @@ public class RoleService {
         }
         return role; //.getRole();
 
+    }
+
+    @Transactional
+    public Role getRoleFromPersonAndUniversity(Long personId, Long universityId) {
+        if (personId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Person Id cannot be null");
+        }
+
+        if (universityId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University Id cannot be null");
+        }
+
+        Person person = personRepository.findById(personId).orElse(null);
+        if (person == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Person with id %d not found", personId));
+        }
+
+        University university = universityRepository.findById(universityId).orElse(null);
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("University with id %d not found", universityId));
+        }
+
+        Role role = roleRepository.findByPersonAndUniversity(person, university);
+        if (role == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Role with person id %d and university id %d not found", personId, universityId));
+        }
+        return role;
     }
 
 
