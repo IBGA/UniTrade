@@ -127,6 +127,11 @@ public class RoleService {
     }
 
     @Transactional
+    public boolean isAdministrator(Long requesterId, Long universityId) {
+        return getRoleFromPersonAndUniversity(requesterId, universityId).getRole() == ModerationRole.ADMINISTRATOR;
+    }
+
+    @Transactional
     public Role getRole(Long id){
 
         if (id == null){
