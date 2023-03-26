@@ -111,7 +111,7 @@ public class PersonRestController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<Boolean> personExists(@PathVariable("email") String email) {
         return new ResponseEntity<Boolean>(
-                personService.isPersonExist(email), HttpStatus.OK);
+                personService.personExistsWithEmail(email), HttpStatus.OK);
     }
 //     @ResponseStatus(HttpStatus.OK)
 //     @GetMapping(value = { "/person/id/{id}" })
