@@ -1,7 +1,6 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.controller;
 
 import java.util.List;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,42 +50,61 @@ public class PersonRestController {
                 body.getProfilePicture(),
                 body.getUniversityId());
         return new ResponseEntity<PersonResponseDto>(
-                PersonResponseDto.createDto(person), HttpStatus.CREATED);
+                PersonResponseDto.createDto(person, false), HttpStatus.CREATED);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    // @GetMapping(value = { "/person/id/{id}" })
-    public ResponseEntity<PersonResponseDto> getPerson(@PathVariable("id") Long id) {
+    @GetMapping(value = { "/person/self" })
+    public ResponseEntity<PersonResponseDto> getPerson() {
+
+        Long authId = ControllerHelper.getAuthenticatedUserId();
+
         return new ResponseEntity<PersonResponseDto>(
-                PersonResponseDto.createDto(personService.getPerson(id)), HttpStatus.OK);
+                PersonResponseDto.createDto(personService.getPerson(authId), false), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    // @GetMapping(value = { "/person/email/{email}" })
-    public ResponseEntity<PersonResponseDto> getPersonByEmail(@PathVariable("email") String email) {
-        return new ResponseEntity<PersonResponseDto>(
-                PersonResponseDto.createDto(personService.getPersonByEmail(email)), HttpStatus.OK);
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    // @GetMapping(value = { "/person/username/{username}" })
+    @PreAuthorize("permitAll()")
+    @GetMapping(value = { "/person/username/{username}" })
     public ResponseEntity<PersonResponseDto> getPersonByUsername(@PathVariable("username") String username) {
         return new ResponseEntity<PersonResponseDto>(
                 PersonResponseDto.createDto(personService.getPersonByUsername(username)), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    // @GetMapping(value = { "/person" })
-    public ResponseEntity<List<PersonResponseDto>> getAllPersons() {
-        List<Person> persons = personService.getAllPersons();
-        List<PersonResponseDto> personResponseDtos = new ArrayList<PersonResponseDto>();
-        for (Person person : persons) {
-            personResponseDtos.add(PersonResponseDto.createDto(person));
-        }
-
-        return new ResponseEntity<List<PersonResponseDto>>(
-                personResponseDtos, HttpStatus.OK);
+    @PreAuthorize("permitAll()")
+    @GetMapping(value = { "/person/usernames" })
+    public ResponseEntity<List<String>> getAllUsernames() {
+        List<String> usernames = personService.getAllUsernames();
+        return new ResponseEntity<List<String>>(usernames, HttpStatus.OK);
     }
+
+//     @ResponseStatus(HttpStatus.OK)
+//     @GetMapping(value = { "/person/id/{id}" })
+//     public ResponseEntity<PersonResponseDto> getPerson(@PathVariable("id") Long id) {
+//         return new ResponseEntity<PersonResponseDto>(
+//                 PersonResponseDto.createDto(personService.getPerson(id), true), HttpStatus.OK);
+//     }
+
+//     @ResponseStatus(HttpStatus.OK)
+//     @GetMapping(value = { "/person/email/{email}" })
+//     public ResponseEntity<PersonResponseDto> getPersonByEmail(@PathVariable("email") String email) {
+//         return new ResponseEntity<PersonResponseDto>(
+//                 PersonResponseDto.createDto(personService.getPersonByEmail(email), true), HttpStatus.OK);
+//     }
+
+//     @ResponseStatus(HttpStatus.OK)
+//     @GetMapping(value = { "/person" })
+//     public ResponseEntity<List<PersonResponseDto>> getAllPersons() {
+//         List<Person> persons = personService.getAllPersons();
+//         List<PersonResponseDto> personResponseDtos = new ArrayList<PersonResponseDto>();
+//         for (Person person : persons) {
+//             personResponseDtos.add(PersonResponseDto.createDto(person));
+//         }
+
+//         return new ResponseEntity<List<PersonResponseDto>>(
+//                 personResponseDtos, HttpStatus.OK);
+//     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/person/exists/{email}" })

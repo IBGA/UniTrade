@@ -2,8 +2,6 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 public class University {
     
