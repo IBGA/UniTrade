@@ -4,7 +4,7 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
-import {get, post} from "../utils/client";
+import {GET, POST} from "../utils/client";
 
 const CreateUniversityStyle = styled.div`
     .create-university-button {
