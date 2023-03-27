@@ -165,11 +165,15 @@ public class ItemPostingService {
     }
 
     @Transactional
-    public void deleteItemPosting(Long id) {
-        if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+    public void deleteItemPosting(Long authId, Long postId) {
+        if (postId == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
 
-        ItemPosting itemPosting = itemPostingRepository.findById(id).orElse(null);
-        if (itemPosting == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Item posting with id '%d' not found", id));
+        ItemPosting itemPosting = itemPostingRepository.findById(postId).orElse(null);
+        if (itemPosting == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Item posting with id '%d' not found", postId));
+
+        if (itemPosting.getPoster().getId() != authId)
+            throw new ServiceLayerException(HttpStatus.FORBIDDEN, "You are not allowed to delete this item posting");
+
         itemPostingRepository.delete(itemPosting);
     }
 }

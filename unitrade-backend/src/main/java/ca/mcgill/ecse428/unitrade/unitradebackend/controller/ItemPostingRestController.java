@@ -129,7 +129,7 @@ public class ItemPostingRestController {
             return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.UNAUTHORIZED);
         }
 
-        itemPostingService.deleteItemPosting(id);
+        itemPostingService.deleteItemPosting(ControllerHelper.getAuthenticatedUserId(), id);
         return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.OK);
     }
 }
