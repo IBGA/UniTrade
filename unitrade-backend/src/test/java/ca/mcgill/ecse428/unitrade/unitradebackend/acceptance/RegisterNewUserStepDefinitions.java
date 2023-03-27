@@ -25,6 +25,7 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
 
     }
 
+
     @Given("a user with email {string} or username {string} does not already exist in the system")
     public void a_user_with_email_or_username_does_not_already_exist_in_the_system(String email, String username) {
         // Long id;
