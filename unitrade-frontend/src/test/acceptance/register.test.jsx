@@ -2,12 +2,12 @@ import { loadFeature, defineFeature } from 'jest-cucumber';
 import { beforeAll, beforeEach, assert, expect } from 'vitest';
 import TestRenderer from 'react-test-renderer';
 import { GET, POST, LOGIN, LOGOUT, getLoginStatus } from '../../utils/client';
-import { Signup } from '../../components/Signup';
+import { SignupPage } from '../../pages/SignupPage';
 import accessBackend from '../../utils/testUtils';
 import ErrorToast from '../../components/toasts/ErrorToast';
 
 const feature = loadFeature('../features/ID015_Register_user_account.feature');
-    let testRenderer = TestRenderer.create(<Signup />);
+    let testRenderer = TestRenderer.create(<SignupPage />);
     let testInstance = testRenderer.root;
     let form;
     let firstNameInput;
@@ -19,7 +19,7 @@ const feature = loadFeature('../features/ID015_Register_user_account.feature');
 
 let defaultUser = {
     email: 'default@user.com',
-    username: 'DefaultUser',
+    username: 'default@user.com',
     firstName: 'Default',
     lastName: 'User',
     password: 'DefaultUser'
@@ -33,7 +33,7 @@ defineFeature(feature, (test) => {
 
     beforeEach(async () => {
         // Rerender everything
-        testRenderer = TestRenderer.create(<Signup />);
+        testRenderer = TestRenderer.create(<SignupPage />);
         testInstance = testRenderer.root;
 
         form = testInstance.findByType('form');
