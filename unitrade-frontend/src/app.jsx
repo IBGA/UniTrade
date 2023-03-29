@@ -6,6 +6,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { SignupPage } from "./pages/SignupPage";
 import { NavMenu } from './components/NavMenu';
 import { CreateUniversity } from './components/CreateUniversity';
+import { CreateCourse } from './components/CreateCourse';
 import { Footer } from './components/Footer';
 import { BrowseItemPostingPage } from "./pages/BrowseItemPostingPage.jsx";
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login"  element={<LoginPage />} />
           <Route path="/signup"  element={<SignupPage />} />
           <Route path="/create-university" element={<CreateUniversity />} />
+          <Route path="/create-course" element={<CreateCourse />} />
           <Route path="/browse/post/item" element={<BrowseItemPostingPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
