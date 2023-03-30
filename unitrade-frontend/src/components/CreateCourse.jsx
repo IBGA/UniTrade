@@ -4,7 +4,8 @@ import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
-import {get, post} from "../utils/client";
+import { useState } from "react";
+import {POST} from "../utils/client";
 
 const CreateCourseStyle = styled.div`
     .create-course-button {
@@ -13,12 +14,10 @@ const CreateCourseStyle = styled.div`
 `;
 
 export function CreateCourse() {
-    const [title, setCourseTitle] = React.useState("");
-    const [codeName, setCodeName] = React.useState("");
-    const [description, setDescription] = React.useState("");
+    const [title, setCourseTitle] = useState("");
+    const [codeName, setCodeName] = useState("");
+    const [description, setDescription] = useState("");
     const [selectedUniversityId, setSelectedUniversityId] = useState(null);
-
-    url = `http://localhost:8080/university/${selectedUniversityId}`;
 
     const handleTitleChange = (event) => setCourseTitle(event.target.value);
     const handleCodeNameChange = (event) => setCodeName(event.target.value);
@@ -27,7 +26,7 @@ export function CreateCourse() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const course = {title, codeName, description, moderation:[]};
-        await post('course', course);
+        await POST('course', course);
     }
     const handleUniversitySelect = (option) => {
         setSelectedUniversityId(option.value);
