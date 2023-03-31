@@ -55,7 +55,7 @@ public class ItemPostingService {
         }
 
         if (datePosted == null) {
-            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Date posted cannot be null");
+            datePosted = new Date();
         }
 
         if (universityId == null) {

@@ -21,6 +21,7 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.UniversityRequestD
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.UniversityResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.UniversityService;
+import ca.mcgill.ecse428.unitrade.unitradebackend.controller.ControllerHelper;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

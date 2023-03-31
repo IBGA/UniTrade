@@ -21,6 +21,11 @@ let defaultUser = {
 let testRenderer;
 let testInstance;
 
+// Mock navigate function,
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(),
+}));
+
 defineFeature(feature, (test) => {
   beforeAll(async () => {
     // Create default user if it doesn't exist
