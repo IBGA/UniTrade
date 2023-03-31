@@ -37,6 +37,20 @@ const ItemPostingThumbnailStyle = styled.div`
 export function ItemPostingThumbnail(props) {
   const { title, description, date, university, person, courses, imageSrc, onClick } = props;
 
+  function getNumOfDays(dateStr) {
+    const publishDate = new Date(dateStr);
+    const diff = new Date() - publishDate.getTime();
+    const days = diff / (1000 * 3600 * 24);
+    const hours = diff / (1000 * 3600);
+    const minutes = hours * 60;
+    
+    if (days >= 365) return `${Math.floor(days / 365)} years ago`
+    if (days >= 14) return `${Math.floor(days / 7)} weeks ago`
+    if (days <= 1 && hours > 1) return `${Math.floor(hours)} hours ago`
+    if (hours <= 1) return `${Math.floor(minutes)} minutes ago`
+    return `${floor(days)} days ago`
+  }
+
   return (
     <ItemPostingThumbnailStyle>
       <Container className="item-posting-container" onClick={onClick}>
@@ -45,7 +59,7 @@ export function ItemPostingThumbnail(props) {
           <Card.Body>
             <Card.Title>{title}</Card.Title>
             <Card.Subtitle className="mb-2 text-muted">{university}</Card.Subtitle>
-            <Card.Subtitle className="mb-2 text-muted">{new Date(date).toLocaleDateString('en-US')}</Card.Subtitle>
+            <Card.Subtitle className="mb-2 text-muted">{getNumOfDays(date)}</Card.Subtitle>
             <Card.Subtitle className="mb-2 text-muted">{person}</Card.Subtitle>
             <Card.Text>{description}</Card.Text>
             {courses.length > 0 &&
