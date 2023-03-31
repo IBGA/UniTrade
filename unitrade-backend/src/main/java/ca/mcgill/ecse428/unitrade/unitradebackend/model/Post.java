@@ -19,7 +19,7 @@ public class Post {
     private Date datePosted;
     @ManyToOne private University university;
     @OneToOne private Person poster;
-    @OneToMany private List<Course> courses;
+    @ManyToMany private List<Course> courses;
 
     public Long getId() {
         return id;
