@@ -165,6 +165,40 @@ public class ItemPostingService {
     }
 
     @Transactional
+    public ItemPosting updateItemPosting(Long id, String title, String description, String imageLink, List<Long> courseIds) {
+        if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+
+        ItemPosting itemPosting = itemPostingRepository.findById(id).orElse(null);
+        if (itemPosting == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Item posting with id '%d' not found", id));
+
+        // Validate input syntax (Error -> 400)
+        if (title == null || title.isEmpty()) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Title cannot be null or empty");
+        }
+
+        if (description == null || description.isEmpty()) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Description cannot be null or empty");
+        }
+
+        itemPosting.setTitle(title);
+        itemPosting.setImageLink(imageLink);
+        itemPosting.setDescription(description);
+
+        if (courseIds != null) {
+            List<Course> courses = new ArrayList<Course>();
+            for (Long courseId : courseIds) {
+                Course course = courseRepository.findById(courseId).orElse(null);
+                if (course == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Course with id '%d' not found", courseId));
+                courses.add(course);
+            }
+            itemPosting.setCourses(courses);
+        }
+
+        return itemPostingRepository.save(itemPosting);
+    }
+
+
+    @Transactional
     public void deleteItemPosting(Long authId, Long postId) {
         if (postId == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
 
