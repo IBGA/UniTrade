@@ -1,10 +1,14 @@
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import { useState } from 'react';
-import { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
+import Alert from 'react-bootstrap/Alert';
 import styled from "styled-components";
+import { useAuth } from "./AuthProvider";
+import {GET, POST} from "../utils/client";
+import { useNavigate } from "react-router-dom";
+import ErrorToast from './toasts/ErrorToast';
 
 const CreateItemPostingStyle = styled.div`
     .post-button {
@@ -27,58 +31,118 @@ const CreateItemPostingStyle = styled.div`
 `;
 
 export function CreateItemPosting() {
-    const course_map = {
-        1: [
-            {label: "ECSE428", value: 1},
-            {label: "ECSE321", value: 2},
-            {label: "ECSE211", value: 3}
-        ],
-        2: [
-            {label: "CONC444", value: 4},
-            {label: "CONC555", value: 5},
-            {label: "CONC666", value: 6}
-        ],
-        3: [
-            {label: "UDEM777", value: 7},
-            {label: "UDEM888", value: 8},
-            {label: "UDEM999", value: 9}
-        ]
-    };
+    const { user } = useAuth();
+    const [universityOptions, setUniversityOptions] = useState([]);
+    const [courseOptions, setCourseOptions] = useState([]);
+    const [title, setTitle] = useState("");
+    const [imageLink, setImageLink] = useState("");
+    const [description, setDescription] = useState("");
+    const [price, setPrice] = useState("");
+    const [universityId, setUniversityId] = useState(null);
+    const [courseIds, setCourseIds] = useState([]);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [error, showError] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const universityOptions = [
-        {label: "McGill", value: 1},
-        {label: "Concordia", value: 2},
-        {label: "UDEM", value: 3}
-    ];
-
-    const [university, setUniversity] = useState(1);
-    const [course, setCourse] = useState(null);
-
-    const changeUniversityOptionHandler = (e) => {
-        setUniversity(e.target.value);
-    };
-        const changeCourseOptionHandler = (e) => {
-        setCourse(e.target.value);
+    async function getUniversityOptions() {
+        let url = "university";
+        const res = await GET(url);
+        if (typeof res === "string" || res.error){
+            setErrorMsg(res.error == undefined ? res.toString() : res.error.toString() )
+            setUniversityOptions([]);
+            showError(true)
+        } else {
+            let opts = res.map((university) => (
+                {label: university.name, value:university.id}
+            ));
+            setUniversityOptions(opts);
+            setUniversityId(opts[0].value);
+        }
     }
 
-    let courseOptions = course_map[university];
+    // On loadup, getUniOptions and set default uni
+    useEffect(() => {
+        getUniversityOptions()
+    }, []);
 
+    useEffect( () => {
+
+        async function getCourseOptions() {
+            if (universityId !== null) {
+                let url = `course/university/${universityId}`;
+                const res = await GET(url);
+                if (typeof res === "string" || res.error){
+                    setErrorMsg(res.error == undefined ? res.toString() : res.error.toString() )
+                    setCourseOptions([]);
+                    showError(true)
+                } else {
+                    setCourseOptions(res.map((course) => (
+                        {label: course.codename, value:course.id}
+                    )));
+                }
+            } else {
+                setCourseOptions([]);
+            }
+        }
+        getCourseOptions();
+
+    }, [universityId, universityOptions]);
+
+    const changeTitleHandler = (e) => {setTitle(e.target.value)};
+    const changeImageLinkHandler = (e) => {setImageLink(e.target.value)};
+    const changeDescriptionHandler = (e) => {setDescription(e.target.value)};
+    const changePriceHandler = (e) => {setPrice(e.target.value)};
+    const changeUniversityOptionHandler = (e) => {setUniversityId(e.target.value)};
+    const changeCourseOptionHandler = (e) => {setCourseIds([].slice.call(e.target.selectedOptions).map(item => item.value))};
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setLoading(true)
+        let d = new Date();
+        let datePosted = `${d.getFullYear()}-${("0" + (d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}`;
+        const itemPosting = {title, description, imageLink, datePosted, universityId, courseIds, price};
+        
+        let res = await POST('itemposting', itemPosting);
+
+        if (typeof res === "string" || res.error) {
+            setErrorMsg(typeof res === "string" ? res : res.error)
+            showError(true)
+            setLoading(false)
+        } else {
+            setLoading(false)
+            console.log("success")
+            navigate('/browse/item');
+        }
+
+    }
+
+    function handleCloseError() {
+        showError(false);
+    }
 
     return (
         <CreateItemPostingStyle>
+            <ErrorToast message={errorMsg} onClose={handleCloseError} show={error} />
+            {user != null &&
             <Container className='create-item-posting-container'>
                 <Card border="light">
                     <Card.Body>
                         <Card.Title className="text-center create-item-posting-title"><b>Create your Item Posting</b></Card.Title>
-                        <Form>
+                        <Form onSubmit={handleSubmit}>
                             <Form.Group className="mb-3">
                                 <Form.Label>Title</Form.Label>
-                                <Form.Control type="text" placeholder="My Posting Title"/>
+                                <Form.Control type="text" placeholder="My Posting Title" value={title} onChange={changeTitleHandler}/>
                             </Form.Group>
 
                             <Form.Group className="mb-3">
                                 <Form.Label>Description</Form.Label>
-                                <Form.Control as="textarea" placeholder="Description of my item"/>
+                                <Form.Control as="textarea" placeholder="Description of my item" value={description} onChange={changeDescriptionHandler}/>
+                            </Form.Group>
+
+                            <Form.Group className="mb-3">
+                                <Form.Label>Imagelink</Form.Label>
+                                <Form.Control type="text" placeholder="https://website.com/book.png" value={imageLink} onChange={changeImageLinkHandler}/>
                             </Form.Group>
 
                             <Form.Group className="mb-3">
@@ -92,25 +156,34 @@ export function CreateItemPosting() {
 
                             <Form.Group className="mb-3">
                                 <Form.Label>Courses</Form.Label>
-                                <Form.Select onChange={changeCourseOptionHandler}>
-                                    {courseOptions.map((university) => (
-                                        <option value={university.value}>{university.label}</option>
+                                <Form.Select onChange={changeCourseOptionHandler} multiple as="select">
+                                    {courseOptions.map((course) => (
+                                        <option value={course.value}>{course.label}</option>
                                     ))}
                                 </Form.Select>
                             </Form.Group>
 
                             <Form.Group className="mb-3">
                                 <Form.Label>Price</Form.Label>
-                                <Form.Control type="number" placeholder="My selling price"/>
+                                <Form.Control type="number" placeholder="My selling price" value={price} onChange={changePriceHandler}/>
                             </Form.Group>
 
-                            <Button variant="dark" type="submit" className='post-button'>
+                            <Button variant="dark" type="submit" className='post-button' disabled={loading}>
                                 Post
                             </Button>
                         </Form>
                     </Card.Body>
                 </Card>
-            </Container>
+            </Container>}
+            {user == null && 
+                <Alert variant="danger">
+                <Alert.Heading>Oh snap! You are not logged in</Alert.Heading>
+                <hr />
+                <p>
+                    {errorMsg}
+                </p>
+            </Alert>
+            }
         </CreateItemPostingStyle>
     );
 };
