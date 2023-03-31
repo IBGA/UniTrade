@@ -26,7 +26,7 @@ function App() {
           <Route path="/signup"  element={<SignupPage />} />
           <Route path="/create-university" element={<CreateUniversityPage />} />
           <Route path="/create-course" element={<CreateCourse />} />
-          <Route path="/create-item-posting" element={<CreateItemPosting />} />
+          <Route path="/create-item-posting" element={<CreateItemPostingPage />} />
           <Route path="/browse/item" element={<BrowseItemPostingPage />} />
           <Route path="/item/:itemId" element={<ItemPage />} />
           <Route path="*" element={<NotFoundPage />} />
