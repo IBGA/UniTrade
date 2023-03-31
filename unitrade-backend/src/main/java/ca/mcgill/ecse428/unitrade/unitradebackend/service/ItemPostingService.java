@@ -165,7 +165,7 @@ public class ItemPostingService {
     }
 
     @Transactional
-    public ItemPosting updateItemPosting(Long id, String title, String description, String imageLink, List<Long> courseIds) {
+    public ItemPosting updateItemPosting(Long id, String title, String description, String imageLink, Double price, Boolean isAvailable, List<Long> courseIds) {
         if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
 
         ItemPosting itemPosting = itemPostingRepository.findById(id).orElse(null);
@@ -180,9 +180,19 @@ public class ItemPostingService {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Description cannot be null or empty");
         }
 
+        if (price == null || price < 0) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Price must be a valid positive number");
+        }
+
+        if (isAvailable == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Availability must be specified");
+        }
+
         itemPosting.setTitle(title);
         itemPosting.setImageLink(imageLink);
         itemPosting.setDescription(description);
+        itemPosting.setPrice(price);
+        itemPosting.setAvailable(isAvailable);
 
         if (courseIds != null) {
             List<Course> courses = new ArrayList<Course>();

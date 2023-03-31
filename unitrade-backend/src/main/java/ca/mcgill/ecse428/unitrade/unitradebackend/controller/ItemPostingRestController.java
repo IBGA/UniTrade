@@ -120,20 +120,22 @@ public class ItemPostingRestController {
 
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value = { "/itemposting/{id}" })
-    public ResponseEntity<ItemPostingResponseDto> updateItemPosting(@RequestBody ItemPostingRequestDto body) {
+    public ResponseEntity<ItemPostingResponseDto> updateItemPosting(@RequestBody ItemPostingRequestDto body, @PathVariable("id") Long id) {
 
         Long authId = ControllerHelper.getAuthenticatedUserId();
 
-        ItemPosting itemPosting = itemPostingService.getItemPosting(body.getId());
+        ItemPosting itemPosting = itemPostingService.getItemPosting(id);
 
         if (itemPosting.getPoster().getId() != authId)
             return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.UNAUTHORIZED);
 
         itemPosting = itemPostingService.updateItemPosting(
-                body.getId(),
+                id,
                 body.getTitle(),
                 body.getDescription(),
                 body.getImageLink(),
+                body.getPrice(),
+                body.isAvailable(),
                 body.getCourseIds());
 
         return new ResponseEntity<ItemPostingResponseDto>(ItemPostingResponseDto.createDto(itemPosting), HttpStatus.OK);
