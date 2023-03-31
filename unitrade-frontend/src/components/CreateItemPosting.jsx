@@ -47,7 +47,7 @@ export function CreateItemPosting() {
 
     async function getUniversityOptions() {
         let url = "university";
-        const res = await GET(url);
+        const res = await GET(url, true);
         if (typeof res === "string" || res.error){
             setErrorMsg(res.error == undefined ? res.toString() : res.error.toString() )
             setUniversityOptions([]);
