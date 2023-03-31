@@ -2,67 +2,93 @@ import { loadFeature, defineFeature } from 'jest-cucumber';
 import { beforeEach } from 'vitest';
 import TestRenderer from 'react-test-renderer';
 import { BrowseItemPostingPage } from '../../pages/BrowseItemPostingPage';
-import { get, post } from '../../utils/client';
-import {ItemPostingThumbnail} from "../../components/ItemPosting.jsx";
+import { DELETE, GET, POST, LOGIN } from '../../utils/client';
+import { ItemPostingThumbnail } from '../../components/ItemPosting.jsx';
+import accessBackend from '../../utils/testUtils';
 
-const feature = loadFeature('../features/ID021_Browse_all_item_postings.feature');
+const feature = loadFeature(
+  '../features/ID021_Browse_all_item_postings.feature'
+);
 
-// vitest.mock('react-select', () => ({
-//   // Mock implementation for startListeningComposition function
-//   startListeningComposition: () => {},
-//   // You can add more mock implementations for other functions used by react-select here
-// }));
+let defaultUser = {
+  email: 'default@user.com',
+  username: 'default@user.com',
+  firstName: 'Default',
+  lastName: 'User',
+  password: 'DefaultUser',
+};
 
-let testRenderer = TestRenderer.create(<BrowseItemPostingPage/>);
-let testInstance = testRenderer.root;
+let testRenderer;
+let testInstance;
+
+// Mock navigate function,
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(),
+}));
 
 defineFeature(feature, (test) => {
-  test('Browse all available item postings (Normal Flow)', ({ given, and, when, then }) => {
-    given('user is logged in', () => {
-      // not implemented yet
+  beforeAll(async () => {
+    // Create default user if it doesn't exist
+    await POST('person', defaultUser, false);
+  });
+
+  beforeEach(async () => {
+    testRenderer = TestRenderer.create(<BrowseItemPostingPage />);
+    testInstance = testRenderer.root;
+  });
+
+  test('Browse all available item postings (Normal Flow)', ({
+    given,
+    and,
+    when,
+    then,
+  }) => {
+    given('user is logged in', async () => {
+      await LOGIN(defaultUser.email, defaultUser.password);
     });
 
     and('there exists at least one item posting', async () => {
-      let items = await get('itemPosting');
-      if (items.length == 0) {
+      await accessBackend(defaultUser, async () => {
+        let items = await GET('itemPosting');
+        if (items.length == 0) {
+          let universityBody = {
+            name: 'Test University',
+            city: 'Test City',
+            description: 'Test Description',
+            moderationIds: [],
+          };
 
-        let universityBody = {
-          name: "Test University",
-          city: "Test City",
-          description: "Test Description",
-          moderationIds: [],
+          let universityRes = await POST('university', universityBody);
+
+          let personBody = {
+            email: 'test@mail.com',
+            password: 'test',
+            firstName: 'Test',
+            lastName: 'Test',
+            username: 'test',
+            universityId: universityRes.id,
+            lastOnline: '2023-02-27T05:35:25.955Z',
+            profilePicture: 'string',
+            enrolledCourseIds: [],
+            online: true,
+            enabled: true,
+          };
+
+          let personRes = await POST('person', personBody);
+
+          let itemBody = {
+            title: 'Test Item',
+            description: 'Test Description',
+            price: 10,
+            universityId: universityRes.id,
+            posterId: personRes.id,
+            datePosted: '2023-02-27T05:35:25.955Z',
+            courseIds: [],
+          };
+
+          let itemRes = await POST('itemPosting', itemBody);
         }
-
-        let universityRes = await post('university', universityBody);
-
-        let personBody = {
-          email: "test@mail.com",
-          password: "test",
-          firstName: "Test",
-          lastName: "Test",
-          username: "test",
-          universityId: universityRes.id,
-          lastOnline: "2023-02-27T05:35:25.955Z",
-          profilePicture: "string",
-          enrolledCourseIds: [],
-          online: true,
-          enabled: true,
-        }
-
-        let personRes = await post('person', personBody);
-
-        let itemBody = {
-          title: 'Test Item',
-          description: 'Test Description',
-          price: 10,
-          universityId: universityRes.id,
-          posterId: personRes.id,
-          datePosted: '2023-02-27T05:35:25.955Z',
-          courseIds: [],
-        }
-
-        let itemRes = await post('itemPosting', itemBody);
-      }
+      });
     });
 
     when('user searches for all available item postings', () => {
@@ -70,22 +96,30 @@ defineFeature(feature, (test) => {
     });
 
     then('all available item postings are displayed', async () => {
-      let itemPostings = testInstance.findAllByType(ItemPostingThumbnail);
-      let onDatabase = await get('itemposting');
-      expect(itemPostings.length).toBe(onDatabase.length);
+      await accessBackend(defaultUser, async () => {
+        let itemPostings = testInstance.findAllByType(ItemPostingThumbnail);
+        let onDatabase = await GET('itemposting');
+        expect(itemPostings.length).toBe(onDatabase.length);
+      });
     });
   });
 
-
-  test('No available item postings (Alternate Flow)', ({ given, and, when, then }) => {
+  test('No available item postings (Alternate Flow)', ({
+    given,
+    and,
+    when,
+    then,
+  }) => {
     given('user is logged in', () => {
       // not implemented yet
     });
 
     and('there are no available item postings', async () => {
-      let itemPostingIds = (await get('itemposting')).map(item => item.id);
-      itemPostingIds.forEach(id => {
-        delete('itemposting', id);
+      await accessBackend(defaultUser, async () => {
+        let itemPostingIds = (await GET('itemposting')).map((item) => item.id);
+        itemPostingIds.forEach((id) => {
+          DELETE('itemposting', id);
+        });
       });
     });
 

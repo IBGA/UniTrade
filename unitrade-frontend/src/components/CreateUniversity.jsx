@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import {GET, POST} from "../utils/client";
+import ErrorToast from "../components/toasts/ErrorToast";
 
 const CreateUniversityStyle = styled.div`
     .create-university-button {
@@ -21,14 +22,37 @@ export function CreateUniversity() {
     const handleCityChange = (event) => setCity(event.target.value);
     const handleDescriptionChange = (event) => setDescription(event.target.value);
 
+    const [error , setError] = React.useState('');
+    const [showError, setShowError] = React.useState(false);
+
+    const [universityCreated, setUniversityCreated] = React.useState(false);
+
+    const handleCloseError = () => setShowError(false);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const university = {name, city, description, moderation:[]};
-        await post('university', university);
+        const university = {name, city, description};
+        let res = await POST('university', university);
+        if (typeof res === 'string') {
+            setError(res);
+            setShowError(true);
+        } else {
+            setUniversityCreated(true);
+        }
+    }
+
+    if (universityCreated) {
+        return (
+            <Container>
+                <h1>You have successfully created a University!</h1>
+                {/* <Nav.Link className="login-link" href="/login">Click here to login!</Nav.Link>  */}
+            </Container>
+        )
     }
 
     return (
         <CreateUniversityStyle>
+            <ErrorToast message={error} onClose={handleCloseError} show={showError} />
             <Container className='create-university-container'>
                 <Card border="light">
                     <Card.Body>

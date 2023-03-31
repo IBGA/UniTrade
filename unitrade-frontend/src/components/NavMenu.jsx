@@ -5,6 +5,8 @@ import logo from '../assets/unitrade-nav.png';
 import styled from "styled-components";
 import { LOGOUT } from "../utils/client";
 import { useAuth } from "./AuthProvider";
+import personIcon from "../assets/person-icon.svg"
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const NavMenuStyle = styled.div`
     .bg-white{
@@ -35,6 +37,11 @@ const NavMenuStyle = styled.div`
         font-weight: 550;
         color: white;
     }
+
+    .profile-btn {
+        width: 30px;
+        height: 30px;
+    }
 `;
 
 export function NavMenu() {
@@ -46,6 +53,12 @@ export function NavMenu() {
         setAuth(false);
         window.location.reload(false);
     }
+
+    const profileTooltip = (
+        <Tooltip id="profile-tooltip">
+          My Profile
+        </Tooltip>
+    );
 
     return (
         <>
@@ -63,9 +76,15 @@ export function NavMenu() {
                         </Navbar.Brand>
                         <Nav className="me-auto">
                             <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="/">Pricing</Nav.Link>
-                            <Nav.Link href="/">About</Nav.Link>
+                            <Nav.Link href="/browse/item">Browse</Nav.Link>
+                            {/* <Nav.Link href="/">About</Nav.Link> */}
                         </Nav>
+                        
+                        {auth &&
+                        <OverlayTrigger placement="bottom" overlay={profileTooltip}>
+                            <Nav.Link href="/profile" className="ms-auto p-3"><img src={personIcon} className="profile-btn"></img></Nav.Link>
+                        </OverlayTrigger>
+                        }
                         {auth ? 
                         <Nav.Link className="logout-link" onClick={handleOnLogout}>Log Out</Nav.Link>
                         :
