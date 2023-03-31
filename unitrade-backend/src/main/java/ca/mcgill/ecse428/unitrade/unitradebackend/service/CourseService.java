@@ -74,6 +74,20 @@ public class CourseService {
     }
 
     @Transactional
+    public List<Course> getCourseByUniversity(Long id){
+        if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+        University university = universityRepository.findById(id).orElse(null);
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("University with id %d not found", id));
+        }
+        
+        List<Course> courses = courseRepository.findByUniversity(university);
+        if (courses == null || courses.isEmpty()) throw new ServiceLayerException(HttpStatus.NOT_FOUND, "No such course");
+        return courses;
+    }
+
+    @Transactional
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
     }

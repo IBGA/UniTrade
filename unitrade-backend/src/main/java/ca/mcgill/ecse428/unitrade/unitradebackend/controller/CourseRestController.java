@@ -55,11 +55,25 @@ public class CourseRestController {
                 CourseResponseDto.createDto(courseService.getCourse(id)), HttpStatus.OK);
     }
 
-    @ResponseStatus(HttpStatus.OK)
+    /*@ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/course/{codename}" })
     public ResponseEntity<CourseResponseDto> getCourseByCodename(@PathVariable("codename") String codename) {
+        System.out.println("Ran by coodename");
         return new ResponseEntity<CourseResponseDto>(
                 CourseResponseDto.createDto(courseService.getCourse(codename)), HttpStatus.OK);
+    }*/
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/course/university/{universityId}" })
+    public ResponseEntity<List<CourseResponseDto>> getCourseByUniversityId(@PathVariable("universityId") Long universityId) {
+        List<Course> courses = courseService.getCourseByUniversity(universityId);
+        List<CourseResponseDto> courseResponseDtos = new ArrayList<CourseResponseDto>();
+        for (Course course : courses) {
+            courseResponseDtos.add(CourseResponseDto.createDto(course));
+        }
+        
+        return new ResponseEntity<List<CourseResponseDto>>(
+                courseResponseDtos, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
