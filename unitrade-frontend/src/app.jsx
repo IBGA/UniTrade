@@ -9,6 +9,7 @@ import { CreateUniversityPage } from './pages/CreateUniversityPage.jsx';
 import { CreateCourse } from './components/CreateCourse';
 import { ItemPage } from './pages/ItemPage';
 import { Footer } from './components/Footer';
+import { CreateItemPostingPage } from "./pages/CreateItemPostingPage";
 import { BrowseItemPostingPage } from "./pages/BrowseItemPostingPage.jsx";
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/signup"  element={<SignupPage />} />
           <Route path="/create-university" element={<CreateUniversityPage />} />
           <Route path="/create-course" element={<CreateCourse />} />
+          <Route path="/create-item-posting" element={<CreateItemPostingPage />} />
           <Route path="/browse/item" element={<BrowseItemPostingPage />} />
           <Route path="/item/:itemId" element={<ItemPage />} />
           <Route path="*" element={<NotFoundPage />} />

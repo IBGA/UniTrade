@@ -46,6 +46,7 @@ public class ItemPostingRestController {
         ItemPosting itemPosting = itemPostingService.createItemPosting(
                 body.getTitle(),
                 body.getDescription(),
+                body.getImageLink(),
                 body.getDatePosted(),
                 body.getUniversityId(),
                 authId,
