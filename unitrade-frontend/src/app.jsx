@@ -9,7 +9,7 @@ import { CreateUniversityPage } from './pages/CreateUniversityPage.jsx';
 import { CreateCourse } from './components/CreateCourse';
 import { ItemPage } from './pages/ItemPage';
 import { Footer } from './components/Footer';
-import { CreateItemPosting } from "./pages/CreateItemPosting";
+import { CreateItemPostingPage } from "./pages/CreateItemPostingPage";
 import { BrowseItemPostingPage } from "./pages/BrowseItemPostingPage.jsx";
 
 function App() {
