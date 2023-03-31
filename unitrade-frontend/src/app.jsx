@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useParams } from "react-router-dom";
 
 import { HomePage } from "./pages/HomePage.jsx";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -7,10 +7,14 @@ import { SignupPage } from "./pages/SignupPage";
 import { NavMenu } from './components/NavMenu';
 import { CreateUniversityPage } from './pages/CreateUniversityPage.jsx';
 import { CreateCourse } from './components/CreateCourse';
+import { ItemPage } from './pages/ItemPage';
 import { Footer } from './components/Footer';
 import { BrowseItemPostingPage } from "./pages/BrowseItemPostingPage.jsx";
 
 function App() {
+
+  const { itemId } = useParams();
+
   return (
     <>
       <NavMenu />
@@ -21,7 +25,8 @@ function App() {
           <Route path="/signup"  element={<SignupPage />} />
           <Route path="/create-university" element={<CreateUniversityPage />} />
           <Route path="/create-course" element={<CreateCourse />} />
-          <Route path="/browse/post/item" element={<BrowseItemPostingPage />} />
+          <Route path="/browse/item" element={<BrowseItemPostingPage />} />
+          <Route path="/item/:itemId" element={<ItemPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
