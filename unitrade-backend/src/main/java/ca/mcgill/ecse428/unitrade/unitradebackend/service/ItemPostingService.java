@@ -38,6 +38,7 @@ public class ItemPostingService {
     public ItemPosting createItemPosting(
             String title,
             String description,
+            String imageLink,
             Date datePosted,
             Long universityId,
             Long posterId,
@@ -52,6 +53,10 @@ public class ItemPostingService {
 
         if (description == null || description.isEmpty()) {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Description cannot be null or empty");
+        }
+
+        if (imageLink == null || imageLink.isEmpty()) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "ImageLink cannot be null or empty");
         }
 
         if (datePosted == null) {
@@ -90,6 +95,7 @@ public class ItemPostingService {
         ItemPosting itemPosting = new ItemPosting();
         itemPosting.setTitle(title);
         itemPosting.setDescription(description);
+        itemPosting.setImageLink(imageLink);
         itemPosting.setDatePosted(datePosted);
         itemPosting.setUniversity(university);
         itemPosting.setPoster(poster);
