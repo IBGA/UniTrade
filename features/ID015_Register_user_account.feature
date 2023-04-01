@@ -19,7 +19,7 @@ Scenario Outline: User email or username already exists in system. (Error Flow)
 Given user is not logged in
 And a user with email "<email>" or username "<username>" already exists in the system
 When user registers with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>"
-Then an error is thrown and no new user account is created
+Then an error is thrown and no new user account with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>" is created
 
 Examples:
 | email               | username      | first_name    | last_name     | password      |
