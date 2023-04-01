@@ -1,4 +1,7 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.model;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -11,7 +14,9 @@ public class Course {
     private String codename;
     private String description;
     private boolean isApproved;
-    @ManyToOne private University university;
+    @ManyToOne(cascade=CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private University university;
 
     public Long getId() {
         return id;
