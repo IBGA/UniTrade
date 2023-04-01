@@ -1,6 +1,9 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -14,8 +17,12 @@ public class Role {
     }
     @Enumerated(EnumType.STRING)
     private ModerationRole modRole;
-    @OneToOne private Person person;
-    @ManyToOne private University university;
+    @OneToOne(cascade=CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Person person;
+    @ManyToOne(cascade=CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private University university;
 
     public Long getId() {
         return id;
