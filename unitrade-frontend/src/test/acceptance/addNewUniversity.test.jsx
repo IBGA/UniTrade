@@ -2,7 +2,7 @@ import { loadFeature, defineFeature } from 'jest-cucumber';
 import { beforeEach } from 'vitest';
 import TestRenderer from 'react-test-renderer';
 import { CreateUniversity } from '../../components/CreateUniversity';
-import { GET, LOGIN, POST } from '../../utils/client';
+import { GET, LOGIN, POST, DELETE } from '../../utils/client';
 import accessBackend from '../../utils/testUtils';
 import ErrorToast from '../../components/toasts/ErrorToast';
 import { expect } from 'vitest';
@@ -47,6 +47,16 @@ defineFeature(feature, (test) => {
     descriptionInput = allInputs[2];
   });
 
+  afterEach( async() => {
+    await accessBackend(defaultUser, async () => {
+        let universities = await GET('university', true);
+        // Remove last university created
+        if (universities.length > 0){
+            await DELETE(`university/${universities[universities.length-1].id}`, true);
+        }
+    });
+  });
+
   test('Fields are filled in correctly (Normal Flow)', ({
     given,
     and,
@@ -62,7 +72,11 @@ defineFeature(feature, (test) => {
       /^a university with name (.*) and city (.*) does not already exist in the system$/,
       async (arg0, arg1) => {
         await accessBackend(defaultUser, async () => {
-          let universities = await GET('university');
+          let universities = await GET('university', true);
+          arg0 = arg0.replace(/["]+/g, '');
+          arg1 = arg1.replace(/["]+/g, '');
+          console.log('universities is:')
+          console.log(universities);
           universities.forEach((university) => {
             if (university.name === arg0 && university.city === arg1) {
               error = 'University already exists';
@@ -91,11 +105,16 @@ defineFeature(feature, (test) => {
       /^a new university with name (.*), city (.*), and description (.*) is added to the system$/,
       async (arg0, arg1, arg2) => {
           await accessBackend(defaultUser, async () => {
-          let universities = await GET('university');
-          let university = universities[universities.length - 1];
-          await expect(university.name).toBe(arg0);
-          await expect(university.city).toBe(arg1);
-          await expect(university.description).toBe(arg2);
+          let universities = await GET('university', true);
+          let found = false
+          console.log('universities 2 is:')
+          console.log(universities);
+          universities.forEach((university) => {
+            if (university.name === arg0 && university.city === arg1 && university.description === arg2) {
+                found = true
+            }
+          })
+          await expect(found).toBe(true);
       })}
     );
   });
@@ -107,7 +126,7 @@ defineFeature(feature, (test) => {
     then,
   }) => {
     given('user is logged in', async () => {
-      await POST('person', defaultUser);
+      await POST('person', defaultUser, false);
       await LOGIN(defaultUser.email, defaultUser.password);
     });
 
@@ -120,7 +139,7 @@ defineFeature(feature, (test) => {
             city: arg1,
             description: 'Test University',
           });
-          let universities = await GET('university');
+          let universities = await GET('university', true);
           universityCount = universities.length;
         });
       }
@@ -156,8 +175,17 @@ defineFeature(feature, (test) => {
       /^a new university with name (.*), city (.*), and description (.*) is not added to the system$/,
       async (arg0, arg1, arg2) => {
         await accessBackend(defaultUser, async () => {
-          let universities = await GET('university');
-          expect(universities.length).toBe(universityCount);
+          let universities = await GET('university', true);
+          arg0 = arg0.replace(/["]+/g, '');
+          arg1 = arg1.replace(/["]+/g, '');
+          arg2 = arg2.replace(/["]+/g, '');
+          let found = false
+          universities.forEach((university) => {
+            if (university.name === arg0 && university.city === arg1 && university.description === arg2) {
+                found = true
+            }
+          })
+          expect(found).toBe(false);
         })}
     );
   });
