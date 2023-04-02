@@ -33,6 +33,9 @@ public class ItemPostingService {
 
     @Autowired
     ItemPostingRepository itemPostingRepository;
+
+    @Autowired
+    RoleService roleService;
     
     @Transactional
     public ItemPosting createItemPosting(
@@ -171,7 +174,7 @@ public class ItemPostingService {
         ItemPosting itemPosting = itemPostingRepository.findById(postId).orElse(null);
         if (itemPosting == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Item posting with id '%d' not found", postId));
 
-        if (itemPosting.getPoster().getId() != authId)
+        if (itemPosting.getPoster().getId() != authId || !roleService.isAdministratorOrHelper(authId, itemPosting.getUniversity().getId()))
             throw new ServiceLayerException(HttpStatus.FORBIDDEN, "You are not allowed to delete this item posting");
 
         itemPostingRepository.delete(itemPosting);
