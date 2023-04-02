@@ -47,16 +47,6 @@ defineFeature(feature, (test) => {
     descriptionInput = allInputs[2];
   });
 
-  afterEach( async() => {
-    await accessBackend(defaultUser, async () => {
-        let universities = await GET('university', true);
-        // Remove last university created
-        if (universities.length > 0){
-            await DELETE(`university/${universities[universities.length-1].id}`, true);
-        }
-    });
-  });
-
   test('Fields are filled in correctly (Normal Flow)', ({
     given,
     and,
@@ -75,8 +65,6 @@ defineFeature(feature, (test) => {
           let universities = await GET('university', true);
           arg0 = arg0.replace(/["]+/g, '');
           arg1 = arg1.replace(/["]+/g, '');
-          console.log('universities is:')
-          console.log(universities);
           universities.forEach((university) => {
             if (university.name === arg0 && university.city === arg1) {
               error = 'University already exists';
@@ -107,19 +95,21 @@ defineFeature(feature, (test) => {
           await accessBackend(defaultUser, async () => {
           let universities = await GET('university', true);
           let found = false
-          console.log('universities 2 is:')
-          console.log(universities);
+          let universityId
           universities.forEach((university) => {
             if (university.name === arg0 && university.city === arg1 && university.description === arg2) {
                 found = true
+                universityId = university.id
             }
           })
           await expect(found).toBe(true);
+
+          await DELETE(`university/${universityId}`, true);
       })}
     );
   });
 
-  test('University already exists  (Error Flow)', ({
+  test('University already exists (Error Flow)', ({
     given,
     and,
     when,
@@ -165,28 +155,20 @@ defineFeature(feature, (test) => {
       }
     );
 
-    then('an error is thrown', async () => {
-      await setTimeout(() => {
-        expect(testInstance.findByType(ErrorToast).props.show).toBe(true);
-    }, 1000);
-    });
-
-    and(
-      /^a new university with name (.*), city (.*), and description (.*) is not added to the system$/,
+    then(
+      /^an error is thrown to create a new university with name (.*), city (.*), and description (.*)$/,
       async (arg0, arg1, arg2) => {
+        await setTimeout(() => {
+          expect(testInstance.findByType(ErrorToast).props.show).toBe(true);
+        }, 1000);
+
+        // cleanup
         await accessBackend(defaultUser, async () => {
-          let universities = await GET('university', true);
-          arg0 = arg0.replace(/["]+/g, '');
-          arg1 = arg1.replace(/["]+/g, '');
-          arg2 = arg2.replace(/["]+/g, '');
-          let found = false
-          universities.forEach((university) => {
-            if (university.name === arg0 && university.city === arg1 && university.description === arg2) {
-                found = true
-            }
-          })
-          expect(found).toBe(false);
-        })}
+            let university = await GET(`university/${arg1}/${arg0}`, true);
+            // Remove university created
+            await DELETE(`university/${university.id}`, true);
+        });
+      }
     );
   });
 });
