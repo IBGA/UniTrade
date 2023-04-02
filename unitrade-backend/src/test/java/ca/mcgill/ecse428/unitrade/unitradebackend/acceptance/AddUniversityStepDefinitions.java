@@ -83,27 +83,35 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
         }
     }
 
-    @Given("a university with name {string} and city {string} already exists in the system")
+    @And("a university with name {string} and city {string} already exists in the system")
     public void a_university_with_name_and_city_already_exists_in_the_system(String name, String city) {
 
-        UniversityRequestDto body = new UniversityRequestDto();
-        body.setName(name);
-        body.setCity(city);
-        body.setDescription("A university");
-
-        String url = "http://localhost:8080/university";
-
         RequestHelperClass helper = new RequestHelperClass(true);
-
         try {
-            helper.post(url, UniversityResponseDto.class, body, true);
+            System.out.println("Getting university");
+            helper.get("http://localhost:8080/university/"+city+"/"+name, UniversityResponseDto.class, true);
+            System.out.println("Got university");
         } catch (HttpClientErrorException e) {
-            statusCode = e.getStatusCode();
+            System.out.println(e);
+
+            UniversityRequestDto body = new UniversityRequestDto();
+            body.setName(name);
+            body.setCity(city);
+            body.setDescription("A university");
+
+            String url = "http://localhost:8080/university";
+
+            try {
+                helper.post(url, UniversityResponseDto.class, body, true);
+            } catch (HttpClientErrorException e1) {
+                System.out.println(e1);
+                statusCode = e1.getStatusCode();
+            }
         }
     }
 
-    @Then("an error is thrown")
-    public void an_error_is_thrown() {
+    @Then("an error is thrown to create a new university with name {string}, city {string}, and description {string}")
+    public void an_error_is_thrown(String name, String city, String description) {
         // check status
         assertTrue(statusCode.is4xxClientError());
     }

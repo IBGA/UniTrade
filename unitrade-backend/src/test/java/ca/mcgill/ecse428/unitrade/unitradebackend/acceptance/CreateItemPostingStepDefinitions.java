@@ -8,7 +8,7 @@ import java.sql.Date;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +21,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpStatusCode;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.UniversityResponseDto;
-
+import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.CourseResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.ItemPostingResponseDto;
+import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.CourseRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.ItemPostingRequestDto;
 
 
@@ -30,8 +31,54 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
     HttpStatusCode statusCode;
     //When user creates an item posting with title "CSC108 textbook" and description "textbook for CSC108" and price "50" for university with name "University of Amogus" and city "Amogus"
 
-    @When("user creates an item posting with title {string} and description {string} and price {long} for university with name {string} and city {string}")
-    public void user_creates_an_item_posting_with_title_and_description_and_price_for_university_with_name_and_city(String title, String description, Long price, String universityName, String universityCity) {
+    @And("a course with codename {string} already exists in the system")
+    public void a_course_with_codename_already_exists_in_the_system(String codename) {
+
+        RequestHelperClass helper = new RequestHelperClass(true);
+        try {
+            System.out.println("Getting course");
+            helper.get("http://localhost:8080/course/codename/"+codename, CourseResponseDto.class, true);
+            System.out.println("Got course");
+        } catch (HttpClientErrorException e) {
+            System.out.println(e);
+            CourseRequestDto body = new CourseRequestDto();
+            body.setTitle("Test_course");
+            body.setCodename(codename);
+            body.setDescription("Test_description");
+
+            String url = "http://localhost:8080/course";
+            try {
+                System.out.println("Create course");
+                helper.post(url, CourseResponseDto.class, body, true);
+                System.out.println("Made course");
+            } catch (HttpClientErrorException e1) {
+                System.out.println(e1);
+                statusCode = e1.getStatusCode();
+            }
+        }
+    }
+
+    @And("a course with codename {string} does not already exists in the system")
+    public void a_course_with_codename_does_not_already_exists_in_the_system(String codename) {
+        String url = "http://localhost:8080/course/codename/" + codename;
+
+        RequestHelperClass helper = new RequestHelperClass(true);
+
+        try {
+            ResponseEntity<CourseResponseDto> response = helper.get(url, CourseResponseDto.class, true);
+            CourseResponseDto course = response.getBody();
+            assertNotNull(course);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                url = "http://localhost:8080/course/" + course.getId();
+                helper.delete(url, false);
+            }
+        } catch (HttpClientErrorException e) {
+
+        }
+    }
+
+    @When("user attempts to create a item posting with title {string}, description {string}, imageLink {string}, university name {string} university city {string}, course codename {string}, and price {long}")
+    public void user_creates_an_item_posting_with_title_and_description_and_price_for_university_with_name_and_city(String title, String description, String imageLink, String universityName, String universityCity, String courseCodename, Long price) {
         RestTemplate restTemplate = new RestTemplate();
         Long universityId = null;
         //Long price = Long.parseLong(itemPrice);
@@ -76,7 +123,7 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
         }
     }
 
-    @Then("the item posting is created and linked to the university with name {string} and city {string}")
+    @Then("a new itemposting with title {string}, description {string}, imageLink {string}, university name {string} university city {string}, course codename {string}, and price {long} is added to the system")
     public void the_item_posting_is_created_and_linked_to_the_university_with_name_and_city(String universityName, String universityCity) {
         RestTemplate restTemplate = new RestTemplate();
         Long universityId = null;

@@ -115,8 +115,8 @@ public class RegisterNewUserStepDefinitions extends AcceptanceTest {
         }
     }
 
-    @Then("an error is thrown and no new user account is created")
-    public void an_error_message_is_thrown() {
+    @Then("an error is thrown to create a new user account with email {string}, username {string}, first name {string}, last name {string} and password {string}")
+    public void an_error_message_is_thrown(String email, String username, String firstname, String lastname, String password) {
         assertTrue(statusCode.is4xxClientError());
     }
 }
