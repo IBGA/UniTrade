@@ -46,8 +46,8 @@ defineFeature(feature, (test) => {
     form = testInstance.findByType('form');
 
     allInputs = testInstance.findByType('form').findAllByType('input');
-    universityNameInput = allInputs[0]; //fix
-    universityCityInput = allInputs[1];
+  //  universityNameInput = allInputs[0]; //fix
+ //   universityCityInput = allInputs[1];
     codeNameInput = allInputs[2];
     titleInput = allInputs[3];
     descriptionInput = allInputs[4];
