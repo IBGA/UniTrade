@@ -37,9 +37,8 @@ export function CreateCourse() {
       <Container className="create-course-container">
         <Card border="light">
           <Card.Body>
-            <CreateNewCourseHeader
               onUniversitySelect={handleUniversitySelect}
-            />
+            
             <Card.Title className="text-center login-title">
               <b>Create a Course</b>
             </Card.Title>
