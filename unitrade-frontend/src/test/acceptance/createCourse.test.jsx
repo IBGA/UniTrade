@@ -179,7 +179,7 @@ defineFeature(feature, (test) => {
 
 
    and(
-    /^a course for university (.*) with codename (.*) does not already exist in the system$/,
+    /^a course for university (.*) with codename (.*) already exists in the system$/,
     async (arg0, arg1) => {
       await accessBackend(defaultUser, async () => {
         await POST('course', {
