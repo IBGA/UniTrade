@@ -19,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.CourseRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.CourseResponseDto;
+import ca.mcgill.ecse428.unitrade.unitradebackend.exception.ServiceLayerException;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.CourseService;
+import ca.mcgill.ecse428.unitrade.unitradebackend.service.RoleService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -38,9 +40,18 @@ public class CourseRestController {
     @Autowired
     CourseService courseService;
 
+    @Autowired
+    RoleService roleService;
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = { "/course" })
     public ResponseEntity<CourseResponseDto> createCourse(@RequestBody CourseRequestDto body) {
+
+        Long authId = ControllerHelper.getAuthenticatedUserId();
+
+        if (!roleService.isAdministratorOrHelper(authId, body.getUniversityId()))
+            throw new ServiceLayerException(HttpStatus.FORBIDDEN, "You are not authorized to create a course for this university.");
+
         Course course = courseService.createCourse(
                 body.getTitle(),
                 body.getCodename(),
