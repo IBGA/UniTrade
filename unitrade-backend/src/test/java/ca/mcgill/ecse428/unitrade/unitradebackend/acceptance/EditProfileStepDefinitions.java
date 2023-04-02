@@ -28,8 +28,9 @@ public class EditProfileStepDefinitions extends AcceptanceTest {
         HttpStatusCode statusCode;
         ResponseEntity<ItemPostingResponseDto[]> response;
 
-        @And("user edits profile information with username {string}, profile picture {string}, university with name {string} and city {string}, and enrolled course with codename {string}")
-        public void user_edits_profile_information_with_username_profile_picture_university_with_name_and_city_and_enrolled_course_with_codename(String username, String profilePicture, String universityName, String universityCity, String codename) {
+        @And("user edits profile information with profile picture {string}, university with name {string} and city {string}, and enrolled course with codename {string}")
+        public void user_edits_profile_information_with_profile_picture_university_with_name_and_city_and_enrolled_course_with_codename(String profilePicture, String universityName, String universityCity, String codename) {
+            var username = "editProfile";
             // Create the person
             PersonRequestDto personDto = new PersonRequestDto();
             personDto.setEmail(username + "@profile.com");
@@ -64,15 +65,15 @@ public class EditProfileStepDefinitions extends AcceptanceTest {
             personDto.setUniversityId(universityResponse.getBody().getId());
             personDto.setEnrolledCourseIds(List.of(courseResponse.getBody().getId()));
 
-            helper.put("http://localhost:8080/person/universityId", PersonResponseDto.class, personDto, true);
-            helper.put("http://localhost:8080/person/enrolledCourses", PersonResponseDto.class, personDto, true);
-            helper.put("http://localhost:8080/person", PersonResponseDto.class, personDto, true );
+            helper.put("http://localhost:8080/person/universityId", PersonRequestDto.class, personDto, true);
+            helper.put("http://localhost:8080/person/enrolledCourses", PersonRequestDto.class, personDto, true);
+            helper.put("http://localhost:8080/person", PersonRequestDto.class, personDto, true );
         }
 
-        @Then("user's profile information is updated with username {string}, profile picture {string}, university with name {string} and city {string}, and enrolled course with codename {string}")
-        public void user_s_profile_information_is_updated_with_username_profile_picture_university_with_name_and_city_and_enrolled_course(String username, String profilePicture, String universityName, String Universitycity, String codename) {
-            //var helper = new RequestHelperClass(true);
-            //var person = helper.get("http://localhost:8080/person/username/" + username, PersonResponseDto.class, true).getBody();
+        @Then("user's profile information is updated with profile picture {string}, university with name {string} and city {string}, and enrolled course with codename {string}")
+        public void user_s_profile_information_is_updated_with_profile_picture_university_with_name_and_city_and_enrolled_course(String profilePicture, String universityName, String Universitycity, String codename) {
+            var username = "editProfile";
+
             var person = personService.getPersonByUsername(username);
 
             assertEquals(username, person.getUsername());
