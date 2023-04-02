@@ -11,12 +11,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.RoleRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.RoleResponseDto;
+import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Role.ModerationRole;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.PersonService;
@@ -49,7 +51,9 @@ public class RoleRestController {
 
         Long authId = ControllerHelper.getAuthenticatedUserId();
 
-        Role role = roleService.createRole(authId, roleRequestDto.getPersonId(),
+        Person person = personService.getPersonByUsername(roleRequestDto.getPersonUsername());
+
+        Role role = roleService.createRole(authId, person.getId(),
                 roleRequestDto.getUniversityId(), ModerationRole.HELPER);
         return new ResponseEntity<RoleResponseDto>(RoleResponseDto.createDto(role), HttpStatus.OK);
     }
@@ -114,5 +118,16 @@ public class RoleRestController {
 
         return new ResponseEntity<List<RoleResponseDto>>(
                 RoleResponseDtos, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = { "/role/person/{username}/university/{id}" })
+    public ResponseEntity<Void> deleteRole(@PathVariable("username") String username,
+            @PathVariable("id") Long universityId) {
+
+        Long authId = ControllerHelper.getAuthenticatedUserId();
+
+        roleService.deleteRole(authId, username, universityId);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }
