@@ -7,7 +7,7 @@ import accessBackend from '../../utils/testUtils';
 import ErrorToast from '../../components/toasts/ErrorToast';
 import { expect } from 'vitest';
 
-const feature = loadFeature('../features/ID125_Create_course.feature');
+const feature = loadFeature('../features-untested/ID125_Create_course.feature');
 
 let testRenderer;
 let testInstance;
@@ -173,7 +173,7 @@ defineFeature(feature, (test) => {
     and (
       /^user is a moderator for university with name (.*) and city (.*)$/,
       async (arg0, arg1) => {
-        
+
       }
     ); // not sure how to implement this yet
 
