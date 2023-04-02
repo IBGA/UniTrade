@@ -154,6 +154,7 @@ public class ItemPostingServiceTests {
     public void testCreateItemPostingComplete() {
         String title = "Thermo of Computing Book";
         String description = "A class textbook";
+        String image = "imgur.com";
         Date datePosted = new Date(0);
         Long universityId = MCGILL_KEY;
         Long posterId = POSTER_KEY;
@@ -163,7 +164,7 @@ public class ItemPostingServiceTests {
         Long buyerId = BUYER_KEY;
     
 
-        ItemPosting itemPosting = itemPostingService.createItemPosting(title, description, datePosted, universityId, posterId, courseIds, false, price, buyerId);
+        ItemPosting itemPosting = itemPostingService.createItemPosting(title, description, image, datePosted, universityId, posterId, courseIds, false, price, buyerId);
 
         assertNotNull(itemPosting);
         assertEquals(title, itemPosting.getTitle());
