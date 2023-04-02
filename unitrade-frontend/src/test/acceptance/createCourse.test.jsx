@@ -84,6 +84,9 @@ defineFeature(feature, (test) => {
 
     and (
       /^user is a moderator for university with name (.*) and city (.*)$/,
+      async (arg0, arg1) => {
+
+      }
     ); // not sure how to implement this yet
 
     and (
@@ -149,7 +152,7 @@ defineFeature(feature, (test) => {
   }) => {
     given('user is logged in', async() => {
       await POST('person', defaultUser);
-      await LOGIN(defaultUser.email, deafultUser.password);
+      await LOGIN(defaultUser.email, defaultUser.password);
 
     });
 
