@@ -99,9 +99,9 @@ export function CreateItemPosting() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         setLoading(true)
-        let d = new Date();
-        let datePosted = `${d.getFullYear()}-${("0" + (d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}`;
-        const itemPosting = {title, description, imageLink, datePosted, universityId, courseIds, price};
+        //let d = new Date();
+        //let datePosted = `${d.getFullYear()}-${("0" + (d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}`;
+        const itemPosting = {title, description, imageLink, universityId, courseIds, price};
         
         let res = await POST('itemposting', itemPosting);
 
