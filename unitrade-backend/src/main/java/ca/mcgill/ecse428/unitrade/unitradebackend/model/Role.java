@@ -17,11 +17,11 @@ public class Role {
     }
     @Enumerated(EnumType.STRING)
     private ModerationRole modRole;
-    @OneToOne(cascade=CascadeType.REMOVE)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade=CascadeType.DETACH)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private Person person;
-    @ManyToOne(cascade=CascadeType.REMOVE)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(cascade=CascadeType.DETACH)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private University university;
 
     public Long getId() {

@@ -20,14 +20,14 @@ public class Post {
     private String description;
     private String imageLink;
     private Date datePosted;
-    @ManyToOne(cascade=CascadeType.REMOVE)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToOne(cascade=CascadeType.DETACH)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private University university;
-    @OneToOne(cascade=CascadeType.REMOVE)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade=CascadeType.DETACH)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private Person poster;
-    @ManyToMany(cascade=CascadeType.REMOVE)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToMany(cascade=CascadeType.DETACH)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private List<Course> courses;
 
     public Long getId() {
