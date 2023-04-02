@@ -72,8 +72,10 @@ defineFeature(feature, (test) => {
     given('user is logged in', () => {});
 
     and(
-      /^user edits profile information with username (.*), profile picture (.*), university with name (.*) and city (.*), and enrolled course with codename (.*)$/,
-      async (arg0, arg1, arg2, arg3, arg4) => {
+      /^user edits profile information with profile picture (.*), university with name (.*) and city (.*), and enrolled course with codename (.*)$/,
+      async (arg1, arg2, arg3, arg4) => {
+        let arg0 = 'editProfile' + arg3;
+
         let course;
         let uni;
 
@@ -120,8 +122,10 @@ defineFeature(feature, (test) => {
     );
 
     then(
-      /^user's profile information is updated with username (.*), profile picture (.*), university with name (.*) and city (.*), and enrolled course with codename (.*)$/,
-      async (arg0, arg1, arg2, arg3, arg4) => {
+      /^user's profile information is updated with profile picture (.*), university with name (.*) and city (.*), and enrolled course with codename (.*)$/,
+      async (arg1, arg2, arg3, arg4) => {
+        let arg0 = 'editProfile' + arg3;
+
         let person;
 
         await accessBackend(defaultUser, async () => {
