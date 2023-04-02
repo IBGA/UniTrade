@@ -184,6 +184,22 @@ public class PersonService {
     }
 
     @Transactional
+    public List<Person> getPersonsFromUniversity(Long universityId) {
+        if (universityId == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University id cannot be null");
+        }
+
+        University university = universityRepository.findById(universityId).orElse(null);
+
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("University with id '%d' not found", universityId));
+        }
+
+        return personRepository.findAllByUniversity(university);
+    }
+
+    @Transactional
     public List<String> getAllUsernames() {
         List<Person> persons = personRepository.findAll();
         List<String> usernames = new ArrayList<>();

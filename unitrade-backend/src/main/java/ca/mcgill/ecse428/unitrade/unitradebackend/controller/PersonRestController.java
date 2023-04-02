@@ -1,5 +1,6 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +155,20 @@ public class PersonRestController {
     public ResponseEntity<Boolean> personExistsWithUsername(@PathVariable("username") String username) {
         return new ResponseEntity<Boolean>(
                 personService.personExistsWithUsername(username), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = {"/person/from/university/{universityId}"})
+    public ResponseEntity<List<PersonResponseDto>> getPersonsFromUniversity(@PathVariable("universityId") Long universityId) {
+
+        List<Person> persons = personService.getPersonsFromUniversity(universityId);
+        List<PersonResponseDto> personResponseDtos = new ArrayList<PersonResponseDto>();
+        for (Person person : persons) {
+            personResponseDtos.add(PersonResponseDto.createDto(person));
+        }
+
+        return new ResponseEntity<List<PersonResponseDto>>(
+                personResponseDtos, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
