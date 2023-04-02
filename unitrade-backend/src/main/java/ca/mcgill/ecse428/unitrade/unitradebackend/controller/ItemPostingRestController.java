@@ -146,14 +146,6 @@ public class ItemPostingRestController {
     @DeleteMapping(value = { "/itemposting/{id}" })
     public ResponseEntity<ItemPostingResponseDto> deleteItemPosting(@PathVariable("id") Long id) {
 
-        Long authId = ControllerHelper.getAuthenticatedUserId();
-
-        ItemPosting itemPosting = itemPostingService.getItemPosting(id);
-
-        if (itemPosting.getPoster().getId() != authId) {
-            return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.UNAUTHORIZED);
-        }
-
         itemPostingService.deleteItemPosting(ControllerHelper.getAuthenticatedUserId(), id);
         return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.OK);
     }

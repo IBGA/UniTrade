@@ -15,10 +15,11 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private ModerationRole modRole;
     @OneToOne(cascade=CascadeType.DETACH)
-    // @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private Person person;
     @ManyToOne(cascade=CascadeType.DETACH)
-    // @OnDelete(action = OnDeleteAction.CASCADE)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
+
     private University university;
 
     public Long getId() {
