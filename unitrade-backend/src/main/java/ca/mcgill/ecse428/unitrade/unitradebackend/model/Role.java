@@ -1,9 +1,6 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import jakarta.persistence.*;
 
 @Entity
