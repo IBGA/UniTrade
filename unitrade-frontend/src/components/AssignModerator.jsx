@@ -26,8 +26,12 @@ export function AssignModerator() {
 
   async function fetchData() {
     const res = await GET(`person/check/admin/or/helper`);
-    if (typeof res === "string" || res.error){
+    console.log(res);
+    if (res == false || typeof res === "string" || res.error){
       setErrorMessage(res.error == undefined ? res.toString() : res.error.toString() )
+      if (res == false) {
+        setErrorMessage("You are not an admin or helper for any university");
+      }
       showError(true)
       console.log("Error: " + res.error);
       return;
@@ -68,7 +72,7 @@ export function AssignModerator() {
   function handleDemoteModerator(username) {
     async function demoteModerator() {
       const res = await DELETE(`role/person/${username}/university/${universityId}`)
-      if (typeof res === "string" || res.error){
+      if (res.error){
         setErrorMessage(res.error == undefined ? res.toString() : res.error.toString() )
         showError(true)
         console.log("Error: " + res.error);
@@ -96,7 +100,7 @@ export function AssignModerator() {
         console.log("Error: " + res.error);
         return;
       }
-      setSuccess('Moderator assigned successfully!');
+      setSuccess('Helper assigned successfully!');
       setShowSuccess(true);
       fetchData();
     }
@@ -167,7 +171,7 @@ export function AssignModerator() {
                     <td>{user.firstName}</td>
                     <td>{user.email}</td>
                     <td>
-                      <Button variant="primary" onClick={() => handleAssignModerator(user.username)}>Assign Moderator</Button>
+                      <Button variant="primary" onClick={() => handleAssignModerator(user.username)}>Assign Helper</Button>
                     </td>
                   </tr>
                 ))}

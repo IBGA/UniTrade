@@ -265,15 +265,7 @@ public class PersonService {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Person is not associated with a university");
         }
 
-        try {
-            roleService.isAdministratorOrHelper(authLong, person.getUniversity().getId());
-        } catch (ServiceLayerException e) {
-            if (e.getStatus() == HttpStatus.NOT_FOUND)
-                throw new ServiceLayerException(HttpStatus.FORBIDDEN, "User is not an administrator or helper");
-            else
-                throw e;
-        }
-        return true;
+        return roleService.isAdministratorOrHelper(authLong, person.getUniversity().getId());
     }
 
     @Transactional
