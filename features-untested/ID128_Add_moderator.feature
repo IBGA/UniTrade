@@ -1,4 +1,4 @@
-Feature: Create course
+Feature: Add Moderator
 
 As a student moderator
 I want to assign other selected students as moderators for my university

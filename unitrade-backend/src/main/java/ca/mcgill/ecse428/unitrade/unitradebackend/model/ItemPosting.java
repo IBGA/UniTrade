@@ -11,8 +11,8 @@ public class ItemPosting extends Post{
 
     private boolean isAvailable;
     private Double price;
-    @OneToOne(cascade=CascadeType.REMOVE)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @OneToOne(cascade=CascadeType.DETACH)
+    //@OnDelete(action = OnDeleteAction.CASCADE)
     private Person buyer;
 
     public Person getBuyer() {
