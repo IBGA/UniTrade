@@ -61,8 +61,6 @@ defineFeature(feature, (test) => {
       async (arg0, arg1) => {
         await accessBackend(defaultUser, async () => {
           let res = await GET(`person/exists/${arg0}`, false)
-          console.log(arg0);
-          console.log(res);
           if (res)
             assert.fail('User with email already exists');
         });
@@ -101,9 +99,7 @@ defineFeature(feature, (test) => {
         }
         await accessBackend(userToDelete, async() => {
           // Cleanup
-          let res = await DELETE(`person`, true);
-          console.log('printing delete:')
-          console.log(res);
+          await DELETE(`person`, true);
         })
       }
     );
@@ -151,7 +147,7 @@ defineFeature(feature, (test) => {
     );
 
     then(
-      /^an error is thrown and no new user account with email (.*), username (.*), first name (.*), last name (.*) and password (.*) is created$/, 
+      /^an error is thrown to create a new user account with email (.*), username (.*), first name (.*), last name (.*) and password (.*)$/, 
       async (arg0, arg1, arg2, arg3, arg4) => {
         // wait some time for the toast to appear
         await setTimeout(() => {
@@ -165,9 +161,7 @@ defineFeature(feature, (test) => {
         }
         await accessBackend(userToDelete, async() => {
           // Cleanup
-          let res = await DELETE(`person`, true);
-          console.log('printing delete:')
-          console.log(res);
+          await DELETE(`person`, true);
         })
     });
   });
