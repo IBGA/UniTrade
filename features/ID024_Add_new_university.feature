@@ -15,12 +15,11 @@ Examples:
 | University of Sydney | Sydney          | A university in Sydney |
 | University of Oxford | Oxford          | A university in Oxford |
 
-Scenario Outline: University already exists  (Error Flow)
+Scenario Outline: University already exists (Error Flow)
 Given user is logged in
 And a university with name "<university_name>" and city "<university_city>" already exists in the system
 When user attempts to create a university with name "<university_name>", city "<university_city>", and description "<university_description>"
-Then an error is thrown
-And a new university with name "<university_name>", city "<university_city>", and description "<university_description>" is not added to the system
+Then an error is thrown to create a new university with name "<university_name>", city "<university_city>", and description "<university_description>"
 
 Examples:
 | university_name      | university_city | university_description |

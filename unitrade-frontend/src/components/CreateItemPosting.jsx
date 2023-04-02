@@ -47,7 +47,7 @@ export function CreateItemPosting() {
 
     async function getUniversityOptions() {
         let url = "university";
-        const res = await GET(url);
+        const res = await GET(url, true);
         if (typeof res === "string" || res.error){
             setErrorMsg(res.error == undefined ? res.toString() : res.error.toString() )
             setUniversityOptions([]);
@@ -57,7 +57,9 @@ export function CreateItemPosting() {
                 {label: university.name, value:university.id}
             ));
             setUniversityOptions(opts);
-            setUniversityId(opts[0].value);
+            if (opts.length > 0) {
+                setUniversityId(opts[0].value);
+            }
         }
     }
 
@@ -69,9 +71,8 @@ export function CreateItemPosting() {
     useEffect( () => {
 
         async function getCourseOptions() {
-            if (universityId !== null) {
-                let url = `course/university/${universityId}`;
-                const res = await GET(url);
+            if (universityId !== null && universityId !== undefined) {
+                let res = await GET(`course/university/${universityId}`, true);
                 if (typeof res === "string" || res.error){
                     setErrorMsg(res.error == undefined ? res.toString() : res.error.toString() )
                     setCourseOptions([]);
@@ -111,8 +112,7 @@ export function CreateItemPosting() {
             setLoading(false)
         } else {
             setLoading(false)
-            console.log("success")
-            navigate('/browse/item');
+            //navigate('/browse/item');
         }
 
     }
@@ -146,6 +146,11 @@ export function CreateItemPosting() {
                             </Form.Group>
 
                             <Form.Group className="mb-3">
+                                <Form.Label>Price</Form.Label>
+                                <Form.Control type="number" placeholder="My selling price" value={price} onChange={changePriceHandler}/>
+                            </Form.Group>
+
+                            <Form.Group className="mb-3">
                                 <Form.Label>University</Form.Label>
                                 <Form.Select onChange={changeUniversityOptionHandler}>
                                     {universityOptions.map((university) => (
@@ -161,11 +166,6 @@ export function CreateItemPosting() {
                                         <option value={course.value}>{course.label}</option>
                                     ))}
                                 </Form.Select>
-                            </Form.Group>
-
-                            <Form.Group className="mb-3">
-                                <Form.Label>Price</Form.Label>
-                                <Form.Control type="number" placeholder="My selling price" value={price} onChange={changePriceHandler}/>
                             </Form.Group>
 
                             <Button variant="dark" type="submit" className='post-button' disabled={loading}>

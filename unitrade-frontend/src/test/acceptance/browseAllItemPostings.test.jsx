@@ -118,7 +118,7 @@ defineFeature(feature, (test) => {
       await accessBackend(defaultUser, async () => {
         let itemPostingIds = (await GET('itemposting')).map((item) => item.id);
         itemPostingIds.forEach((id) => {
-          DELETE('itemposting', id);
+          DELETE(`itemposting/${id}`, true);
         });
       });
     });

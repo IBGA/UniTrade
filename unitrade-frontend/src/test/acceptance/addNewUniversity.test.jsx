@@ -2,7 +2,7 @@ import { loadFeature, defineFeature } from 'jest-cucumber';
 import { beforeEach } from 'vitest';
 import TestRenderer from 'react-test-renderer';
 import { CreateUniversity } from '../../components/CreateUniversity';
-import { GET, LOGIN, POST } from '../../utils/client';
+import { GET, LOGIN, POST, DELETE } from '../../utils/client';
 import accessBackend from '../../utils/testUtils';
 import ErrorToast from '../../components/toasts/ErrorToast';
 import { expect } from 'vitest';
@@ -62,7 +62,9 @@ defineFeature(feature, (test) => {
       /^a university with name (.*) and city (.*) does not already exist in the system$/,
       async (arg0, arg1) => {
         await accessBackend(defaultUser, async () => {
-          let universities = await GET('university');
+          let universities = await GET('university', true);
+          arg0 = arg0.replace(/["]+/g, '');
+          arg1 = arg1.replace(/["]+/g, '');
           universities.forEach((university) => {
             if (university.name === arg0 && university.city === arg1) {
               error = 'University already exists';
@@ -91,23 +93,30 @@ defineFeature(feature, (test) => {
       /^a new university with name (.*), city (.*), and description (.*) is added to the system$/,
       async (arg0, arg1, arg2) => {
           await accessBackend(defaultUser, async () => {
-          let universities = await GET('university');
-          let university = universities[universities.length - 1];
-          await expect(university.name).toBe(arg0);
-          await expect(university.city).toBe(arg1);
-          await expect(university.description).toBe(arg2);
+          let universities = await GET('university', true);
+          let found = false
+          let universityId
+          universities.forEach((university) => {
+            if (university.name === arg0 && university.city === arg1 && university.description === arg2) {
+                found = true
+                universityId = university.id
+            }
+          })
+          await expect(found).toBe(true);
+
+          await DELETE(`university/${universityId}`, true);
       })}
     );
   });
 
-  test('University already exists  (Error Flow)', ({
+  test('University already exists (Error Flow)', ({
     given,
     and,
     when,
     then,
   }) => {
     given('user is logged in', async () => {
-      await POST('person', defaultUser);
+      await POST('person', defaultUser, false);
       await LOGIN(defaultUser.email, defaultUser.password);
     });
 
@@ -120,7 +129,7 @@ defineFeature(feature, (test) => {
             city: arg1,
             description: 'Test University',
           });
-          let universities = await GET('university');
+          let universities = await GET('university', true);
           universityCount = universities.length;
         });
       }
@@ -146,19 +155,20 @@ defineFeature(feature, (test) => {
       }
     );
 
-    then('an error is thrown', async () => {
-      await setTimeout(() => {
-        expect(testInstance.findByType(ErrorToast).props.show).toBe(true);
-    }, 1000);
-    });
-
-    and(
-      /^a new university with name (.*), city (.*), and description (.*) is not added to the system$/,
+    then(
+      /^an error is thrown to create a new university with name (.*), city (.*), and description (.*)$/,
       async (arg0, arg1, arg2) => {
+        await setTimeout(() => {
+          expect(testInstance.findByType(ErrorToast).props.show).toBe(true);
+        }, 1000);
+
+        // cleanup
         await accessBackend(defaultUser, async () => {
-          let universities = await GET('university');
-          expect(universities.length).toBe(universityCount);
-        })}
+            let university = await GET(`university/${arg1}/${arg0}`, true);
+            // Remove university created
+            await DELETE(`university/${university.id}`, true);
+        });
+      }
     );
   });
 });

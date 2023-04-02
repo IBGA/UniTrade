@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -55,13 +56,12 @@ public class CourseRestController {
                 CourseResponseDto.createDto(courseService.getCourse(id)), HttpStatus.OK);
     }
 
-    /*@ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/course/{codename}" })
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/course/codename/{codename}" })
     public ResponseEntity<CourseResponseDto> getCourseByCodename(@PathVariable("codename") String codename) {
-        System.out.println("Ran by coodename");
         return new ResponseEntity<CourseResponseDto>(
                 CourseResponseDto.createDto(courseService.getCourse(codename)), HttpStatus.OK);
-    }*/
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/course/university/{universityId}" })
@@ -94,5 +94,12 @@ public class CourseRestController {
     public ResponseEntity<CourseResponseDto> approveCourse(@PathVariable("id") Long id) {
         return new ResponseEntity<CourseResponseDto>(CourseResponseDto.createDto(courseService.approve(id)),
                 HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = { "/course/{id}" })
+    public ResponseEntity<CourseResponseDto> deleteCourse(@PathVariable("id") Long id) {
+        courseService.deleteCourse(ControllerHelper.getAuthenticatedUserId(), id);
+        return new ResponseEntity<CourseResponseDto>(HttpStatus.OK);
     }
 }

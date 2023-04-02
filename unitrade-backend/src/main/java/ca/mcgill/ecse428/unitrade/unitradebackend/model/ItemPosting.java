@@ -1,5 +1,8 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -8,7 +11,9 @@ public class ItemPosting extends Post{
 
     private boolean isAvailable;
     private Double price;
-    @OneToOne private Person buyer;
+    @OneToOne(cascade=CascadeType.REMOVE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Person buyer;
 
     public Person getBuyer() {
         return buyer;

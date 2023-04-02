@@ -44,6 +44,7 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
 
                     Long posterID = 1L;
 
+
                     try {
                         url = "http://localhost:8080/person/email/browsebyuniversity";
                         ResponseEntity<PersonResponseDto> browseResponse = helper.get(url, PersonResponseDto.class, true);
@@ -60,7 +61,11 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
                         person.setUniversityId(id);
 
                         url = "http://localhost:8080/person";
-                        ResponseEntity<PersonResponseDto> personResponse = helper.post(url, PersonResponseDto.class, person, true);
+                        try{ 
+                            ResponseEntity<PersonResponseDto> personResponse = helper.post(url, PersonResponseDto.class, person, false);
+                        } catch (HttpClientErrorException e2) {
+                            statusCode = e2.getStatusCode();
+                        }
                         // posterID = personResponse.getBody().getId(); Uncommented this and the line 5 lines below because itemPostingRequest doesn't take poster Ids anymore
                     }
 
@@ -68,6 +73,7 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
                     itemPosting.setTitle("test");
                     itemPosting.setUniversityId(id);
                     itemPosting.setPrice(100);
+                    itemPosting.setImageLink("http://myimage.com/image.png");
                     // itemPosting.setPosterId(posterID);
                     itemPosting.setDescription("test");
                     itemPosting.setDatePosted(new Date(2));
@@ -103,12 +109,8 @@ public class BrowseByUniversityStepDefinitions extends AcceptanceTest {
 
                 url = "http://localhost:8080/itemposting/university/" + id;
 
-                try {
-                    ResponseEntity<ItemPostingResponseDto[]> itemPostings = helper.get(url, ItemPostingResponseDto[].class, true);
-                    statusCode = itemPostings.getStatusCode();
-                } catch (HttpClientErrorException e) {
-                    statusCode = e.getStatusCode();
-                }
+                ResponseEntity<ItemPostingResponseDto[]> itemPostings = helper.get(url, ItemPostingResponseDto[].class, true);
+                statusCode = itemPostings.getStatusCode();
             }
         } catch (HttpClientErrorException e) {
             statusCode = e.getStatusCode();
