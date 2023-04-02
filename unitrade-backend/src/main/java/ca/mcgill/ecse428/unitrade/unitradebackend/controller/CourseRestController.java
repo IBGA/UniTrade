@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,8 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request.CourseRequestDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.CourseResponseDto;
+import ca.mcgill.ecse428.unitrade.unitradebackend.exception.ServiceLayerException;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
 import ca.mcgill.ecse428.unitrade.unitradebackend.service.CourseService;
+import ca.mcgill.ecse428.unitrade.unitradebackend.service.RoleService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
@@ -37,9 +40,18 @@ public class CourseRestController {
     @Autowired
     CourseService courseService;
 
+    @Autowired
+    RoleService roleService;
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = { "/course" })
     public ResponseEntity<CourseResponseDto> createCourse(@RequestBody CourseRequestDto body) {
+
+        Long authId = ControllerHelper.getAuthenticatedUserId();
+
+        if (!roleService.isAdministratorOrHelper(authId, body.getUniversityId()))
+            throw new ServiceLayerException(HttpStatus.FORBIDDEN, "You are not authorized to create a course for this university.");
+
         Course course = courseService.createCourse(
                 body.getTitle(),
                 body.getCodename(),
@@ -55,13 +67,12 @@ public class CourseRestController {
                 CourseResponseDto.createDto(courseService.getCourse(id)), HttpStatus.OK);
     }
 
-    /*@ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/course/{codename}" })
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/course/codename/{codename}" })
     public ResponseEntity<CourseResponseDto> getCourseByCodename(@PathVariable("codename") String codename) {
-        System.out.println("Ran by coodename");
         return new ResponseEntity<CourseResponseDto>(
                 CourseResponseDto.createDto(courseService.getCourse(codename)), HttpStatus.OK);
-    }*/
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/course/university/{universityId}" })
@@ -94,5 +105,12 @@ public class CourseRestController {
     public ResponseEntity<CourseResponseDto> approveCourse(@PathVariable("id") Long id) {
         return new ResponseEntity<CourseResponseDto>(CourseResponseDto.createDto(courseService.approve(id)),
                 HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = { "/course/{id}" })
+    public ResponseEntity<CourseResponseDto> deleteCourse(@PathVariable("id") Long id) {
+        courseService.deleteCourse(ControllerHelper.getAuthenticatedUserId(), id);
+        return new ResponseEntity<CourseResponseDto>(HttpStatus.OK);
     }
 }

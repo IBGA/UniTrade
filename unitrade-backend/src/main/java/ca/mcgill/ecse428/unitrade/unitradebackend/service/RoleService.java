@@ -128,7 +128,31 @@ public class RoleService {
 
     @Transactional
     public boolean isAdministrator(Long requesterId, Long universityId) {
+
+        if (requesterId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Requester Id cannot be null");
+        }
+
+        if (universityId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University Id cannot be null");
+        }
+
         return getRoleFromPersonAndUniversity(requesterId, universityId).getRole() == ModerationRole.ADMINISTRATOR;
+    }
+
+    @Transactional
+    public boolean isAdministratorOrHelper(Long requesterId, Long universityId) {
+
+        if (requesterId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Requester Id cannot be null");
+        }
+
+        if (universityId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University Id cannot be null");
+        }
+
+        return getRoleFromPersonAndUniversity(requesterId, universityId).getRole() == ModerationRole.ADMINISTRATOR ||
+                getRoleFromPersonAndUniversity(requesterId, universityId).getRole() == ModerationRole.HELPER;
     }
 
     @Transactional

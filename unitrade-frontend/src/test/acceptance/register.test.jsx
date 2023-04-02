@@ -1,7 +1,7 @@
 import { loadFeature, defineFeature } from 'jest-cucumber';
 import { beforeAll, beforeEach, assert, expect } from 'vitest';
 import TestRenderer from 'react-test-renderer';
-import { GET, POST, LOGIN, LOGOUT, getLoginStatus } from '../../utils/client';
+import { GET, POST, LOGIN, LOGOUT, getLoginStatus, DELETE } from '../../utils/client';
 import { SignupPage } from '../../pages/SignupPage';
 import accessBackend from '../../utils/testUtils';
 import ErrorToast from '../../components/toasts/ErrorToast';
@@ -60,7 +60,8 @@ defineFeature(feature, (test) => {
       /^a user with email (.*) or username (.*) does not already exist in the system$/,
       async (arg0, arg1) => {
         await accessBackend(defaultUser, async () => {
-          if (await GET(`person/exists/${arg0}`, false))
+          let res = await GET(`person/exists/${arg0}`, false)
+          if (res)
             assert.fail('User with email already exists');
         });
       }
@@ -88,7 +89,18 @@ defineFeature(feature, (test) => {
           expect(person.username).toBe(arg1);
           expect(person.firstName).toBe(arg2);
           expect(person.lastName).toBe(arg3);
+
         });
+
+        // Need to get session token of user that was created
+        let userToDelete = {
+            email: arg0,
+            password: arg4
+        }
+        await accessBackend(userToDelete, async() => {
+          // Cleanup
+          await DELETE(`person`, true);
+        })
       }
     );
   });
@@ -109,7 +121,7 @@ defineFeature(feature, (test) => {
         await accessBackend(defaultUser, async () => {
           let person = await GET(`person/username/${arg0}`);
           if (person == null) {
-            post('person', {
+            POST('person', {
               email: arg0,
               username: arg1,
               firstName: 'Test',
@@ -134,11 +146,23 @@ defineFeature(feature, (test) => {
       }
     );
 
-    then('an error is thrown and no new user account is created', async () => {
-      // wait some time for the toast to appear
-      await setTimeout(() => {
-        expect(testInstance.findByType(ErrorToast).props.show).toBe(true);
-      }, 1000);
+    then(
+      /^an error is thrown to create a new user account with email (.*), username (.*), first name (.*), last name (.*) and password (.*)$/, 
+      async (arg0, arg1, arg2, arg3, arg4) => {
+        // wait some time for the toast to appear
+        await setTimeout(() => {
+            expect(testInstance.findByType(ErrorToast).props.show).toBe(true);
+        }, 1000);
+
+        // Need to get session token of user that was created
+        let userToDelete = {
+          email: arg0,
+          password: arg4
+        }
+        await accessBackend(userToDelete, async() => {
+          // Cleanup
+          await DELETE(`person`, true);
+        })
     });
   });
 });
