@@ -52,7 +52,7 @@ export function EditProfile() {
         return;
       }
 
-      await PUT(`person/universityId`, {
+      let hi = await PUT(`person/universityId`, {
         ...user,
         universityId,
       });
@@ -78,7 +78,7 @@ export function EditProfile() {
   useEffect(() => {
     if (user) {
       setCourseIds(user.enrolledCourses.map((course) => course.id));
-      setUniversityId(user.university.id);
+      setUniversityId(user.university ? user.university.id : 0);
       setProfilePicture(user.profilePicture);
       setFirstName(user.firstName);
       setLastName(user.lastName);
@@ -121,8 +121,6 @@ export function EditProfile() {
     } else {
       setCourseIds([...courseIds, selectedCourse]);
     }
-
-    console.log(courseIds);
   };
 
   const handleChangeProfilePicture = (event) => {
@@ -254,8 +252,10 @@ export function EditProfile() {
                     ))}
                   </Form.Select>
                 </Form.Group>
-                <Form.Group className="mb-3">
-                  {console.log(courseIds)}
+                <Form.Group
+                  className="mb-3 checkboxes"
+                  onChange={handleChangeCourses}
+                >
                   <Form.Label>Courses</Form.Label>
                   {Array.isArray(courseOptions) &&
                     courseOptions.map((crs) => (
