@@ -2,7 +2,8 @@ import { loadFeature, defineFeature } from 'jest-cucumber';
 import { beforeEach } from 'vitest';
 import TestRenderer from 'react-test-renderer';
 import { CreateItemPosting } from '../../components/CreateItemPosting';
-import { GET, LOGIN, POST } from '../../utils/client';
+import { AuthProvider } from '../../components/AuthProvider';
+import { GET, LOGIN, POST, DELETE } from '../../utils/client';
 import accessBackend from '../../utils/testUtils';
 import ErrorToast from '../../components/toasts/ErrorToast';
 import { expect } from 'vitest';
@@ -24,8 +25,9 @@ let priceInput;
 let title;
 let description;
 let imageLink;
-let universityId;
-let courseIds;
+let universityName;
+let universityCity;
+let courseCodename;
 let price;
 
 let error = ''
@@ -46,22 +48,67 @@ vi.mock('react-router-dom', () => ({
 defineFeature(feature, (test) => {
     beforeEach(async() =>{
         await POST('person', defaultUser, false);
-        await LOGIN(defaultUser.email, defaultUser.password);
 
         error = '';
-        testRenderer = TestRenderer.create(<CreateItemPosting />);
+        testRenderer = TestRenderer.create(
+            <AuthProvider>
+                <CreateItemPosting />
+            </AuthProvider>
+        );
         testInstance = testRenderer.root;
+        error = ''
 
-        form = testInstance.findByType('form');
+        while (form == null) {
+            try {
+                await LOGIN(defaultUser.email, defaultUser.password);
+                form = testInstance.findByType('form');
+        
+                allInputs = testInstance.findByType('form').findAllByType('input');
+                let allSelects = testInstance.findByType('form').findAllByType('select');
+                let allTextAreas = testInstance.findByType('form').findAllByType('textarea');
 
-        allInputs = testInstance.findByType('form').findAllByType('input');
-        titleInput = allInputs[0];
-        descriptionInput = allInputs[1];
-        imageLinkInput = allInputs[2];
-        universityIdInput = allInputs[3];
-        courseIdsInput = allInputs[4];
-        priceInput = allInputs[5];
+                titleInput = allInputs[0];
+                descriptionInput = allTextAreas[0];
+                imageLinkInput = allInputs[1];
+                universityIdInput = allSelects[0];
+                courseIdsInput = allSelects[1];
+                priceInput = allInputs[2];
+            } catch (e) {
+                continue;
+            }
+        }
+
+        await accessBackend(defaultUser, async () => {
+            let university = await POST('university', {
+                name: 'Test_university',
+                city: 'Test_city',
+                description: 'Test_description',
+            });
+
+            let course = await POST('course', {
+                title: 'Test_course',
+                codename: 'Test_codename',
+                description: 'Test_description',
+                universityId: university.id
+            });
+        });
     });
+
+    afterEach( async() => {
+        await accessBackend(defaultUser, async () => {
+            let universities = await GET('university');
+            // Remove last university created
+            if (universities.length > 0) {
+                DELETE(`university/${universities[universities.length-1].id}`, true);
+            }
+
+            let courses = await GET('course');
+            // Remove last course created
+            if (courses.length > 0) {
+                DELETE(`course/${courses[courses.length-1].id}`, true);
+            }
+        });
+      });
 
     test('University is found in the system and item posting is created (Normal Flow)', ({
         given,
@@ -74,70 +121,95 @@ defineFeature(feature, (test) => {
             await LOGIN(defaultUser.email, defaultUser.password);
         });
         and (
-            /^a university with id (.*) already exists in the system$/,
-            async (arg0) => {
+            /^a university with name (.*) and city (.*) already exists in the system$/,
+            async (arg0, arg1) => {
                 await accessBackend(defaultUser, async () => {
                     let universities = await GET('university');
+                    arg0 = arg0.replace(/["]+/g, '');
+                    arg1 = arg1.replace(/["]+/g, '');
+                    let found = false;
                     universities.forEach((university) => {
-                        if (university.id == arg0){
-                            return;
+                        if (university.name === arg0 && university.city === arg1){
+                            found = true;
                         }
                     });
-                    error = 'University does not exist';
-                    assert.fail(error);
+                    if (!found) {
+                        error = 'University does not exist';
+                        assert.fail(error);
+                    }
                 })
             }
         );
         and (
-            /^a course with id (.*) already exists in the system$/,
+            /^a course with codename (.*) already exists in the system$/,
             async (arg0) => {
                 await accessBackend(defaultUser, async () => {
                     let courses = await GET('course');
+                    arg0 = arg0.replace(/["]+/g, '');
+                    let found = false;
                     courses.forEach((course) => {
-                        if (course.id == arg0){
-                            return;
+                        if (course.codename === arg0){
+                            found = true;
                         }
                     });
-                    error = 'Course does not exist';
-                    assert.fail(error);
+                    if (!found) {
+                        error = 'Course does not exist';
+                        assert.fail(error);
+                    }
                 })
             }
         );
 
         when(
-            /^user attempts to create a item posting with title (.*), description (.*), imagelink (.*), universityId (.*), courseIds (.*), and price (.*)$/,
-            async (arg0, arg1, arg2, arg3, arg4, arg5) => {
-                title = arg0;
-                description = arg1;
-                imageLink = arg2;
-                universityId = arg3;
-                courseIds = [arg4];
-                price = arg5;
-        
-                titleInput.props.onChange({ target: { value: title } });
-                descriptionInput.props.onChange({ target: { value: description } });
-                imageLinkInput.props.onChange({ target: { value: imageLink } });
-                universityIdInput.props.onChange({ target: { value: universityId } });
-                courseIdsInput.props.onChange({ target: { value: courseIds } });
-                priceInput.props.onChange({ target: { value: price } });
-        
-                await form.props.onSubmit({ preventDefault: () => {} });
+            /^user attempts to create a item posting with title (.*), description (.*), imagelink (.*), university name (.*), university city (.*), course codename (.*), and price (.*)$/,
+            async (arg0, arg1, arg2, arg3, arg4, arg5, arg6) => {
+                await accessBackend(defaultUser, async () => {
+                    title = arg0.replace(/["]+/g, '');
+                    description = arg1.replace(/["]+/g, '');
+                    imageLink = arg2.replace(/["]+/g, '');
+                    universityName = arg3.replace(/["]+/g, '');
+                    universityCity = arg4.replace(/["]+/g, '')
+                    courseCodename = arg5.replace(/["]+/g, '');
+                    price = arg6.replace(/["]+/g, '');
+
+                    // Transform data here
+                    let university = await GET(`university/${universityCity}/${universityName}`, true)
+                    let course = await GET(`course/codename/${courseCodename}`, true);
+
+                    titleInput.props.onChange({ target: { value: title } });
+                    descriptionInput.props.onChange({ target: { value: description } });
+                    imageLinkInput.props.onChange({ target: { value: imageLink } });
+                    universityIdInput.props.onChange({ target: { value: university.id } });
+                    courseIdsInput.props.onChange({ target: { selectedOptions: [{value: course.id }] } });
+                    priceInput.props.onChange({ target: { value: price } });
+            
+                    await form.props.onSubmit({ preventDefault: () => {} });
+                })
             }
         );
 
         then(
-            /^a new itemposting with title (.*), description (.*), imagelink (.*), universityId (.*), courseIds (.*), and price (.*) is added to the system$/,
-            async (arg0, arg1, arg2, arg3, arg4, arg5) => {
+            /^a new itemposting with title (.*), description (.*), imagelink (.*), university name (.*), university city (.*), course codename (.*), and price (.*) is added to the system$/,
+            async (arg0, arg1, arg2, arg3, arg4, arg5, arg6) => {
                 await accessBackend(defaultUser, async () => {
-                let itempostings = await GET('itemposting');
+                let itempostings = await GET('itemposting', true);
                 let itemposting = itempostings[itempostings.length - 1];
-                await expect(itemposting.title).toBe(arg0);
-                await expect(itemposting.description).toBe(arg1);
-                await expect(itemposting.imageLink).toBe(arg2);
-                await expect(itemposting.universityId).toBe(arg3);
-                await expect(itemposting.courseIds).toBe(arg4);
-                await expect(itemposting.price).toBe(arg5);
+                await expect(itemposting.title).toBe(arg0.replace(/["]+/g, ''));
+                await expect(itemposting.description).toBe(arg1.replace(/["]+/g, ''));
+                await expect(itemposting.imageLink).toBe(arg2.replace(/["]+/g, ''));
+
+                let university = await GET(`university/${itemposting.university.id}`, true);
+                let course = await GET(`course/${itemposting.courses[0].id}`, true);
+
+                await expect(university.name).toBe(arg3.replace(/["]+/g, ''));
+                await expect(university.city).toBe(arg4.replace(/["]+/g, ''));
+                await expect(course.codename).toBe(arg5.replace(/["]+/g, ''));
+                await expect(itemposting.price).toBe(parseInt(arg6.replace(/["]+/g, ''), 10));
+
+                // Cleanup
+                DELETE(`itemposting/${itemposting.id}`, true);
             })}
+
         );
     })
 
@@ -152,12 +224,14 @@ defineFeature(feature, (test) => {
             await LOGIN(defaultUser.email, defaultUser.password);
         });
         and (
-            /^a university with id (.*) does not already exists in the system$/,
-            async (arg0) => {
+            /^a university with name (.*) and city (.*) does not already exists in the system$/,
+            async (arg0, arg1) => {
                 await accessBackend(defaultUser, async () => {
-                    let universities = await GET('university');
+                    let universities = await GET('university', true);
+                    arg0 = arg0.replace(/["]+/g, '');
+                    arg1 = arg1.replace(/["]+/g, '');
                     universities.forEach((university) => {
-                        if (university.id == arg0){
+                        if (university.name === arg0 && university.city === arg1){
                             error = 'University already exists';
                             assert.fail(error);
                         }
@@ -166,13 +240,14 @@ defineFeature(feature, (test) => {
             }
         );
         and (
-            /^a course with id (.*) does not already exists in the system$/,
+            /^a course with codename (.*) does not already exists in the system$/,
             async (arg0) => {
                 await accessBackend(defaultUser, async () => {
                     let courses = await GET('course');
+                    arg0 = arg0.replace(/["]+/g, '');
                     courses.forEach((course) => {
-                        if (course.id == arg0){
-                            error = 'University already exists';
+                        if (course.codename === arg0){
+                            error = 'Course already exists';
                             assert.fail(error);
                         }
                     });
@@ -181,20 +256,25 @@ defineFeature(feature, (test) => {
         );
 
         when(
-            /^user attempts to create a item posting with title (.*), description (.*), imagelink (.*), universityId (.*), courseIds (.*), and price (.*)$/,
-            async (arg0, arg1, arg2, arg3, arg4, arg5) => {
+            /^user attempts to create a item posting with title (.*), description (.*), imagelink (.*), university name (.*), university city (.*), course codename (.*), and price (.*)$/,
+            async (arg0, arg1, arg2, arg3, arg4, arg5, arg6) => {
                 title = arg0;
                 description = arg1;
                 imageLink = arg2;
-                universityId = arg3;
-                courseIds = [arg4];
-                price = arg5;
-        
+                universityName = arg3;
+                universityCity = arg4
+                courseCodename = arg5;
+                price = arg6;
+
+                // Transform data here
+                let university = await GET(`university/${universityCity}/${universityName}`, true)
+                let course = await GET(`course/codename/${courseCodename}`, true);
+
                 titleInput.props.onChange({ target: { value: title } });
                 descriptionInput.props.onChange({ target: { value: description } });
                 imageLinkInput.props.onChange({ target: { value: imageLink } });
-                universityIdInput.props.onChange({ target: { value: universityId } });
-                courseIdsInput.props.onChange({ target: { value: courseIds } });
+                universityIdInput.props.onChange({ target: { value: university.id } });
+                courseIdsInput.props.onChange({ target: { selectedOptions: [{value: course.id }] } });
                 priceInput.props.onChange({ target: { value: price } });
         
                 await form.props.onSubmit({ preventDefault: () => {} });
