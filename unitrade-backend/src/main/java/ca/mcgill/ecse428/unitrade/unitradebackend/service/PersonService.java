@@ -28,6 +28,9 @@ public class PersonService {
     @Autowired
     CourseRepository courseRepository;
 
+    @Autowired
+    RoleService roleService;
+
     @Transactional
     public Person createPerson(
             String email,
@@ -184,6 +187,57 @@ public class PersonService {
     }
 
     @Transactional
+    public List<Person> getPersonsNonHelperFromUniversity(Long universityId) {
+        if (universityId == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University id cannot be null");
+        }
+
+        University university = universityRepository.findById(universityId).orElse(null);
+
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("University with id '%d' not found", universityId));
+        }
+
+        List<Person> persons = personRepository.findAllByUniversity(university);
+
+        List<Person> nonHelpers = new ArrayList<>();
+
+        for (Person person : persons) {
+            if (!roleService.isAdministratorOrHelper(person.getId(), universityId)) {
+                nonHelpers.add(person);
+            }
+        }
+
+        return nonHelpers;
+    }
+
+    @Transactional
+    public List<Person> getPersonsHelperFromUniversity(Long universityId) {
+        if (universityId == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University id cannot be null");
+        }
+
+        University university = universityRepository.findById(universityId).orElse(null);
+
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("University with id '%d' not found", universityId));
+        }
+
+        List<Person> persons = personRepository.findAllByUniversity(university);
+        List<Person> helpers = new ArrayList<>();
+
+        for (Person person : persons) {
+            if (roleService.isHelper(person.getId(), universityId)) {
+                helpers.add(person);
+            }
+        }
+
+        return helpers;
+    }
+
+    @Transactional
     public List<String> getAllUsernames() {
         List<Person> persons = personRepository.findAll();
         List<String> usernames = new ArrayList<>();
@@ -192,6 +246,26 @@ public class PersonService {
             usernames.add(person.getUsername());
         }
         return usernames;
+    }
+
+    @Transactional
+    public boolean isAdministratorOrHelperToSelfUniversity(Long authLong) {
+
+        if (authLong == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Auth id cannot be null");
+        }
+
+        Person person = personRepository.findById(authLong).orElse(null);
+
+        if (person == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Person with id '%d' not found", authLong));
+        }
+
+        if (person.getUniversity() == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Person is not associated with a university");
+        }
+
+        return roleService.isAdministratorOrHelper(authLong, person.getUniversity().getId());
     }
 
     @Transactional

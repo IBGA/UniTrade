@@ -1,9 +1,6 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -22,6 +19,7 @@ public class Role {
     private Person person;
     @ManyToOne(cascade=CascadeType.DETACH)
     //@OnDelete(action = OnDeleteAction.CASCADE)
+
     private University university;
 
     public Long getId() {

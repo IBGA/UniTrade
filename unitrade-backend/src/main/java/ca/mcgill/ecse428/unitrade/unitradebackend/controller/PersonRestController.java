@@ -1,5 +1,6 @@
 package ca.mcgill.ecse428.unitrade.unitradebackend.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +155,43 @@ public class PersonRestController {
     public ResponseEntity<Boolean> personExistsWithUsername(@PathVariable("username") String username) {
         return new ResponseEntity<Boolean>(
                 personService.personExistsWithUsername(username), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = {"/person/non-helper/from/university/{universityId}"})
+    public ResponseEntity<List<PersonResponseDto>> getPersonsNonHelperFromUniversity(@PathVariable("universityId") Long universityId) {
+
+        List<Person> persons = personService.getPersonsNonHelperFromUniversity(universityId);
+        List<PersonResponseDto> personResponseDtos = new ArrayList<PersonResponseDto>();
+        for (Person person : persons) {
+            personResponseDtos.add(PersonResponseDto.createDto(person));
+        }
+
+        return new ResponseEntity<List<PersonResponseDto>>(
+                personResponseDtos, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = {"/person/helper/from/university/{universityId}"})
+    public ResponseEntity<List<PersonResponseDto>> getPersonsHelperFromUniversity(@PathVariable("universityId") Long universityId) {
+
+        List<Person> persons = personService.getPersonsHelperFromUniversity(universityId);
+        List<PersonResponseDto> personResponseDtos = new ArrayList<PersonResponseDto>();
+        for (Person person : persons) {
+            personResponseDtos.add(PersonResponseDto.createDto(person));
+        }
+        return new ResponseEntity<List<PersonResponseDto>>(
+                personResponseDtos, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = {"/person/check/admin/or/helper"})
+    public ResponseEntity<Boolean> checkIfUserIsAdminOrHelper() {
+
+        Long authId = ControllerHelper.getAuthenticatedUserId();
+
+        return new ResponseEntity<Boolean>(
+                personService.isAdministratorOrHelperToSelfUniversity(authId), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
