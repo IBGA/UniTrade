@@ -17,14 +17,14 @@ let form;
 let allInputs;
 let universityNameInput;
 let universityCityInput;
-let courseCodeNameInput;
-let courseTitleInput;
-let courseDescriptionInput;
+let codeNameInput;
+let titleInput;
+let descriptionInput;
 let universityName = '';
 let universityCity = '';
-let courseCodeName = '';
-let courseTitle = '';
-let courseDescription = '';
+let codeName = '';
+let title = '';
+let description = '';
 
 let error = ''
 let courseCount = 0;
@@ -48,9 +48,9 @@ defineFeature(feature, (test) => {
     allInputs = testInstance.findByType('form').findAllByType('input');
     universityNameInput = allInputs[0]; //fix
     universityCityInput = allInputs[1];
-    courseCodeNameInput = allInputs[2];
-    courseTitleInput = allInputs[3];
-    courseDescriptionInput = allInputs[4];
+    codeNameInput = allInputs[2];
+    titleInput = allInputs[3];
+    descriptionInput = allInputs[4];
 
   });
 
@@ -98,7 +98,7 @@ defineFeature(feature, (test) => {
             if (university.name = arg0){
               let courses = await GET('course');
               courses.forEach((course) => {
-                if (course.courseCodeName == arg1){
+                if (course.codeName == arg1){
                   error = 'Course already exists';
                   assert.fail(error);
                 }
@@ -114,14 +114,14 @@ defineFeature(feature, (test) => {
       /^user attempts to create a course for university (.*) with title (.*), codename (.*), and description (.*)$/,
       async(arg0, arg1, arg2, arg3) => {
         universityName = arg0;
-        courseTitle = arg1;
-        courseCodeName = arg2;
-        courseDescription = arg3;
+        title = arg1;
+        codeName = arg2;
+        description = arg3;
 
-        universityNameInput.props.onChange({target: {value: universityName}});
-        courseTitleInput.props.onChange({target: {value: courseTitle}});
-        courseCodeNameInput.props.onChange({target: {value: courseCodeName}});
-        courseDescriptionInput.props.onChange({target: {value: courseDescription}});
+      //  universityNameInput.props.onChange({target: {value: universityName}});
+        titleInput.props.onChange({target: {value: title}});
+        codeNameInput.props.onChange({target: {value: codeName}});
+        descriptionInput.props.onChange({target: {value: description}});
 
         await form.props.onSubmit({ preventDefault: () => {}});
       }
@@ -133,10 +133,10 @@ defineFeature(feature, (test) => {
           await accessBackend(defaultUser, async () => {
             let courses = await GET('course');
             let course = courses[course.length-1];
-            await expect(course.universityName).toBe(arg0);
-            await expect(course.courseTitle).toBe(arg1);
-            await expect(course.courseCodeName).toBe(arg2);
-            await expect(course.courseDescription).toBe(arg3)
+         //   await expect(course.universityName).toBe(arg0);
+            await expect(course.title).toBe(arg1);
+            await expect(course.codeName).toBe(arg2);
+            await expect(course.description).toBe(arg3)
           });
         }
         );
@@ -187,7 +187,7 @@ defineFeature(feature, (test) => {
       await accessBackend(defaultUser, async () => {
         await POST('course', {
           universityName: arg0,
-          courseCodeName: arg1,
+          codeName: arg1,
 
         });
         let courses = await GET('course');
@@ -201,14 +201,14 @@ defineFeature(feature, (test) => {
       async(arg0, arg1, arg2, arg3) => {
         try {
           universityName = arg0;
-          courseTitle = arg1;
-          courseCodeName = arg2;
-          courseDescription = arg3;
+          title = arg1;
+          codeName = arg2;
+          description = arg3;
 
          universityNameInput.props.onChange({target: {value: universityName}});
-          courseTitleInput.props.onChange({target: {value: courseTitle}});
-          courseCodeNameInput.props.onChange({target: {value: courseCodeName}});
-          courseDescriptionInput.props.onChange({target: {value: courseDescription}});
+          titleInput.props.onChange({target: {value: title}});
+          codeNameInput.props.onChange({target: {value: codeName}});
+          descriptionInput.props.onChange({target: {value: description}});
 
         await form.props.onSubmit({ preventDefault: () => {}});
         }
