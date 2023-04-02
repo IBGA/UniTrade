@@ -36,6 +36,8 @@ public class PersonResponseDto {
         this.profilePicture = profilePicture;
         this.isOnline = isOnline;
         this.isEnabled = isEnabled;
+        this.university = university;
+        this.enrolledCourses = enrolledCourses;
     }
 
     public Long getId() {
@@ -128,6 +130,7 @@ public class PersonResponseDto {
             courses,
             universityDto
         );
+
         return dto;
     }
 }

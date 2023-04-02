@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,10 +68,23 @@ public class CourseRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value = { "/course/{codename}" })
+    @GetMapping(value = { "/course/codename/{codename}" })
     public ResponseEntity<CourseResponseDto> getCourseByCodename(@PathVariable("codename") String codename) {
         return new ResponseEntity<CourseResponseDto>(
                 CourseResponseDto.createDto(courseService.getCourse(codename)), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/course/university/{universityId}" })
+    public ResponseEntity<List<CourseResponseDto>> getCourseByUniversityId(@PathVariable("universityId") Long universityId) {
+        List<Course> courses = courseService.getCourseByUniversity(universityId);
+        List<CourseResponseDto> courseResponseDtos = new ArrayList<CourseResponseDto>();
+        for (Course course : courses) {
+            courseResponseDtos.add(CourseResponseDto.createDto(course));
+        }
+        
+        return new ResponseEntity<List<CourseResponseDto>>(
+                courseResponseDtos, HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -91,5 +105,12 @@ public class CourseRestController {
     public ResponseEntity<CourseResponseDto> approveCourse(@PathVariable("id") Long id) {
         return new ResponseEntity<CourseResponseDto>(CourseResponseDto.createDto(courseService.approve(id)),
                 HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = { "/course/{id}" })
+    public ResponseEntity<CourseResponseDto> deleteCourse(@PathVariable("id") Long id) {
+        courseService.deleteCourse(ControllerHelper.getAuthenticatedUserId(), id);
+        return new ResponseEntity<CourseResponseDto>(HttpStatus.OK);
     }
 }

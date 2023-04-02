@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +46,7 @@ public class ItemPostingRestController {
         ItemPosting itemPosting = itemPostingService.createItemPosting(
                 body.getTitle(),
                 body.getDescription(),
+                body.getImageLink(),
                 body.getDatePosted(),
                 body.getUniversityId(),
                 authId,
@@ -115,6 +117,29 @@ public class ItemPostingRestController {
 
         return new ResponseEntity<List<ItemPostingResponseDto>>(
                 itemPostingResponseDtos, HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(value = { "/itemposting/{id}" })
+    public ResponseEntity<ItemPostingResponseDto> updateItemPosting(@RequestBody ItemPostingRequestDto body, @PathVariable("id") Long id) {
+
+        Long authId = ControllerHelper.getAuthenticatedUserId();
+
+        ItemPosting itemPosting = itemPostingService.getItemPosting(id);
+
+        if (itemPosting.getPoster().getId() != authId)
+            return new ResponseEntity<ItemPostingResponseDto>(HttpStatus.UNAUTHORIZED);
+
+        itemPosting = itemPostingService.updateItemPosting(
+                id,
+                body.getTitle(),
+                body.getDescription(),
+                body.getImageLink(),
+                body.getPrice(),
+                body.isAvailable(),
+                body.getCourseIds());
+
+        return new ResponseEntity<ItemPostingResponseDto>(ItemPostingResponseDto.createDto(itemPosting), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)

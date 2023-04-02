@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.sql.Date;
 import java.util.List;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.lang.NonNull;
 
 @Entity

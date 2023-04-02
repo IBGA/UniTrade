@@ -41,6 +41,7 @@ public class ItemPostingService {
     public ItemPosting createItemPosting(
             String title,
             String description,
+            String imageLink,
             Date datePosted,
             Long universityId,
             Long posterId,
@@ -57,8 +58,12 @@ public class ItemPostingService {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Description cannot be null or empty");
         }
 
+        if (imageLink == null || imageLink.isEmpty()) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "ImageLink cannot be null or empty");
+        }
+
         if (datePosted == null) {
-            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Date posted cannot be null");
+            datePosted = new Date();
         }
 
         if (universityId == null) {
@@ -93,6 +98,7 @@ public class ItemPostingService {
         ItemPosting itemPosting = new ItemPosting();
         itemPosting.setTitle(title);
         itemPosting.setDescription(description);
+        itemPosting.setImageLink(imageLink);
         itemPosting.setDatePosted(datePosted);
         itemPosting.setUniversity(university);
         itemPosting.setPoster(poster);
@@ -166,6 +172,50 @@ public class ItemPostingService {
     public List<ItemPosting> getAllItemPostings() {
         return itemPostingRepository.findAll();
     }
+
+    @Transactional
+    public ItemPosting updateItemPosting(Long id, String title, String description, String imageLink, Double price, Boolean isAvailable, List<Long> courseIds) {
+        if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+
+        ItemPosting itemPosting = itemPostingRepository.findById(id).orElse(null);
+        if (itemPosting == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Item posting with id '%d' not found", id));
+
+        // Validate input syntax (Error -> 400)
+        if (title == null || title.isEmpty()) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Title cannot be null or empty");
+        }
+
+        if (description == null || description.isEmpty()) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Description cannot be null or empty");
+        }
+
+        if (price == null || price < 0) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Price must be a valid positive number");
+        }
+
+        if (isAvailable == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Availability must be specified");
+        }
+
+        itemPosting.setTitle(title);
+        itemPosting.setImageLink(imageLink);
+        itemPosting.setDescription(description);
+        itemPosting.setPrice(price);
+        itemPosting.setAvailable(isAvailable);
+
+        if (courseIds != null) {
+            List<Course> courses = new ArrayList<Course>();
+            for (Long courseId : courseIds) {
+                Course course = courseRepository.findById(courseId).orElse(null);
+                if (course == null) throw new ServiceLayerException(HttpStatus.NOT_FOUND, String.format("Course with id '%d' not found", courseId));
+                courses.add(course);
+            }
+            itemPosting.setCourses(courses);
+        }
+
+        return itemPostingRepository.save(itemPosting);
+    }
+
 
     @Transactional
     public void deleteItemPosting(Long authId, Long postId) {

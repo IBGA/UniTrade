@@ -9,8 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ca.mcgill.ecse428.unitrade.unitradebackend.exception.ServiceLayerException;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.Course;
+import ca.mcgill.ecse428.unitrade.unitradebackend.model.Person;
 import ca.mcgill.ecse428.unitrade.unitradebackend.model.University;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.CourseRepository;
+import ca.mcgill.ecse428.unitrade.unitradebackend.repository.PersonRepository;
 import ca.mcgill.ecse428.unitrade.unitradebackend.repository.UniversityRepository;
 
 @Service
@@ -20,6 +22,12 @@ public class CourseService {
 
     @Autowired
     UniversityRepository universityRepository;
+
+    @Autowired
+    PersonRepository personRepository;
+
+    @Autowired
+    RoleService roleService;
 
     @Transactional
     public Course createCourse(
@@ -74,6 +82,20 @@ public class CourseService {
     }
 
     @Transactional
+    public List<Course> getCourseByUniversity(Long id){
+        if (id == null) throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+        University university = universityRepository.findById(id).orElse(null);
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("University with id %d not found", id));
+        }
+        
+        List<Course> courses = courseRepository.findByUniversity(university);
+        if (courses == null || courses.isEmpty()) throw new ServiceLayerException(HttpStatus.NOT_FOUND, "No such course");
+        return courses;
+    }
+
+    @Transactional
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
     }
@@ -88,5 +110,35 @@ public class CourseService {
 
         course.setApproved(true);
         return courseRepository.save(course);
+    }
+
+    @Transactional
+    public void deleteCourse(Long authId, Long courseId) {
+
+        if (courseId == null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Id cannot be null");
+        }
+
+        Person requester = personRepository.findById(authId).orElse(null);
+        if (requester == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("Person with id %d not found", authId));
+        }
+
+        Course course = courseRepository.findById(courseId).orElse(null);
+        if (course == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND,
+                    String.format("Course with id %d not found", courseId));
+        }
+        Long universityId = course.getUniversity().getId();
+
+        // Check if requester is an administrator (Error -> 403)
+        if (!roleService.isAdministrator(authId, universityId)) {
+            throw new ServiceLayerException(HttpStatus.FORBIDDEN,
+                    String.format("Person with id %d is not an administrator of university with id %d", authId, universityId));
+        }
+
+        // Delete university
+        courseRepository.delete(course);
     }
 }

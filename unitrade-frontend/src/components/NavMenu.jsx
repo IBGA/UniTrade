@@ -5,6 +5,9 @@ import logo from '../assets/unitrade-nav.png';
 import styled from "styled-components";
 import { LOGOUT } from "../utils/client";
 import { useAuth } from "./AuthProvider";
+import personIcon from "../assets/person-icon.svg"
+import arrowIcon from "../assets/box-arrow.svg"
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const NavMenuStyle = styled.div`
     .bg-white{
@@ -35,6 +38,16 @@ const NavMenuStyle = styled.div`
         font-weight: 550;
         color: white;
     }
+
+    .profile-btn {
+        width: 30px;
+        height: 30px;
+    }
+
+    .add-btn {
+        width: 30px;
+        height: 30px;
+    }
 `;
 
 export function NavMenu() {
@@ -46,6 +59,18 @@ export function NavMenu() {
         setAuth(false);
         window.location.reload(false);
     }
+
+    const profileTooltip = (
+        <Tooltip id="profile-tooltip">
+          My Profile
+        </Tooltip>
+    );
+
+    const postToolTip = (
+        <Tooltip id="post-tooltip">
+            Post an Item
+        </Tooltip>
+    );
 
     return (
         <>
@@ -63,13 +88,26 @@ export function NavMenu() {
                         </Navbar.Brand>
                         <Nav className="me-auto">
                             <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="/">Pricing</Nav.Link>
-                            <Nav.Link href="/">About</Nav.Link>
+                            <Nav.Link href="/browse/item">Browse</Nav.Link>
+                            {/* <Nav.Link href="/">About</Nav.Link> */}
                         </Nav>
+
+                        {auth &&
+                        <Nav className="ms-auto p-3">
+                            <OverlayTrigger placement="bottom" overlay={postToolTip}>
+                                <Nav.Link href="/create-item-posting"><img src={arrowIcon} className="add-btn"></img></Nav.Link>
+                            </OverlayTrigger>
+                        
+                            <OverlayTrigger placement="bottom" overlay={profileTooltip}>
+                                <Nav.Link href="/profile"><img src={personIcon} className="profile-btn"></img></Nav.Link>
+                            </OverlayTrigger>
+                        </Nav>
+                        }
+                        
                         {auth ? 
                         <Nav.Link className="logout-link" onClick={handleOnLogout}>Log Out</Nav.Link>
                         :
-                        <Nav.Link className="get-started-link" href="/login">Get Started</Nav.Link>
+                        <Nav.Link className="get-started-link" href="/login">Log In</Nav.Link>
                         }
                     </Container>
                 </Navbar>

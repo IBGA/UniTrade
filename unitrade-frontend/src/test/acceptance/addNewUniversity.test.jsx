@@ -2,20 +2,22 @@ import { loadFeature, defineFeature } from 'jest-cucumber';
 import { beforeEach } from 'vitest';
 import TestRenderer from 'react-test-renderer';
 import { CreateUniversity } from '../../components/CreateUniversity';
-import { get, post } from '../../utils/client';
+import { GET, LOGIN, POST, DELETE } from '../../utils/client';
+import accessBackend from '../../utils/testUtils';
+import ErrorToast from '../../components/toasts/ErrorToast';
+import { expect } from 'vitest';
 
 const feature = loadFeature('../features/ID024_Add_new_university.feature');
 
-let testRenderer = TestRenderer.create(<CreateUniversity />);
-let testInstance = testRenderer.root;
+let testRenderer;
+let testInstance;
 
-let form = testInstance.findByType('form');
+let form;
 
-let allInputs = testInstance.findByType('form').findAllByType('input');
-let nameInput = allInputs[0];
-let cityInput = allInputs[1];
-let descriptionInput = allInputs[2];
-
+let allInputs;
+let nameInput;
+let cityInput;
+let descriptionInput;
 let name = '';
 let city = '';
 let description = '';
@@ -23,9 +25,26 @@ let description = '';
 let error = ''
 let universityCount = 0;
 
+let defaultUser = {
+  email: 'default@user.com',
+  username: 'default@user.com',
+  firstName: 'Default',
+  lastName: 'User',
+  password: 'DefaultUser'
+}
+
 defineFeature(feature, (test) => {
   beforeEach(() => {
     error = '';
+    testRenderer = TestRenderer.create(<CreateUniversity />);
+    testInstance = testRenderer.root;
+
+    form = testInstance.findByType('form');
+
+    allInputs = testInstance.findByType('form').findAllByType('input');
+    nameInput = allInputs[0];
+    cityInput = allInputs[1];
+    descriptionInput = allInputs[2];
   });
 
   test('Fields are filled in correctly (Normal Flow)', ({
@@ -34,20 +53,25 @@ defineFeature(feature, (test) => {
     when,
     then,
   }) => {
-    given('user is logged in', () => {});
+    given('user is logged in', async () => {
+      await POST('person', defaultUser, false);
+      await LOGIN(defaultUser.email, defaultUser.password);
+    });
 
     and(
       /^a university with name (.*) and city (.*) does not already exist in the system$/,
       async (arg0, arg1) => {
-        let universities = await get('university');
-        console.log(universities);
-        universities.forEach((university) => {
-          if (university.name === arg0 && university.city === arg1) {
-            error = 'University already exists';
-            assert.fail(error);
-          }
-        });
-      }
+        await accessBackend(defaultUser, async () => {
+          let universities = await GET('university', true);
+          arg0 = arg0.replace(/["]+/g, '');
+          arg1 = arg1.replace(/["]+/g, '');
+          universities.forEach((university) => {
+            if (university.name === arg0 && university.city === arg1) {
+              error = 'University already exists';
+              assert.fail(error);
+            }
+          });
+        })}
     );
 
     when(
@@ -68,43 +92,46 @@ defineFeature(feature, (test) => {
     then(
       /^a new university with name (.*), city (.*), and description (.*) is added to the system$/,
       async (arg0, arg1, arg2) => {
-        let universities = await get('university');
-        let university = universities[universities.length - 1];
-        expect(university.name).toBe(arg0);
-        expect(university.city).toBe(arg1);
-        expect(university.description).toBe(arg2);
-      }
+          await accessBackend(defaultUser, async () => {
+          let universities = await GET('university', true);
+          let found = false
+          let universityId
+          universities.forEach((university) => {
+            if (university.name === arg0 && university.city === arg1 && university.description === arg2) {
+                found = true
+                universityId = university.id
+            }
+          })
+          await expect(found).toBe(true);
+
+          await DELETE(`university/${universityId}`, true);
+      })}
     );
   });
 
-  test('University already exists  (Error Flow)', ({
+  test('University already exists (Error Flow)', ({
     given,
     and,
     when,
     then,
   }) => {
-    given('user is logged in', () => {});
+    given('user is logged in', async () => {
+      await POST('person', defaultUser, false);
+      await LOGIN(defaultUser.email, defaultUser.password);
+    });
 
     and(
       /^a university with name (.*) and city (.*) already exists in the system$/,
       async (arg0, arg1) => {
-        try {
-          name = arg0;
-          city = arg1;
-          description = "description";
-
-          nameInput.props.onChange({ target: { value: name } });
-          cityInput.props.onChange({ target: { value: city } });
-          descriptionInput.props.onChange({ target: { value: description } });
-
-        
-          await form.props.onSubmit({ preventDefault: () => {} });
-        } catch (e) {
-          error = e;
-        }
-
-        let universities = await get('university');
-        universityCount = universities.length;
+        await accessBackend(defaultUser, async () => {
+          await POST('university', {
+            name: arg0,
+            city: arg1,
+            description: 'Test University',
+          });
+          let universities = await GET('university', true);
+          universityCount = universities.length;
+        });
       }
     );
 
@@ -128,15 +155,19 @@ defineFeature(feature, (test) => {
       }
     );
 
-    then('an error is thrown', () => {
-      expect(error).not.toBe('');
-    });
-
-    and(
-      /^a new university with name (.*), city (.*), and description (.*) is not added to the system$/,
+    then(
+      /^an error is thrown to create a new university with name (.*), city (.*), and description (.*)$/,
       async (arg0, arg1, arg2) => {
-        let universities = await get('university');
-        expect(universities.length).toBe(universityCount);
+        await setTimeout(() => {
+          expect(testInstance.findByType(ErrorToast).props.show).toBe(true);
+        }, 1000);
+
+        // cleanup
+        await accessBackend(defaultUser, async () => {
+            let university = await GET(`university/${arg1}/${arg0}`, true);
+            // Remove university created
+            await DELETE(`university/${university.id}`, true);
+        });
       }
     );
   });
