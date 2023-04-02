@@ -7,6 +7,7 @@ import { LOGOUT } from "../utils/client";
 import { useAuth } from "./AuthProvider";
 import personIcon from "../assets/person-icon.svg"
 import arrowIcon from "../assets/box-arrow.svg"
+import universityIcon from "../assets/university-icon.svg"
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const NavMenuStyle = styled.div`
@@ -60,6 +61,12 @@ export function NavMenu() {
         window.location.reload(false);
     }
 
+    const UniversityTooltip = (
+        <Tooltip id="university-tooltip">
+            My University
+        </Tooltip>
+    );
+
     const profileTooltip = (
         <Tooltip id="profile-tooltip">
           My Profile
@@ -94,10 +101,14 @@ export function NavMenu() {
 
                         {auth &&
                         <Nav className="ms-auto p-3">
+                            <OverlayTrigger placement="bottom" overlay={UniversityTooltip}>
+                                <Nav.Link href="/create-university"><img src={universityIcon} className="add-btn"></img></Nav.Link>
+                            </OverlayTrigger>
+
                             <OverlayTrigger placement="bottom" overlay={postToolTip}>
                                 <Nav.Link href="/create-item-posting"><img src={arrowIcon} className="add-btn"></img></Nav.Link>
                             </OverlayTrigger>
-                        
+
                             <OverlayTrigger placement="bottom" overlay={profileTooltip}>
                                 <Nav.Link href="/profile"><img src={personIcon} className="profile-btn"></img></Nav.Link>
                             </OverlayTrigger>
