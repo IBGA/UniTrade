@@ -88,11 +88,8 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
 
         RequestHelperClass helper = new RequestHelperClass(true);
         try {
-            System.out.println("Getting university");
             helper.get("http://localhost:8080/university/"+city+"/"+name, UniversityResponseDto.class, true);
-            System.out.println("Got university");
         } catch (HttpClientErrorException e) {
-            System.out.println(e);
 
             UniversityRequestDto body = new UniversityRequestDto();
             body.setName(name);
@@ -104,7 +101,6 @@ public class AddUniversityStepDefinitions extends AcceptanceTest {
             try {
                 helper.post(url, UniversityResponseDto.class, body, true);
             } catch (HttpClientErrorException e1) {
-                System.out.println(e1);
                 statusCode = e1.getStatusCode();
             }
         }

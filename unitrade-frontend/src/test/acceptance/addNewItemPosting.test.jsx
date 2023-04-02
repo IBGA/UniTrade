@@ -141,8 +141,8 @@ defineFeature(feature, (test) => {
             }
         );
         and (
-            /^a course with codename (.*) already exists in the system$/,
-            async (arg0) => {
+            /^a course with codename (.*) for university with name (.*) and city (.*) already exists in the system$/,
+            async (arg0, arg1, arg2) => {
                 await accessBackend(defaultUser, async () => {
                     let courses = await GET('course');
                     arg0 = arg0.replace(/["]+/g, '');
@@ -224,7 +224,7 @@ defineFeature(feature, (test) => {
             await LOGIN(defaultUser.email, defaultUser.password);
         });
         and (
-            /^a university with name (.*) and city (.*) does not already exists in the system$/,
+            /^a university with name (.*) and city (.*) does not already exist in the system$/,
             async (arg0, arg1) => {
                 await accessBackend(defaultUser, async () => {
                     let universities = await GET('university', true);
@@ -240,7 +240,7 @@ defineFeature(feature, (test) => {
             }
         );
         and (
-            /^a course with codename (.*) does not already exists in the system$/,
+            /^a course with codename (.*) does not already exist in the system$/,
             async (arg0) => {
                 await accessBackend(defaultUser, async () => {
                     let courses = await GET('course');
