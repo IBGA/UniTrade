@@ -8,8 +8,8 @@ Scenario Outline: Moderator gives other user moderator abilities (Normal Flow)
 Given user is logged in
 And a university with name "<university_name>" and city "<university_city>" exists in the system
 And user is a moderator for university with name "<university_name>" and city "<university_city>"
-And another user with username "<username>" exists in the system
-When user attempts to give user with username "<username>" moderator abilities for university with name "<university_name>" and city "<university_city>"
+And another user with username "<username>" exists in the system and is a member of university with name "<university_name>" and city "<university_name>"
+When user attempts to give user with username "<username>" moderator abilities for university with name "<university_name>" and city "<university_name>"
 Then user with username "<username>" is given moderator abilities for university with name "<university_name>" and city "<university_city>"
 
 Examples:
