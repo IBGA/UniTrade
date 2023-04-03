@@ -13,11 +13,12 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.PersonResponseDto
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.RoleResponseDto;
 import ca.mcgill.ecse428.unitrade.unitradebackend.dto.Response.UniversityResponseDto;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
-public class AssignModeratorStepDefinitions {
+public class AssignModeratorStepDefinitions extends AcceptanceTest {
     
-    @And("user is a moderator for university with name {string} and city {string}")
+    @And("user is a moderator for a university with name {string} and city {string}")
     public void user_is_a_moderator_for_university_with_name_and_city(String name, String city){
         
         PersonRequestDto personRequestDto = new PersonRequestDto();
@@ -56,7 +57,7 @@ public class AssignModeratorStepDefinitions {
 
         RequestHelperClass helper = new RequestHelperClass(personRequestDto, true);
 
-        String url = "http://localhost:8080/university/" + name + "/" + city;
+        String url = "http://localhost:8080/university/" + city + "/" + name;
 
         ResponseEntity<UniversityResponseDto> res1 = helper.get(url, UniversityResponseDto.class, true);
         assertTrue(res1.getStatusCode().is2xxSuccessful());
@@ -70,16 +71,53 @@ public class AssignModeratorStepDefinitions {
     @When("user attempts to give user with username {string} moderator abilities for university with name {string} and city {string}")
     public void user_attempts_to_give_user_with_username_moderator_abilities_for_university_with_name_and_city(String username, String name, String city){
 
-        RequestHelperClass helper = new RequestHelperClass(false);
-        PersonRequestDto personRequestDto = helper.get("http://localhost:8080/person/self", PersonRequestDto.class, true).getBody();
+        PersonRequestDto personRequestDto = new PersonRequestDto();
+        personRequestDto.setUsername("testUsername2");
+        personRequestDto.setEmail("testEmail2");
+        personRequestDto.setPassword("testPassword2");
+        personRequestDto.setFirstName("testFirstName2");
+        personRequestDto.setLastName("testLastName2");
+
+        RequestHelperClass helper = new RequestHelperClass(personRequestDto, false);
+
+        PersonResponseDto personResponseDto = helper.get("http://localhost:8080/person/self", PersonResponseDto.class, true).getBody();
+
+        String url = "http://localhost:8080/university/" + city + "/" + name;
+
+        ResponseEntity<UniversityResponseDto> unires = helper.get(url, UniversityResponseDto.class, true);
+        assertTrue(unires.getStatusCode().is2xxSuccessful());
 
         RoleRequestDto roleDto = new RoleRequestDto();
         roleDto.setPersonUsername(username);
-        roleDto.setUniversityId(personRequestDto.getUniversityId());
+        roleDto.setUniversityId(unires.getBody().getId());
 
-        String url = "http://localhost:8080/role/helper";
+        url = "http://localhost:8080/role/helper";
 
         ResponseEntity<RoleResponseDto> res = helper.post(url, RoleResponseDto.class, roleDto, true);
+        assertTrue(res.getStatusCode().is2xxSuccessful());
+    }
+
+    @Then("user with username {string} is given moderator abilities for university with name {string} and city {string}")
+    public void user_with_username_is_given_moderator_abilities_for_university_with_name_and_city(String username, String name, String city){
+        PersonRequestDto personRequestDto = new PersonRequestDto();
+        personRequestDto.setUsername(username);
+        personRequestDto.setEmail("testEmail3");
+        personRequestDto.setPassword("testPassword3");
+        personRequestDto.setFirstName("testFirstName3");
+        personRequestDto.setLastName("testLastName3");
+
+        RequestHelperClass helper = new RequestHelperClass(personRequestDto, false);
+
+        ResponseEntity<PersonResponseDto> personRes = helper.get("http://localhost:8080/person/self", PersonResponseDto.class, true);
+        assertTrue(personRes.getStatusCode().is2xxSuccessful());
+
+        String url = "http://localhost:8080/university/" + city + "/" + name;
+        ResponseEntity<UniversityResponseDto> unires = helper.get(url, UniversityResponseDto.class, true);
+        assertTrue(unires.getStatusCode().is2xxSuccessful());
+
+        url = "http://localhost:8080/role/personId/" + personRes.getBody().getId() + "/universityId/" + unires.getBody().getId();
+
+        ResponseEntity<RoleResponseDto> res = helper.get(url, RoleResponseDto.class, true);
         assertTrue(res.getStatusCode().is2xxSuccessful());
     }
 }

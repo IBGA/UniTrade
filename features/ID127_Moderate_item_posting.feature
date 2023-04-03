@@ -13,6 +13,6 @@ When user deletes the item posting with title "<title>" and description "<descri
 Then the item posting with title "<title>" and description "<description>" and price <price> for university with name "<university_name>" and city "<university_city>" does not exist in the system
 
 Examples:
-| university_name        | university_city | title           | description         | price |
-| University of American | American        | CSC109 textbook | textbook for CSC109 | 50    |
-| University of Mexican  | Mexican         | MTH103 textbook | textbook for MTH103 | 50    |
+| university_name                      | university_city      | title           | description         | price |
+| University of The Texas American Kid | American T Rex      | CSC109 textbook | textbook for CSC109 | 50    |
+| University of Mexican Tacos          | Mexican Taco Bell    | MTH103 textbook | textbook for MTH103 | 50    |
