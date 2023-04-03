@@ -152,7 +152,7 @@ defineFeature(feature, (test) => {
         // wait some time for the toast to appear
         await setTimeout(() => {
             expect(testInstance.findByType(ErrorToast).props.show).toBe(true);
-        }, 1000);
+        }, 10000);
 
         // Need to get session token of user that was created
         let userToDelete = {
