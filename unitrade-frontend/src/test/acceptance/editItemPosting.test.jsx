@@ -74,8 +74,6 @@ defineFeature(feature, (test) => {
                 universityId: university.id
             });
 
-            console.log(itemPosting)
-
         });
 
         // while (form == null) {
@@ -156,7 +154,6 @@ defineFeature(feature, (test) => {
 
 
                     for (let item of items) {
-                        console.log(item)
                         if (item.title === title && item.description === description && item.price === price && item.university === university && item.city === city) {
                             found = true;
                             break;
