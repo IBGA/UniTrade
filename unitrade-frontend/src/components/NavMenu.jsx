@@ -8,6 +8,7 @@ import { useAuth } from "./AuthProvider";
 import personIcon from "../assets/person-icon.svg"
 import arrowIcon from "../assets/box-arrow.svg"
 import universityIcon from "../assets/university-icon.svg"
+import assignMod from "../assets/assign-moderator.svg"
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const NavMenuStyle = styled.div`
@@ -61,6 +62,12 @@ export function NavMenu() {
         window.location.reload(false);
     }
 
+    const AssignModToolTip = (
+        <Tooltip id="assign-mod-tooltip">
+            Assign Helpers
+        </Tooltip>
+    )
+
     const UniversityTooltip = (
         <Tooltip id="university-tooltip">
             My University
@@ -101,6 +108,10 @@ export function NavMenu() {
 
                         {auth &&
                         <Nav className="ms-auto p-3">
+                            <OverlayTrigger placement="bottom" overlay={AssignModToolTip}>
+                                <Nav.Link href="/assign-moderator"><img src={assignMod} className="profile-btn"></img></Nav.Link>
+                            </OverlayTrigger>
+
                             <OverlayTrigger placement="bottom" overlay={UniversityTooltip}>
                                 <Nav.Link href="/create-university"><img src={universityIcon} className="add-btn"></img></Nav.Link>
                             </OverlayTrigger>
