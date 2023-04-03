@@ -50,6 +50,10 @@ public class CourseService {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Description name cannot be null or empty");
         }
 
+        if (courseRepository.findByCodename(codename) != null) {
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Course with codename already exists");
+        }
+
         Course course = new Course();
         course.setTitle(title);
         course.setCodename(codename);

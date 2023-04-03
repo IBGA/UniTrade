@@ -25,55 +25,18 @@ import ca.mcgill.ecse428.unitrade.unitradebackend.repository.UniversityRepositor
 public class CreateCourseStepDefinitions extends AcceptanceTest{
     
     HttpStatusCode statusCode;
-    @And("a university with name {string} and city {string} exists in the system")
-    public void a_university_with_name_and_city_exists_in_the_system(String name, String city){
-        String url = "http://localhost:8080/university" + city + "/" + name;
-        RequestHelperClass helper = new RequestHelperClass(true);
 
-        try{
-            ResponseEntity<UniversityResponseDto> response = helper.get(url, UniversityResponseDto.class, false);
-            UniversityResponseDto university = response.getBody();
-            assertNotNull(university);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                url = "http://localhost:8080/university/" + university.getId();
-                helper.delete(url, false);
-            }
-        } catch (HttpClientErrorException e) {
+    @And("user is a moderator for university")
+    public void user_is_a_moderator_for_university(){
 
-        }
-        
     }
 
-    @And("user is a moderator for univeristy with name {string} and city {string}")
-    public void user_is_a_moderator_for_university_with_name_and_city(String name, String city){
-        
-    }
-
-    @And("a course for university {string} and codename {string} does not already exist in the system")
-    public void a_course_for_university_with_codename_does_not_already_exist_in_the_system(String universityName, String courseCodeName){
-        String url = "http://localhost:8080/university/" + universityName;
-
-        RequestHelperClass helper = new RequestHelperClass(true);
-
-        try {
-            ResponseEntity<CourseResponseDto> response = helper.get(url, CourseResponseDto.class, false);
-            CourseResponseDto course = response.getBody();
-            assertNotNull(course);
-            if (response.getStatusCode().is2xxSuccessful()) {
-                url = "http://localhost:8080/university/" + course.getUniversity().getId();
-                helper.delete(url, false);
-            }
-        } catch (HttpClientErrorException e) {
-
-        }
-    }
-
-    @When("user attempts to create a course for university {string} with title {string}, codename {string} and description {string}")
-    public void user_attempts_to_create_a_course_for_university_with_title_codename_and_description(String universityName, String title, String courseCodeName, String description){
+    @When("user attempts to create a course for university with name {string} and city {string} with title {string}, codename {string}, and description {string}")
+    public void user_attempts_to_create_a_course_for_university_with_title_codename_and_description(String universityName, String universityCity, String title, String courseCodeName, String description){
         RestTemplate restTemplate = new RestTemplate();
         Long universityId = null;
 
-        String url = "http://localhost:8080/university/" + universityName; //check if city needed
+        String url = "http://localhost:8080/university/" + universityCity + "/" + universityName; //check if city needed
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization",
                  "Basic " + Base64.getEncoder().encodeToString(("testEmail" + ":" + "testPassword").getBytes()));
@@ -89,7 +52,7 @@ public class CreateCourseStepDefinitions extends AcceptanceTest{
             if(statusCode.value() == 404) return;
         }
 
-        url = "http://localhost:8080/university/" + universityName;
+        url = "http://localhost:8080/course";
 
         CourseRequestDto body = new CourseRequestDto();
             body.setCodename(courseCodeName);
@@ -105,16 +68,22 @@ public class CreateCourseStepDefinitions extends AcceptanceTest{
         }
     }
 
-    @Then("a new course for university {string} with title {string}, codename {string}, and description {string} is added to the system")
-    public void a_new_course_for_university_with_title_codename_and_description_is_added_to_the_system(String universityName, String title, 
+    @Then("a new course for university with name {string} and city {string} with title {string}, codename {string}, and description {string} is added to the system")
+    public void a_new_course_for_university_with_title_codename_and_description_is_added_to_the_system(String universityName, String universityCity, String title, 
                 String codeName, String description){
-       String url = "http://localhost:8080/university/" + universityName;
+       String url = "http://localhost:8080/university/" + universityCity + "/" + universityName;
        RequestHelperClass helper = new RequestHelperClass(true);
 
         try {
-            ResponseEntity<CourseResponseDto> response = helper.get(url, CourseResponseDto.class, true);
-            CourseResponseDto course = response.getBody();
+            ResponseEntity<UniversityResponseDto> uniresponse = helper.get(url, UniversityResponseDto.class, true);
+            UniversityResponseDto university = uniresponse.getBody();
+
+            url = "http://localhost:8080/course/codename/"+codeName;
+            ResponseEntity<CourseResponseDto> courseresponse = helper.get(url, CourseResponseDto.class, true);
+            CourseResponseDto course = courseresponse.getBody();
             assertNotNull(course);
+            assertNotNull(university);
+            assertEquals(course.getUniversity().getId(), university.getId());
             assertEquals(universityName, course.getUniversity().getName());
             assertEquals(title, course.getTitle());
             assertEquals(codeName, course.getCodename());
@@ -124,19 +93,23 @@ public class CreateCourseStepDefinitions extends AcceptanceTest{
         }
     }
 
-    @Then("a new course for university {string} with title {string}, codename {string}, and description {string} is not added to the system")
-    public void a_new_course_for_university_with_title_codename_and_description_is__not_added_to_the_system(String universityName, String title, 
+    @Then("a new course for university with name {string} and city {string} with title {string}, codename {string}, and description {string} is not added to the system")
+    public void a_new_course_for_university_with_title_codename_and_description_is__not_added_to_the_system(String universityName, String universityCity, String title, 
                 String codeName, String description){
-                    String url = "http://localhost:8080/university/" ;
+                    String url = "http://localhost:8080/course/" ;
 
                     RequestHelperClass helper = new RequestHelperClass(true);
             
                     try {
-                        helper.get(url, CourseResponseDto.class, true);
+                        helper.get(url+codeName, CourseResponseDto.class, true);
                     } catch (HttpClientErrorException e) {
-                        assertEquals(404, e.getStatusCode().value());
+                        assertEquals(true, e.getStatusCode().is4xxClientError());
                     }
 
                 }
+    @Then("an error is thrown")
+    public void the_item_posting_is_not_created_and_an_error_is_thrown() {
+        assertEquals(true, statusCode.is4xxClientError());
+    }
 }
 

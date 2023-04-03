@@ -39,6 +39,7 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
             helper.get("http://localhost:8080/course/codename/"+codename, CourseRequestDto.class, true);
         } catch (HttpClientErrorException e) {
             CourseRequestDto body = new CourseRequestDto();
+            System.out.println("not existed");
             body.setTitle("Test_course");
             body.setCodename(codename);
             body.setDescription("Test_description");
@@ -49,10 +50,13 @@ public class CreateItemPostingStepDefinitions extends AcceptanceTest {
                 String url = "http://localhost:8080/course";
                 try {
                     helper.post(url, CourseRequestDto.class, body, true);
+                    System.out.println("created");
                 } catch (HttpClientErrorException e2) {
+                    System.out.println("not created");
                     statusCode = e2.getStatusCode();
                 }
             } catch (HttpClientErrorException e1) {
+                System.out.println("failed tog et uni");
                 statusCode = e1.getStatusCode();
             }
         }
