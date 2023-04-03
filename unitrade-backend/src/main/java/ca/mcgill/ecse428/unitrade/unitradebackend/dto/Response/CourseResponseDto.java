@@ -10,6 +10,9 @@ public class CourseResponseDto {
     private String description;
     private boolean isApproved;
     private UniversityResponseDto university;
+    
+    public CourseResponseDto() {
+    }
 
     public CourseResponseDto(Long id, String title, String codename, String description, boolean isApproved, UniversityResponseDto university){
         this.id = id;
