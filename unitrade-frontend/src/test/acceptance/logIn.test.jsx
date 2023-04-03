@@ -111,7 +111,6 @@ defineFeature(feature, (test) => {
             /^user is logged in and redirected to the home page$/,
             async () => {
                 let user = GET('person', true);
-                console.log(user);
                 await expect(user).toBeDefined();
 
                 // Cleanup
@@ -211,8 +210,6 @@ defineFeature(feature, (test) => {
             async (arg0)=> {
                 arg0 = arg0.replace(/["]+/g, '');
                 let exists = await GET('person/exists/username/'+arg0, false)
-                console.log('printing exists: here')
-                console.log(exists)
                 if (exists) {
                     error = 'User exists in system';
                     assert.fail(error);
