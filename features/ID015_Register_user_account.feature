@@ -4,35 +4,24 @@ As a UniTrade potential user
 I want to register an account
 So that I can trade in the online marketplace
 
-Scenario Outline: User email does not already exist in system and password is valid. (Normal Flow)
-Given user is on the register account page
-And user enters a non-existing email address <new_email>
-And user enters a valid password <valid_pass>
-When user clicks on the register button
-Then user with email <new_email> and password <valid_pass> is registered and redirected to the login page
+Scenario Outline: User email and username does not already exist in system. (Normal Flow)
+Given user is not logged in
+And a user with email "<email>" or username "<username>" does not already exist in the system
+When user registers with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>"
+Then a new user account with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>" is created
 
-| new_email          | valid_pass        |
-| alex@newemail.com  | STRONGPASSWORD123 |
-| steve@newemail.com | STRONGPASSWORD456 |
+Examples: 
+| email             | username      | first_name    | last_name     | password      |
+| zidane@zidane.com | zidane        | Zinedine      | Zidane        | zidane        |
+| amidon@gmail.com  | amidon        | Andre         | Agassi        | amidon        |
 
-Scenario Outline: User password is invalid. (Error Flow)
-Given user is on the register account page
-And user enters an existing or non existing email address <email>
-And user enters an invalid password <invalid_pass>
-When user clicks on the register button
-Then a "invalid password" error message is issued
+Scenario Outline: User email or username already exists in system. (Error Flow)
+Given user is not logged in
+And a user with email "<email>" or username "<username>" already exists in the system
+When user registers with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>"
+Then an error is thrown to create a new user account with email "<email>", username "<username>", first name "<first_name>", last name "<last_name>" and password "<password>"
 
-| email              | invalid_pass |
-| alex@email.com     | easypass1    |
-| steve@newemail.com | easypass2    |
-
-Scenario Outline: User email already exists in system. (Error Flow)
-Given user is on the register account page
-And user enters an existing email address <existing_email>
-And user enters a valid password <valid_pass>
-When user clicks on the register button
-Then a "email already exists" error message is issued
-
-| existing_email          | valid_pass        |
-| alex@existingemail.com  | STRONGPASSWORD123 |
-| steve@existingemail.com | STRONGPASSWORD456 |
+Examples:
+| email               | username      | first_name    | last_name     | password      |
+| etienne@hotmail.com | etienne       | Etienne       | Capoue        | etienne       |
+| dean35@outlook.com  | dean35        | Dean          | Henderson     | dean35        |

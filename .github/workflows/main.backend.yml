@@ -2,28 +2,34 @@ name: Gradle Build
 on:
   # Triggers the workflow on push or pull request events but only for the "main" or "dev" branch
   push:
-    branches: [ "main","dev" ]
+    branches: ['main', 'dev']
   pull_request:
-    branches: [ "main","dev" ]
-    
+    branches: ['main', 'dev']
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    # Tell it to run in the unitrade-backend folder
-    defaults: 
+
+    # Setup Node
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    # Tell it to run in the unitrade-backend folder, but does not work for external actions
+    # only for running our own scripts
+    defaults:
       run:
         working-directory: unitrade-backend
-        
+
     steps:
-       # setup Postgres DB
+      # setup Postgres DB
       - name: Set up PostgreSQL database
         uses: harmon758/postgresql-action@v1
         with:
           postgresql version: 14.5
-          postgresql db: UniTrade
+          postgresql db: unitrade-db
           postgresql user: postgres
-          postgresql password: postgres
+          postgresql password: admin
       # setup Java & Gradle
       - uses: actions/checkout@v3
       - name: Set up JDK 17
@@ -31,13 +37,26 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-      #- name: Validate Gradle wrapper
-      #  uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
-      #- name: Grant execute permission for gradlew
-       # run: chmod +x gradlew
-       # working-directory: UniTrade
-        # Run build
+      # Run build which runs the tests as well
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        run: ./gradlew build
+      # Frontend build and test
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
         with:
-          arguments: build
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: unitrade-frontend/package-lock.json
+      - run: npm install
+        working-directory: unitrade-frontend
+      - run: npm run build
+        working-directory: unitrade-frontend
+      # Run the backend in the background for the frontend tests
+      - name: Run backend
+        run: ./gradlew bootRun &
+      # Sleep so that the backend can completely set up
+      - name: Wait for backend to set up
+        run: sleep 10
+      - run: npm run test
+        working-directory: unitrade-frontend

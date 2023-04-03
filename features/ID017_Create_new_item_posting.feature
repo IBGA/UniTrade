@@ -4,43 +4,27 @@ As an existing UniTrade user
 I want to create a new item posting
 So that I can sell course related items to other users.
 
-Scenario Outline: University and course are found in the system, and all fields are filled in correctly (Normal Flow)
+Scenario Outline: University is found in the system and item posting is created (Normal Flow)
 Given user is logged in
-And user is on the create new item posting page
-And user has found and selected the university <existing_university> from the dropdown menu
-And user has found and selected the course <existing_course> from the dropdown menu
-And user has filled in the item category <item_category>
-And user has filled in the item name <item_name>
-And user has filled in the item description <item_description>
-And user has appended the item image <item_image>
-And user has filled in the item condition <item_condition>
-And user has filled in the item price <item_price>
-And user has filled in the item quantity <item_quantity>
-When user clicks the create posting button
-Then the item posting of item with name <item_name>,
-    item description <item_description>,
-    item image <item_image>,
-    item condition <item_condition>,
-    item price <item_price>,
-    item quantity <item_quantity>,
-    item category <item_category>,
-    is created and tagged with university <existing_university> and course <existing_course>
+And a university with name "<university_name>" and city "<university_city>" already exists in the system
+And a course with codename "<course_codename>" for university with name "<university_name>" and city "<university_city>" already exists in the system
+When user attempts to create a item posting with title "<title>", description "<description>", imagelink "<imageLink>", university name "<university_name>", university city "<university_city>", course codename "<course_codename>", and price <price>
+Then a new itemposting with title "<title>", description "<description>", imagelink "<imageLink>", university name "<university_name>", university city "<university_city>", course codename "<course_codename>", and price <price> is added to the system
 
-| existing_university   | existing_course | item_category | item_name                 | item_description                            | item_image     | item_condition | item_price | item_quantity |
-| University of Toronto | CSC108          | textbook      | Intro to CS               | This is a textbook for CSC108               | textbook.jpg   | new            | 50         | 1             |
-| McGill University     | STAT241         | calculator    | TI-84 Plus CE             | This is a TI-84 Plus CE graphing calculator | calculator.png | new            | 120        | 2             |
+Examples:
+| title           | description         | imageLink                      | university_name | university_city | course_codename | price |
+| CSC108 textbook | textbook for CSC108 | https://myimage.com/image.png  | Test_university | Test_city       | Test_codename   | 50    |
+| MTH101 textbook | textbook for MTH101 | https://myimage.com/image2.png | Test_university | Test_city       | Test_codename   | 50    |
 
-Scenario Outline: University and course are found in the system, and some fields are filled in incorrectly (Error Flow)
+Scenario: University is not found in the system and item posting is not created (Error Flow)
 Given user is logged in
-And user is on the create new item posting page
-And user has found and selected the university <existing_university> from the dropdown menu
-And user has found and selected the course <existing_course> from the dropdown menu
-And user has filled in at least one field <incorrectly_filled_fields> incorrectly
-When user clicks the create posting button
-Then a "Fields filled incorrectly" error message is issued and the fields <incorrectly_filled_fields> are highlighted in red
+And a university with name "<university_name>" and city "<university_city>" does not already exist in the system
+And a course with codename "<course_codename>" does not already exist in the system
+When user attempts to create a item posting with title "<title>", description "<description>", imagelink "<imageLink>", university name "<university_name>", university city "<university_city>", course codename "<course_codename>", and price <price>
+Then the item posting is not created and an error is thrown
 
-Scenario: University and/or course is not found in the system (Alternate Flow)
-Given user is logged in
-And user is on the create new item posting page
-When user has not found the university <nonexisting_university> or course <nonexisting_course> from the dropdown menu and clicks "add new"
-Then user is prompted to add a new university or course to the system with the fields prefilled with <nonexisting_university> or <nonexisting_course>
+Examples:
+| title           | description         | imageLink                      | university_name | university_city | course_codename | price |
+| CSC108 textbook | textbook for CSC108 | https://myimage.com/image.png  | No_university   | No_city         | No_codename     | 50    |
+| MTH101 textbook | textbook for MTH101 | https://myimage.com/image2.png | No_university_2 | No_city_2       | No_codename_2   | 50    |
+

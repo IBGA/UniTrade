@@ -1,0 +1,31 @@
+{
+  "name": "unitrade-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "bootstrap": "^5.2.3",
+    "react": "^18.2.0",
+    "react-bootstrap": "^2.7.1",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.1",
+    "react-select": "^5.7.0",
+    "styled-components": "^5.3.6",
+    "vitest": "^0.28.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@vitejs/plugin-react": "^3.1.0",
+    "happy-dom": "^8.9.0",
+    "jest-cucumber": "^3.0.1",
+    "react-test-renderer": "^18.2.0",
+    "vite": "^4.1.0"
+  }
+}
