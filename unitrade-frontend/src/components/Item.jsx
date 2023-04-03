@@ -2,7 +2,7 @@ import Container from 'react-bootstrap/Container';
 import styled from "styled-components";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from 'react';
-import { GET, PUT } from '../utils/client';
+import { GET, PUT, DELETE } from '../utils/client';
 import { getNumOfDays } from '../utils/time';
 import Alert from 'react-bootstrap/Alert';
 import { useAuth } from "./AuthProvider";
@@ -15,6 +15,8 @@ import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import ErrorToast from './toasts/ErrorToast';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from "react-router-dom";
 
 const ItemStyle = styled.div`
 
@@ -36,9 +38,14 @@ const ItemStyle = styled.div`
     }
 
     .contact-btn {
-        margin-top: 10px;
         background-color: var(--secondary);
         border: none;
+    }
+
+    .delete-btn {
+        background-color: var(--red);
+        border: none;
+        margin-left: 10px;
     }
 
     .description-input {
@@ -78,9 +85,39 @@ function ItemUniversitySelect(props) {
     );
 }
 
+function ModalDeleteItem(props) {
+
+    const { show, setShow, onConfirm } = props;
+
+    const handleClose = () => {
+        setShow(false);
+    }
+    const handleConfirm = () => {
+        setShow(false);
+        onConfirm();
+    }
+
+    return (
+        <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+        <Modal.Title>Delete this Item?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this item?</Modal.Body>
+        <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+            Cancel
+        </Button>
+        <Button variant="danger" className="delete-btn" onClick={handleConfirm}>
+            Confirm
+        </Button>
+        </Modal.Footer>
+        </Modal>
+      );
+}
+
 export function Item() {
     const params = useParams();
-    const { user } = useAuth();
+    const { user, role } = useAuth();
     const [isValid, setValid] = useState(0);
     const [errorMsg, setErrorMsg] = useState("");
     const [item, setItem] = useState(null);
@@ -93,6 +130,8 @@ export function Item() {
     const [itemImage, setItemImage] = useState(null);
     const [error, showError] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         async function getItemPosting() {
@@ -141,8 +180,6 @@ export function Item() {
         if (typeof res === "string" || res.error) {
             setErrorMsg(typeof res === "string" ? res : res.error)
             showError(true)
-        } else {
-            console.log("success")
         }
 
         setLoading(false)
@@ -160,9 +197,21 @@ export function Item() {
         showError(false);
     }
 
+    async function handleConfirmDeleteItem() {
+        const res = await DELETE(`itemposting/${params.itemId}`);
+        console.log(res)
+        if (res.error) {
+            setErrorMsg(res.error)
+            showError(true)
+        } else {
+            navigate("/browse/item");
+        }
+    }
+
     return (
         <ItemStyle>
         <ErrorToast message={errorMsg} onClose={handleCloseError} show={error} />
+        <ModalDeleteItem show={showDeleteModal} setShow={setShowDeleteModal} onConfirm={handleConfirmDeleteItem} />
         <Container>
                 {isValid==1 && user != null && item != null && user.username === item.poster.username &&
                     <Container className="p-5">
@@ -195,8 +244,11 @@ export function Item() {
                                 <FloatingLabel controlId="floatingInputImg" label="Image URL" className="mb-3">
                                     <Form.Control type="text" placeholder="Image URL" defaultValue={item.imageLink} onChange={(e) => setItemImage(e.target.value)}/>
                                 </FloatingLabel>
-
-                                <Button className="contact-btn" variant="secondary" type="submit" disabled={loading}>Submit Changes</Button>
+                                <div className="mt-4">
+                                    <Button className="contact-btn" variant="secondary" type="submit" disabled={loading}>Submit Changes</Button>
+                                    <Button className="delete-btn" validant="danger" onClick={() => setShowDeleteModal(true)}>Delete</Button>
+                                </div>
+                                
                             </Form>
                         </Col>
                     </Row>
@@ -227,7 +279,12 @@ export function Item() {
                                     <ListGroup.Item><b>Location: </b> <a href={`https://www.google.com/maps/${item.university.city}`}>{item.university.city}</a></ListGroup.Item>
                                     <ListGroup.Item><b>Related Courses: </b> {item.courses.map(course => course.codename).join(", ")}</ListGroup.Item>
                                 </ListGroup>
-                                <Button className="contact-btn" variant="secondary" disabled={!item.available} href={`mailto:${item.poster.email}`}>Contact {item.poster.firstName}</Button>
+                                <div className="mt-4 d-flex h-20">
+                                    <Button className="contact-btn" variant="secondary" disabled={!item.available} href={`mailto:${item.poster.email}`}>Contact {item.poster.firstName}</Button>
+                                    { role == item.university.id &&
+                                        <Button className="delete-btn" validant="danger" onClick={() => setShowDeleteModal(true)}>Delete</Button>
+                                    }
+                                </div>
                             </Stack>
                         </Col>
                     </Row>

@@ -251,6 +251,28 @@ public class RoleService {
     }
 
     @Transactional
+    public Long getSelfRoleUniversityId(Long requestId) {
+        if (requestId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Request Id cannot be null");
+        }
+
+        Person person = personRepository.findById(requestId).orElse(null);
+
+        if (person == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Person with id %d not found", requestId));
+        }
+
+        Role role = roleRepository.findByPerson(person);
+
+        if (role == null) {
+            return 0L;
+        }
+
+        return roleRepository.findByPerson(person).getUniversity().getId();
+    }
+
+    @Transactional
     public List<Person> getAllPersonsWithRole(Long roleId){
         List<Person> allPersons = personRepository.findAll();
         List<Person> allPersonsWithRole = new ArrayList<Person>();

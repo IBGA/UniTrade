@@ -38,7 +38,7 @@ export function BrowseItemPostingPage() {
       if (typeof res === "string" || res.error) {
         setItemPostings([]);
       } else {
-        setItemPostings(res);
+        setItemPostings(res.sort((a, b) => b.datePosted.localeCompare(a.datePosted)));
       }
     }
 
@@ -66,12 +66,12 @@ export function BrowseItemPostingPage() {
           <h2>Results</h2>
           <Row className="mb-5">
             {itemPostings.map(posting => (
-              <Col xs={12} md={6} lg={4} key={posting.id}>
+              <Col xs={12} md={6} lg={4} key={posting.id} className="my-3">
                 <ItemPostingThumbnail
                   title={posting.title}
                   description={posting.description}
                   date={posting.datePosted}
-                  university={posting.university.name}
+                  university={posting.university}
                   person={posting.poster.username}
                   courses={posting.courses.map(course => course.codename)}
                   imageSrc={""}

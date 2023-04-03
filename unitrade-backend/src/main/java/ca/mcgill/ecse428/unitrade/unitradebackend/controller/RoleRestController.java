@@ -75,6 +75,15 @@ public class RoleRestController {
     }
 
     @ResponseStatus(HttpStatus.OK)
+    @GetMapping(value = { "/role/self/role/university" })
+    public ResponseEntity<Long> getSelfRoleUniversityId() {
+        Long authId = ControllerHelper.getAuthenticatedUserId();
+
+        return new ResponseEntity<Long>(
+            roleService.getSelfRoleUniversityId(authId), HttpStatus.OK);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = { "/role/personId/{personId}/universityId/{universityId}" })
     public ResponseEntity<RoleResponseDto> getRoleFromPersonAndUniversity(@PathVariable("personId") Long personId,
             @PathVariable("universityId") Long universityId) {
