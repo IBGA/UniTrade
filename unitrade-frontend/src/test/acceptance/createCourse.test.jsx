@@ -65,7 +65,7 @@ defineFeature(feature, (test) => {
       await LOGIN(defaultUser.email, defaultUser.password);
     });
 
-    and (
+   /* and (
       /^a university with name (.*) and city (.*) exists in the system$/,
       async (arg0, arg1) => {
         universityName = arg0;
@@ -80,7 +80,22 @@ defineFeature(feature, (test) => {
           })
         })
       }
+      ); */
+
+      and(
+        /^a university with name (.*) and city (.*) already exists in the system$/,
+        async (arg0, arg1) => {
+          await accessBackend(defaultUser, async () => {
+            await POST('university', {
+              universityName: arg0,
+              universityCity: arg1,
+              
+            });
+            let universities = await GET('university');
+          });
+        }
       );
+  
 
     and (
       /^user is a moderator for university with name (.*) and city (.*)$/,
@@ -118,12 +133,12 @@ defineFeature(feature, (test) => {
         codeName = arg2;
         description = arg3;
 
-      /*  universityNameInput.props.onChange({target: {value: universityName}});
+        universityNameInput.props.onChange({target: {value: universityName}});
         titleInput.props.onChange({target: {value: title}});
         codeNameInput.props.onChange({target: {value: codeName}});
         descriptionInput.props.onChange({target: {value: description}});
 
-        await form.props.onSubmit({ preventDefault: () => {}}); */
+        await form.props.onSubmit({ preventDefault: () => {}}); 
       }
       );
 
