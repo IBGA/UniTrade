@@ -46,8 +46,8 @@ defineFeature(feature, (test) => {
     form = testInstance.findByType('form');
 
     allInputs = testInstance.findByType('form').findAllByType('input');
-  //  universityNameInput = allInputs[0]; //fix
- //   universityCityInput = allInputs[1];
+    universityNameInput = allInputs[0]; //fix
+    universityCityInput = allInputs[1];
     codeNameInput = allInputs[2];
     titleInput = allInputs[3];
     descriptionInput = allInputs[4];
@@ -118,12 +118,12 @@ defineFeature(feature, (test) => {
         codeName = arg2;
         description = arg3;
 
-      //  universityNameInput.props.onChange({target: {value: universityName}});
+      /*  universityNameInput.props.onChange({target: {value: universityName}});
         titleInput.props.onChange({target: {value: title}});
         codeNameInput.props.onChange({target: {value: codeName}});
         descriptionInput.props.onChange({target: {value: description}});
 
-        await form.props.onSubmit({ preventDefault: () => {}});
+        await form.props.onSubmit({ preventDefault: () => {}}); */
       }
       );
 
