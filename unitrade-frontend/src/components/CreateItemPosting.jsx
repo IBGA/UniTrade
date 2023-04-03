@@ -113,7 +113,7 @@ export function CreateItemPosting() {
             setLoading(false)
         } else {
             setLoading(false)
-            navigate('/browse/item');
+            //navigate('/browse/item');
         }
 
     }
