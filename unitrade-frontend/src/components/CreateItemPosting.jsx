@@ -99,6 +99,7 @@ export function CreateItemPosting() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        console.log("pressed submit")
         setLoading(true)
         //let d = new Date();
         //let datePosted = `${d.getFullYear()}-${("0" + (d.getMonth()+1)).slice(-2)}-${("0" + d.getDate()).slice(-2)}`;
@@ -112,7 +113,7 @@ export function CreateItemPosting() {
             setLoading(false)
         } else {
             setLoading(false)
-            //navigate('/browse/item');
+            navigate('/browse/item');
         }
 
     }
@@ -154,7 +155,7 @@ export function CreateItemPosting() {
                                 <Form.Label>University</Form.Label>
                                 <Form.Select onChange={changeUniversityOptionHandler}>
                                     {universityOptions.map((university) => (
-                                        <option value={university.value}>{university.label}</option>
+                                        <option value={university.value} key={university.value}>{university.label}</option>
                                     ))}
                                 </Form.Select>
                             </Form.Group>
@@ -163,7 +164,7 @@ export function CreateItemPosting() {
                                 <Form.Label>Courses</Form.Label>
                                 <Form.Select onChange={changeCourseOptionHandler} multiple as="select">
                                     {courseOptions.map((course) => (
-                                        <option value={course.value}>{course.label}</option>
+                                        <option value={course.value} key={course.value}>{course.label}</option>
                                     ))}
                                 </Form.Select>
                             </Form.Group>

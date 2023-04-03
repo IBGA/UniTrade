@@ -4,7 +4,8 @@ import { GET } from "../utils/client";
 const AuthContext = createContext({
   auth: false,
   setAuth: () => {},
-  user: null
+  user: null,
+  role: 0
 });
 
 const useAuth = () => useContext(AuthContext);
@@ -12,6 +13,7 @@ const useAuth = () => useContext(AuthContext);
 const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(0);
 
   useEffect(() => {
     const isAuth = async () => {
@@ -21,12 +23,16 @@ const AuthProvider = ({ children }) => {
         if (auth) {
           const userRes = await GET('person/self', true);
           setUser(userRes)
+          const role = await GET('role/self/role/university', true);
+          setRole(role);
         } else {
           setUser(null);
+          setRole(0);
         }
       } catch(error) {
         setAuth(false);
         setUser(null);
+        setRole(0);
       };
     };
 
@@ -34,7 +40,7 @@ const AuthProvider = ({ children }) => {
   }, [auth]);
 
   return (
-    <AuthContext.Provider value={{ auth, setAuth, user }}>
+    <AuthContext.Provider value={{ auth, setAuth, user, role }}>
       {children}
     </AuthContext.Provider>
   );
