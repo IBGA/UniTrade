@@ -15,7 +15,7 @@ public class Course {
     private String description;
     private boolean isApproved;
     @ManyToOne(cascade=CascadeType.DETACH)
-    //@OnDelete(action = OnDeleteAction.CASCADE)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private University university;
 
     public Long getId() {
