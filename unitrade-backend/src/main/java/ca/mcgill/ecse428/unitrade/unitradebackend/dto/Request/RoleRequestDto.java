@@ -2,7 +2,7 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.dto.Request;
 
 public class RoleRequestDto {
     private Long id;
-    private Long personId;
+    private String personUsername;
     private Long universityId;
 
     public Long getId() {
@@ -13,12 +13,12 @@ public class RoleRequestDto {
         this.id = id;
     }
 
-    public Long getPersonId() {
-        return personId;
+    public String getPersonUsername() {
+        return personUsername;
     }
 
-    public void setPersonId(Long personId) {
-        this.personId = personId;
+    public void setPersonUsername(String personUsername) {
+        this.personUsername = personUsername;
     }
 
     public Long getUniversityId() {

@@ -141,8 +141,7 @@ public class RoleService {
     }
 
     @Transactional
-    public boolean isAdministratorOrHelper(Long requesterId, Long universityId) {
-
+    public boolean isHelper(Long requesterId, Long universityId) {
         if (requesterId == null){
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Requester Id cannot be null");
         }
@@ -151,8 +150,16 @@ public class RoleService {
             throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University Id cannot be null");
         }
 
-        return getRoleFromPersonAndUniversity(requesterId, universityId).getRole() == ModerationRole.ADMINISTRATOR ||
-                getRoleFromPersonAndUniversity(requesterId, universityId).getRole() == ModerationRole.HELPER;
+        if (getRoleFromPersonAndUniversityBoolean(requesterId, universityId) == false) {
+            return false;
+        }
+
+        return getRoleFromPersonAndUniversity(requesterId, universityId).getRole() == ModerationRole.HELPER;
+    }
+
+    @Transactional
+    public boolean isAdministratorOrHelper(Long requesterId, Long universityId) {
+        return getRoleFromPersonAndUniversityBoolean(requesterId, universityId);
     }
 
     @Transactional
@@ -201,6 +208,32 @@ public class RoleService {
         return role;
     }
 
+    @Transactional
+    public boolean getRoleFromPersonAndUniversityBoolean(Long personId, Long universityId) {
+        if (personId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Person Id cannot be null");
+        }
+
+        if (universityId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "University Id cannot be null");
+        }
+
+        Person person = personRepository.findById(personId).orElse(null);
+        if (person == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Person with id %d not found", personId));
+        }
+
+        University university = universityRepository.findById(universityId).orElse(null);
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("University with id %d not found", universityId));
+        }
+
+        Role role = roleRepository.findByPersonAndUniversity(person, university);
+        return role != null;
+    }
+
 
     @Transactional
     public Role updateRole(Long personId, ModerationRole modRole){
@@ -215,6 +248,28 @@ public class RoleService {
         Role role = roleRepository.findByPerson(personRepository.findById(personId));
         role.setRole(modRole);
         return roleRepository.save(role);
+    }
+
+    @Transactional
+    public Long getSelfRoleUniversityId(Long requestId) {
+        if (requestId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Request Id cannot be null");
+        }
+
+        Person person = personRepository.findById(requestId).orElse(null);
+
+        if (person == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Person with id %d not found", requestId));
+        }
+
+        Role role = roleRepository.findByPerson(person);
+
+        if (role == null) {
+            return 0L;
+        }
+
+        return roleRepository.findByPerson(person).getUniversity().getId();
     }
 
     @Transactional
@@ -233,7 +288,41 @@ public class RoleService {
         }
 
         return allPersonsWithRole;
+    }
 
-    } 
-    
+    @Transactional
+    public void deleteRole(Long requestId, String username, Long universityId) {
+        if (username == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "Username cannot be null");
+        }
+
+        if (universityId == null){
+            throw new ServiceLayerException(HttpStatus.BAD_REQUEST, "universityId cannot be null");
+        }
+
+        Person person = personRepository.findByUsername(username);
+        if (person == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Person with username %s not found", username));
+        }
+
+        University university = universityRepository.findById(universityId).orElse(null);
+        if (university == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("University with id %d not found", universityId));
+        }
+
+        if(!isAdministrator(requestId, universityId)){
+            throw new ServiceLayerException(HttpStatus.FORBIDDEN, 
+                    String.format("User with id %d is not an administrator", requestId));
+        }
+
+        Role role = roleRepository.findByPersonAndUniversity(person, university);
+        if (role == null) {
+            throw new ServiceLayerException(HttpStatus.NOT_FOUND, 
+                    String.format("Role with person id %d not found", person.getId()));
+        }
+
+        roleRepository.delete(role);
+    }
 }

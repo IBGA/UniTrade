@@ -55,6 +55,11 @@ public class UniversityService {
         university.setDescription(description);
         University savedUniversity = universityRepository.save(university);
 
+        if (roleService.getSelfRoleUniversityId(requesterId) != 0) {
+            throw new ServiceLayerException(HttpStatus.FORBIDDEN,
+                    String.format("Person with id %d is already an administrator of university with id %d", requesterId, roleService.getSelfRoleUniversityId(requesterId)));
+        }
+
         // Create role
         if (requesterId != null) {
             if (personRepository.findById(requesterId).orElse(null) == null) {

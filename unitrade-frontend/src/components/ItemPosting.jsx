@@ -1,6 +1,8 @@
 import React, { useState, useEffect  } from "react";
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import styled from 'styled-components';
 import Select from 'react-select';
 import { Form, Dropdown } from 'react-bootstrap';
@@ -8,6 +10,7 @@ import Button from "react-bootstrap/Button";
 import { getNumOfDays } from '../utils/time';
 import { GET } from '../utils/client';
 import Badge from 'react-bootstrap/Badge';
+import { useAuth } from './AuthProvider';
 
 const ItemPostingThumbnailStyle = styled.div`
   .item-posting-container {
@@ -43,6 +46,7 @@ const ItemPostingThumbnailStyle = styled.div`
 
 export function ItemPostingThumbnail(props) {
   const { title, description, date, university, person, courses, imageSrc, onClick } = props;
+  const { auth, role } = useAuth();
 
   return (
     <ItemPostingThumbnailStyle>
@@ -51,7 +55,7 @@ export function ItemPostingThumbnail(props) {
           <Card.Img variant="top" src={imageSrc} />
           <Card.Body>
             <Card.Title>{title} {(getNumOfDays(date).includes("hours") || getNumOfDays(date).includes("minutes")) && <Badge className="badge-body" bg="secondary">New</Badge>}</Card.Title>
-            <Card.Subtitle className="mb-2 text-muted">{university}</Card.Subtitle>
+            <Card.Subtitle className="mb-2 text-muted">{university.name}</Card.Subtitle>
             <Card.Subtitle className="mb-2 text-muted">{getNumOfDays(date)}</Card.Subtitle>
             <Card.Subtitle className="mb-2 text-muted">{person}</Card.Subtitle>
             <Card.Text>{description}</Card.Text>
@@ -59,6 +63,9 @@ export function ItemPostingThumbnail(props) {
               <Card.Text>
                 <strong>Courses:</strong> {courses.join(", ")}
               </Card.Text>
+            }
+            {auth && role == university.id &&
+              <Card.Subtitle className="text-danger"><small><i>You can moderate this item.</i></small></Card.Subtitle>
             }
           </Card.Body>
         </Card>
