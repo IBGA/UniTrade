@@ -9,6 +9,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useNavigate } from "react-router-dom";
 import { GET } from '../utils/client';
+import Image1 from '../assets/background1.jpg';
+import Image2 from '../assets/background2.jpg';
+import Image3 from '../assets/background3.jpg';
 
 const HomeStyle = styled.div`
 .image {
@@ -90,7 +93,7 @@ export function Home() {
                     <Carousel.Item className='image'>
                         <img
                         className="d-block rounded-5 image"
-                        src="https://pixabay.com/get/ge46614e76a3b3f12b6eccf00f18543931277950d6f7579e7c0e8a31c9e2b5c2d5bc75a66f82ec8041ece381b0150701089aac5ffb1f6c1a60f601848392727d72b1dcbb2e528bbe20071d92f6589828e_1280.jpg"
+                        src={Image1}
                         alt="First slide"
                         />
                         <Carousel.Caption>
@@ -101,7 +104,7 @@ export function Home() {
                     <Carousel.Item className='image'>
                         <img
                         className="d-block rounded-5 image"
-                        src="https://pixabay.com/get/gdb2ba1b0f33a5cec9051fe992c8f1131507595e4cc23667bf3d769eb0c642c52287fe44c47c5c6f172c10e7d2db5165f92717a33ad94ac99b2feab1d953d82bafc10a5f9524f62b9d88ec9ca1f8ab945_1280.jpg"
+                        src={Image2}
                         alt="Second slide"
                         />
 
@@ -113,7 +116,7 @@ export function Home() {
                     <Carousel.Item className='image'>
                         <img
                         className="d-block rounded-5 image"
-                        src="https://pixabay.com/get/g188f6749aeaca47125addf074f9e51b8958d0b576d870b80184c56609e00e62219566c9f8f6cf0072525da5802678781f7744cf55282bcb5afc0a7fc471f2d46e9849b19e7697765bd24fc238bb554a5_1280.jpg"
+                        src={Image3}
                         alt="Third slide"
                         />
 

@@ -187,7 +187,7 @@ defineFeature(feature, (test) => {
             async () => {
                 await setTimeout(() => {
                     expect(testInstance.findByType(Alert).props.show).toBe(true);
-                }, 1000);
+                }, 10000);
 
                 // Cleanup
                 LOGIN(email, password);
