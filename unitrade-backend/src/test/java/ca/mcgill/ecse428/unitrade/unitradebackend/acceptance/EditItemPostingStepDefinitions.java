@@ -26,8 +26,8 @@ public class EditItemPostingStepDefinitions extends AcceptanceTest {
     ResponseEntity<ItemPostingResponseDto> itemPostingResponse;
     Long itemPostingId;
 
-    @And("item posting with title {string} and description {string} and price {long} for university with name {string} and city {string} exists in the system")
-    public void item_posting_with_title_description_price_for_university_in_city_exists_in_the_system(String title, String description, Long price, String name, String city) {
+    @And("item posting with title {string} and description {string} and price {double} for university with name {string} and city {string} exists in the system")
+    public void item_posting_with_title_description_price_for_university_in_city_exists_in_the_system(String title, String description, Double price, String name, String city) {
 
         ItemPostingRequestDto body = new ItemPostingRequestDto();
         body.setTitle(title);
@@ -75,14 +75,14 @@ public class EditItemPostingStepDefinitions extends AcceptanceTest {
     
     }
 
-    @And("user is the owner of the item posting with title {string} and description {string} and price {long} for university with name {string} and city {string}")
-    public void user_is_owner_of_item_posting_with_title_description_price_for_university_in_city(String title, String description, Long price, String name, String city) {
+    @And("user is the owner of the item posting with title {string} and description {string} and price {double} for university with name {string} and city {string}")
+    public void user_is_owner_of_item_posting_with_title_description_price_for_university_in_city(String title, String description, Double price, String name, String city) {
         
 
     }
 
-    @When("user edits the item posting with title {string} and description {string} and price {long} for university with name {string} and city {string} to have description {string} and price {long}")
-    public void user_edits_item_posting_with_title_description_price_for_university_in_city_to_description_and_price(String title, String description, Long price, String name, String city, String newDescription, Long newPrice) {
+    @When("user edits the item posting with title {string} and description {string} and price {double} for university with name {string} and city {string} to have description {string} and price {double}")
+    public void user_edits_item_posting_with_title_description_price_for_university_in_city_to_description_and_price(String title, String description, Double price, String name, String city, String newDescription, Double newPrice) {
         itemPostingResponse = helper.get("http://localhost:8080/itemposting/"+itemPostingId, ItemPostingResponseDto.class, true);
         ItemPostingRequestDto body = new ItemPostingRequestDto();
         body.setDescription(newDescription);
@@ -93,20 +93,21 @@ public class EditItemPostingStepDefinitions extends AcceptanceTest {
         var itemPostingPut = helper.put("http://localhost:8080/itemposting/"+itemPostingId, ItemPostingResponseDto.class, body, true);
     }
 
-    @Then("the item posting with title {string} and description {string} and price {long} for university with name {string} and city {string} exists in the system")
-    public void then_item_posting_with_title_description_price_for_university_in_city_exists_in_the_system(String title, String newDescription, Long newPrice, String name, String city) {
+    @Then("the item posting with title {string} and description {string} and price {double} for university with name {string} and city {string} exists in the system")
+    public void then_item_posting_with_title_description_price_for_university_in_city_exists_in_the_system(String title, String newDescription, Double newPrice, String name, String city) {
         itemPostingResponse = helper.get("http://localhost:8080/itemposting/"+itemPostingId, ItemPostingResponseDto.class, true);
+        ItemPostingResponseDto body = itemPostingResponse.getBody();
         assert(itemPostingResponse.getBody().getDescription().equals(newDescription));
         assert(itemPostingResponse.getBody().getPrice().equals(newPrice));
     }
 
-    @When("user deletes the item posting with title {string} and description {string} and price {long} for university with name {string} and city {string}")
-    public void user_deletes_item_posting_with_title_description_price_for_university_in_city(String title, String description, Long price, String name, String city) {
+    @When("user deletes the item posting with title {string} and description {string} and price {double} for university with name {string} and city {string}")
+    public void user_deletes_item_posting_with_title_description_price_for_university_in_city(String title, String description, Double price, String name, String city) {
         var itemPostingDelete = helper.delete("http://localhost:8080/itemposting/"+itemPostingId, true);
     }
 
-    @Then("the item posting with title {string} and description {string} and price {long} for university with name {string} and city {string} does not exist in the system") 
-    public void then_item_posting_with_title_description_price_for_university_in_city_does_not_exist_in_the_system(String title, String description, Long price, String name, String city) {
+    @Then("the item posting with title {string} and description {string} and price {double} for university with name {string} and city {string} does not exist in the system") 
+    public void then_item_posting_with_title_description_price_for_university_in_city_does_not_exist_in_the_system(String title, String description, Double price, String name, String city) {
         try {
             itemPostingResponse = helper.get("http://localhost:8080/itemposting/"+itemPostingId, ItemPostingResponseDto.class, true);
         } catch (HttpClientErrorException e) {
@@ -114,35 +115,3 @@ public class EditItemPostingStepDefinitions extends AcceptanceTest {
         }
     }
 }
-
-/*
- * Feature: Edit item posting
-
-As a student
-I want to edit or delete my item postings
-So that I can keep them up to date
-
-Scenario Outline: Item posting is edited (Normal Flow)
-Given user is logged in
-And item posting with title "<title>" and description "<description>" and price <price> for university with name "<university_name>" and city "<university_city>" exists in the system
-And user is the owner of the item posting with title "<title>" and description "<description>" and price <price> for university with name "<university_name>" and city "<university_city>"
-When user edits the item posting with title "<title>" and description "<description>" and price <price> for university with name "<university_name>" and city "<university_city>" to have description "<new_description>" and price <new_price>
-Then the item posting with title "<title>" and description "<new_description>" and price <new_price> for university with name "<university_name>" and city "<university_city>" exists in the system
-
-Examples:
-| university_name        | university_city | title           | description         | price | new_description          | new_price |
-| University of Montreal | Montreal        | CSC109 textbook | textbook for CSC109 | 50    | mint textbook for CSC109 | 60        |
-| University of Montreal | Montreal        | MTH103 textbook | textbook for MTH103 | 50    | mint textbook for MTH103 | 60        |
-
-Scenario: Item posting is deleted (Alternate Flow)
-Given user is logged in
-And item posting with title "<title>" and description "<description>" and price <price> for university with name "<university_name>" and city "<university_city>" exists in the system
-And user is the owner of the item posting with title "<title>" and description "<description>" and price <price> for university with name "<university_name>" and city "<university_city>"
-When user deletes the item posting with title "<title>" and description "<description>" and price <price> for university with name "<university_name>" and city "<university_city>"
-Then the item posting with title "<title>" and description "<description>" and price <price> for university with name "<university_name>" and city "<university_city>" does not exist in the system
-
-Examples:
-| university_name        | university_city | title           | description         | price |
-| University of Montreal | Montreal        | CSC109 textbook | textbook for CSC109 | 50    |
-| University of Montreal | Montreal        | MTH103 textbook | textbook for MTH103 | 50    |
- */

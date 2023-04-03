@@ -2,6 +2,8 @@ package ca.mcgill.ecse428.unitrade.unitradebackend.model;
 
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class Role {
